@@ -1,8 +1,9 @@
 /** @jsx React.DOM */
 var React = require('react');
-var Router = require('../../modules/main');
-var Route = Router.Route;
-var Link = Router.Link;
+var ReactRouter = require('../../modules/main');
+var Router = ReactRouter.Router;
+var Route = ReactRouter.Route;
+var Link = ReactRouter.Link;
 
 var App = React.createClass({
   getInitialState: function() {
@@ -48,13 +49,12 @@ var State = React.createClass({
   }
 });
 
-var routes = (
+
+Router(
   <Route handler={App}>
     <Route name="state" path="state/:abbr" handler={State}/>
   </Route>
-);
-
-React.renderComponent(routes, document.body);
+).renderComponent(document.body);
 
 /*****************************************************************************/
 // data stuff

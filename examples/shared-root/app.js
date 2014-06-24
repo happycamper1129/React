@@ -1,8 +1,9 @@
 /** @jsx React.DOM */
 var React = require('react');
-var Router = require('../../modules/main');
-var Route = Router.Route;
-var Link = Router.Link;
+var ReactRouter = require('../../modules/main');
+var Router = ReactRouter.Router;
+var Route = ReactRouter.Route;
+var Link = ReactRouter.Link;
 
 var App = React.createClass({
   render: function () {
@@ -65,7 +66,7 @@ var ForgotPassword = React.createClass({
   }
 });
 
-var routes = (
+Router(
   <Route handler={App}>
     <Route handler={SignedOut}>
       <Route name="signin" handler={SignIn}/>
@@ -75,6 +76,4 @@ var routes = (
       <Route name="home" handler={Home}/>
     </Route>
   </Route>
-);
-
-React.renderComponent(routes, document.body);
+).renderComponent(document.body);
