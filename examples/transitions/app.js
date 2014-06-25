@@ -1,8 +1,10 @@
 /** @jsx React.DOM */
+
 var React = require('react');
-var Router = require('../../modules/main');
-var Route = Router.Route;
-var Link = Router.Link;
+var ReactRouter = require('../../modules/main');
+var Router = ReactRouter.Router;
+var Route = ReactRouter.Route;
+var Link = ReactRouter.Link;
 
 var App = React.createClass({
   render: function() {
@@ -54,11 +56,10 @@ var Form = React.createClass({
   }
 });
 
-var routes = (
+Router(
   <Route handler={App}>
-    <Route name="dashboard" handler={Dashboard}/>
-    <Route name="form" handler={Form}/>
+    <Route name="dashboard" handler={Dashboard} />
+    <Route name="form" handler={Form} />
   </Route>
-);
+).renderComponent(document.body);
 
-React.renderComponent(routes, document.body);

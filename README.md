@@ -9,14 +9,12 @@ Features
 --------
 
 - Nested views mapped to nested routes
-- Modular construction of route hierarchy
-- Fully asynchronous transition hooks
-- Transition abort / redirect / retry
 - Dynamic segments
 - Query parameters
 - Links with automatic `.active` class when their route is active
+- Transition abort / retry
 - Multiple root routes
-- Hash or HTML5 history URLs
+- hash or history urls
 
 Check out the `examples` directory to see how simple previously complex UI
 and workflows are to create.
@@ -29,33 +27,38 @@ Installation
 Usage
 -----
 
-This library only ships with CommonJS modules, so you'll need browserify or
+This library only ships with common js modules, so you'll need browserify or
 webpack or something that can load/bundle it.
 
 ```
-var Route = require('react-nested-router').Route;
+var ReactRouter = require('react-nested-router');
+var Router = ReactRouter.Router;
+var Route = ReactRouter.Route;
+var Link = ReactRouter.Link;
 
-React.renderComponent((
+// note that you always need a root route like `App` here
+
+Router(
   <Route handler={App}>
     <Route name="about" handler={About}/>
     <Route name="users" handler={Users}>
-      <Route name="user" path="/user/:userId" handler={User}/>
+      <Route name="user" path="user/:userId" handler={User}/>
     </Route>
   </Route>
-), document.body);
+).renderComponent(document.body);
 ```
 
 Or if JSX isn't your jam:
 
 ```js
-React.renderComponent((
+Router(
   Route({handler: App},
     Route({name: "about", handler: About}),
     Route({name: "users", handler: Users},
-      Route({name: "user", path: "/user/:userId", handler: User})
+      Route({name="user", path: "user/:userId", handler: User})
     )
   )
-), document.body);
+).renderComponent(document.body);
 ```
 
 When a `Route` is active, you'll get an instance of `handler`
@@ -65,23 +68,9 @@ way down the view hierarchy. This allows you to create nested layouts
 without having to wire it all up yourself. `Link` components create
 accessible anchor tags to route you around the application.
 
-As an example, if the current path is `/user/17`, the following
-component will be rendered:
-
-```js
-<App activeRoute={
-  <Users activeRoute={<User params={{userId: 17}} />} />
-} />
-```
-
-Each component will also receive a `query` prop equal to a dictionary
-of the current query params.
-
 Here's the rest of the application:
 
 ```js
-var Link = require('react-nested-router').Link;
-
 var App = React.createClass({
   render: function() {
     return (
@@ -149,24 +138,62 @@ Benefits of This Approach
 API
 ---
 
-### Route (component)
+### Router (Constructor)
+
+Router config constructor.
+
+```jsx
+Router(
+  <Route handler={App}>
+    <Route path="/users" name="userList" handler={UserList}>
+      <Route path="/users/:id" name="user" handler={User}/>
+    </Route>
+  </Route>
+);
+```
+
+#### Methods
+
+**renderComponent(Node)** - Renders the top level handler into `Node`.
+
+```js
+var router = Router(routes);
+router.renderComponent(document.body):
+```
+
+#### Constructor Methods
+
+**useHistory()** - Uses the browser's history API instead of hashes.
+
+```js
+Router.useHistory();
+```
+
+**transitionTo(routeName, [params[, query]])** - Programatically transition to a new route.
+
+```js
+Router.transitionTo('user', {id: 10}, {showAge: true});
+Router.transitionTo('about');
+```
+
+**replaceWith(routeName, [params[, query]])** - Programatically replace current route with a new route. Does not add an entry into the browser history.
+
+```js
+Router.replaceWith('user', {id: 10}, {showAge: true});
+Router.replaceWith('about');
+```
+
+### Route (Component)
 
 Configuration component to declare your application's routes and view hierarchy.
 
-#### Props
-
-**location** - The method to use for page navigation when initializing the router.
-May be either "hash" to use URLs with hashes in them and the `hashchange` event or
-"history" to use the HTML5 history API. This prop is only ever used on the root
-route that is rendered into the page.
+#### Properties
 
 **name** - The name of the route, used in the `Link` component and the
 router's transition methods.
 
 **path** - The path used in the URL, supporting dynamic segments. If
-left undefined, the path will be defined by the `name`. This path is always
-absolute from the URL "root", even if the leading slash is left off. Nested
-routes do not inherit the path of their parent.
+left undefined, the path will be defined by the `name`.
 
 **handler** - The component to be rendered when the route matches.
 
@@ -181,10 +208,10 @@ handler will have an instance of the child route's handler available on
 ```xml
 <Route handler={App}>
   <!-- path is automatically assigned to the name since it is omitted -->
-  <Route name="about" handler={About}/>
+  <Route name="about" handler={About} />
   <Route name="users" handler={Users}>
     <!-- note the dynamic segment in the path -->
-    <Route name="user" handler={User} path="/user/:id"/>
+    <Route name="user" handler={User} path="/user/:id" />
   </Route>
 </Route>
 ```
@@ -200,76 +227,9 @@ Route({handler: App},
 );
 ```
 
-### Route Handler (user-defined component)
+#### Note
 
-The value you pass to a route's `handler` prop is another component that
-is rendered to the page when that route is active. There are some special
-props and static methods available to these components.
-
-#### Props
-
-**this.props.activeRoute** - The active child route handler instance.
-Use it in your render method to render the child route.
-
-**this.props.params** - When a route has dynamic segments like `<Route
-path="users/:userId"/>` the dynamic values are available at
-`this.props.params.userId`, etc.
-
-**this.props.query** - The query parameters from the url.
-
-#### Static Methods (Transition Hooks)
-
-You can define static methods on your route handlers that will be called
-during route transitions.
-
-**willTransitionTo(transition, params)** - Called when a route is about
-to render, giving you the opportunity to abort the transition. You can
-return a promise and the whole route hierarchy will wait for the
-promises to resolve before proceeding. This is especially useful for
-server-side rendering when you need to populate some data before the
-handler is rendered.
-
-**willTransitionFrom(transition, component)** - Called when an active
-route is being transitioned out giving you an opportunity to abort the
-transition. The `component` is the current component, you'll probably
-need it to check its state to decide if you want to allow the
-transition.
-
-### Transition (object)
-
-**transition.abort()** - aborts a transition
-
-**transition.redirect(to, params, query)** - redirect to another route
-
-**transition.retry()** - retrys a transition
-
-#### Example
-
-```js
-var Settings = React.createClass({
-  statics: {
-    willTransitionTo: function(transition, params) {
-      return auth.isLoggedIn().then(function(loggedIn) {
-        if (!loggedIn)
-          return;
-        transition.abort();
-        return auth.logIn({transition: transition});
-        // in auth module call `transition.retry()` after being logged in
-      });
-    },
-
-    willTransitionFrom: function(transition, component) {
-      if (component.formHasUnsavedData())) {
-        if (!confirm('You have unsaved information, are you sure you want to leave this page?')) {
-          transition.abort();
-        }
-      }
-    }
-  }
-
-  //...
-});
-```
+Paths are not inherited from parent routes.
 
 ### Link (Component)
 
@@ -299,29 +259,72 @@ active -->
 <a href="#/users/123?foo=bar">Michael</a>
 ```
 
+### Handlers
 
-### Top-Level Static Methods
+There are some properties and hooks available to the handlers you pass
+to the `handler` property of a `Route`.
 
-The Router module has several top-level methods that may be used to navigate around the application.
+#### Properties
 
-**transitionTo(routeName, [params[, query]])** - Programatically transition to a new route.
+**this.props.activeRoute** - The active child route handler instance.
+Use it in your render method to render the child route.
+
+**this.props.params** - When a route has dynamic segments like `<Route
+path="users/:userId"/>` the dynamic values are available at
+`this.props.params.userId`, etc.
+
+**this.props.query** - The query parameters from the url.
+
+### Transition Hooks
+
+You can define static methods on your route handlers that will be called
+during route transitions.
+
+**willTransitionTo(transition, params)** - Called when a route is about
+to render, giving you the opportunity to abort the transition. You can
+return a promise and the whole route hierarchy will wait for the
+promises to resolve before proceeding. This is especially useful for
+server-side rendering when you need to populate some data before the
+handler is rendered.
+
+**willTransitionFrom(transition, component)** - Called when an active
+route is being transitioned out giving you an opportunity to abort the
+transition. The `component` is the current component, you'll probably
+need it to check its state to decide if you want to allow the
+transition.
+
+#### transition (object)
+
+**transition.abort()** - aborts a transition
+
+**transition.retry()** - retrys a transition
+
+#### Example
 
 ```js
-Router.transitionTo('user', {id: 10}, {showAge: true});
-Router.transitionTo('about');
-```
+var Settings = React.createClass({
+  statics: {
+    willTransitionTo: function(transition, params) {
+      return auth.isLoggedIn().then(function(loggedIn) {
+        if (!loggedIn)
+          return;
+        transition.abort();
+        return auth.logIn({transition: transition});
+        // in auth module call `transition.retry()` after being logged in
+      });
+    },
 
-**replaceWith(routeName, [params[, query]])** - Programatically replace current route with a new route. Does not add an entry into the browser history.
+    willTransitionFrom: function(transition, component) {
+      if (component.formHasUnsavedData())) {
+        if (!confirm('You have unsaved information, are you sure you want to leave this page?')) {
+          transition.abort();
+        }
+      }
+    }
+  }
 
-```js
-Router.replaceWith('user', {id: 10}, {showAge: true});
-Router.replaceWith('about');
-```
-
-**goBack()** - Programatically go back to the last route and remove the most recent entry from the browser history.
-
-```js
-Router.goBack();
+  //...
+});
 ```
 
 Development
