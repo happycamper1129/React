@@ -302,11 +302,7 @@ active -->
 
 ### Top-Level Static Methods
 
-The router has several top-level methods that may be used to navigate around the application.
-
-```js
-var Router = require('react-nested-router')
-```
+The Router module has several top-level methods that may be used to navigate around the application.
 
 **transitionTo(routeName, [params[, query]])** - Programatically transition to a new route.
 
