@@ -1,6 +1,7 @@
 var React = require('react');
 var warning = require('react/lib/warning');
 var invariant = require('react/lib/invariant');
+var emptyFunction = require('react/lib/emptyFunction');
 var ExecutionEnvironment = require('react/lib/ExecutionEnvironment');
 var mergeProperties = require('../helpers/mergeProperties');
 var goBack = require('../helpers/goBack');
@@ -64,7 +65,7 @@ var RESERVED_PROPS = {
  *     render: function () {
  *       return (
  *         <div class="application">
- *           {this.props.activeRoute}
+ *           {this.props.activeRoute()}
  *         </div>
  *       );
  *     }
@@ -426,10 +427,10 @@ function computeHandlerProps(matches, query) {
     key: null,
     params: null,
     query: null,
-    activeRoute: null
+    activeRoute: emptyFunction.thatReturnsNull
   };
 
-  var childDescriptor;
+  var childHandler;
   reversedArray(matches).forEach(function (match, index) {
     var route = match.route;
 
@@ -440,13 +441,15 @@ function computeHandlerProps(matches, query) {
     props.params = match.params;
     props.query = query;
 
-    if (childDescriptor) {
-      props.activeRoute = childDescriptor;
+    if (childHandler) {
+      props.activeRoute = childHandler;
     } else {
-      props.activeRoute = null;
+      props.activeRoute = emptyFunction.thatReturnsNull;
     }
 
-    childDescriptor = route.props.handler(props);
+    childHandler = function (props, addedProps, children) {
+      return route.props.handler(mergeProperties(props, addedProps), children);
+    }.bind(this, props);
 
     match.refName = props.ref;
   });
