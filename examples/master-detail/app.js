@@ -111,6 +111,7 @@ var App = React.createClass({
     var contacts = this.state.contacts.map(function(contact) {
       return <li key={contact.id}><Link to="contact" id={contact.id}>{contact.first}</Link></li>
     });
+    var content = (this.props.activeRoute) ? this.props.activeRoute() : this.indexTemplate();
     return (
       <div className="App">
         <div className="ContactList">
@@ -120,7 +121,7 @@ var App = React.createClass({
           </ul>
         </div>
         <div className="Content">
-          {this.props.activeRoute() || this.indexTemplate()}
+          {content}
         </div>
       </div>
     );
