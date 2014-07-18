@@ -60,7 +60,7 @@ React.renderComponent((
 
 When a `Route` is active, you'll get an instance of `handler`
 automatically rendered for you. When one of the child routes is active,
-you can render it with `this.props.activeRoute()` in the parent all the
+you can render it with `this.props.activeRoute` in the parent all the
 way down the view hierarchy. This allows you to create nested layouts
 without having to wire it all up yourself. `Link` components create
 accessible anchor tags to route you around the application.
@@ -91,7 +91,7 @@ var App = React.createClass({
           <li><Link to="users">Users</Link></li>
           <li><Link to="user" userId="123">User 123</Link></li>
         </ul>
-        {this.props.activeRoute()}
+        {this.props.activeRoute}
       </div>
     );
   }
@@ -108,7 +108,7 @@ var Users = React.createClass({
     return (
       <div>
         <h2>Users</h2>
-        {this.props.activeRoute()}
+        {this.props.activeRoute}
       </div>
     );
   }
@@ -164,7 +164,7 @@ Configuration component to declare your application's routes and view hierarchy.
 **location** - The method to use for page navigation when initializing the router.
 May be either "hash" to use URLs with hashes in them and the `hashchange` event or
 "history" to use the HTML5 history API. This prop is only ever used on the root
-route that is rendered into the page.
+route that is rendered into the page. The default is "hash".
 
 **name** - The name of the route, used in the `Link` component and the
 router's transition methods.
@@ -180,7 +180,8 @@ routes do not inherit the path of their parent.
 
 Routes can be nested. When a child route matches, the parent route's
 handler will have an instance of the child route's handler available on
-`this.props.activeRoute()`.
+`this.props.activeRoute`.
+
 #### Examples
 
 ```xml
@@ -214,8 +215,7 @@ props and static methods available to these components.
 #### Props
 
 **this.props.activeRoute** - The active child route handler instance.
-Use it in your render method to render the child route. You can pass
-additional props to it for rendering.
+Use it in your render method to render the child route.
 
 **this.props.params** - When a route has dynamic segments like `<Route
 path="users/:userId"/>` the dynamic values are available at
