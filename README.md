@@ -31,7 +31,7 @@ Installation
 ------------
 
 ```sh
-npm install react-nested-router
+npm install react-router
 # or
 bower install react-router
 ```
@@ -47,7 +47,7 @@ Usage
 -----
 
 ```
-var Route = require('react-nested-router').Route;
+var Route = require('react-router').Route;
 
 React.renderComponent((
   <Route handler={App}>
@@ -88,7 +88,7 @@ will render the active child route handler.
 Here's the rest of the application:
 
 ```js
-var Link = require('react-nested-router').Link;
+var Link = require('react-router').Link;
 
 var App = React.createClass({
   render: function() {
@@ -137,7 +137,7 @@ might look something like this:
 ```js
 render: function() {
   var user = <User params={{userId: 2}}/>;
-  var users = <Users activeRouteHandler={user}/>;
+  var users = <User activeRouteHandler={user}/>;
   return <App activeRouteHandler={users}/>;
 }
 ```
@@ -339,7 +339,7 @@ active -->
 The router has several top-level methods that may be used to navigate around the application.
 
 ```js
-var Router = require('react-nested-router')
+var Router = require('react-router')
 ```
 
 **transitionTo(routeNameOrPath, [params[, query]])** - Programatically transition to a new route.
