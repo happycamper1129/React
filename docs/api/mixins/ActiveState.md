@@ -26,12 +26,12 @@ Let's say you are using bootstrap and want to get `active` on those `li`
 tags for the Tabs:
 
 ```js
-var Link = require('react-router/Link');
-var ActiveState = require('react-router/ActiveState');
+var Router = require('react-router');
+var Link = Router.Link;
 
 var Tab = React.createClass({
   
-  mixins: [ ActiveState ],
+  mixins: [ Router.ActiveState ],
 
   getInitialState: function () {
     return { isActive: false };
