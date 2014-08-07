@@ -3,7 +3,6 @@ var Route = require('./Route');
 
 function Redirect(props) {
   return Route({
-    name: props.name,
     path: props.from,
     handler: createRedirectClass(props.to)
   });

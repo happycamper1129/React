@@ -54,13 +54,11 @@ var Routes = React.createClass({
 
   propTypes: {
     location: React.PropTypes.oneOf([ 'hash', 'history' ]).isRequired,
-    preserveScrollPosition: React.PropTypes.bool
   },
 
   getDefaultProps: function () {
     return {
-      location: 'hash',
-      preserveScrollPosition: false
+      location: 'hash'
     };
   },
 
@@ -341,8 +339,6 @@ function syncWithTransition(routes, transition) {
         })
       };
 
-      // TODO: add functional test
-      maybeScrollWindow(routes, toMatches[toMatches.length - 1]);
       routes.setState(state);
 
       return state;
@@ -438,16 +434,6 @@ function returnNull() {
 
 function reversedArray(array) {
   return array.slice(0).reverse();
-}
-
-function maybeScrollWindow(routes, match) {
-  if (routes.props.preserveScrollPosition)
-    return;
-
-  if (!match || match.route.props.preserveScrollPosition)
-    return;
-
-  window.scrollTo(0, 0);
 }
 
 module.exports = Routes;
