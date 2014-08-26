@@ -105,7 +105,7 @@ var App = React.createClass({
 
   render: function() {
     var contacts = this.state.contacts.map(function(contact) {
-      return <li key={contact.id}><Link to="contact" id={contact.id}>{contact.first}</Link></li>
+      return <li key={contact.id}><Link to="contact" params={contact}>{contact.first}</Link></li>
     });
     return (
       <div className="App">
@@ -130,10 +130,15 @@ var Index = React.createClass({
 });
 
 var Contact = React.createClass({
-  getInitialState: function() {
+  getStateFromStore: function(props) {
+    props = props || this.props;
     return {
-      contact: ContactStore.getContact(this.props.params.id)
+      contact: ContactStore.getContact(props.params.id)
     };
+  },
+
+  getInitialState: function() {
+    return this.getStateFromStore();
   },
 
   componentDidMount: function() {
@@ -144,13 +149,15 @@ var Contact = React.createClass({
     ContactStore.removeChangeListener(this.updateContact);
   },
 
+  componentWillReceiveProps: function(newProps) {
+    this.setState(this.getStateFromStore(newProps));
+  },
+
   updateContact: function () {
     if (!this.isMounted())
       return;
 
-    this.setState({
-      contact: ContactStore.getContact(this.props.params.id)
-    });
+    this.setState(this.getStateFromStore())
   },
 
   destroy: function() {
@@ -204,20 +211,6 @@ var NotFound = React.createClass({
   }
 });
 
-var routes = (
-  <Route handler={App}>
-    <DefaultRoute handler={Index}/>
-    <Route name="new" path="contact/new" handler={NewContact}/>
-    <Route name="not-found" path="contact/not-found" handler={NotFound}/>
-    <Route name="contact" path="contact/:id" handler={Contact}/>
-  </Route>
-);
-
-React.renderComponent(
-  <Routes children={routes}/>,
-  document.getElementById('example')
-);
-
 // Request utils.
 
 function getJSON(url, cb) {
@@ -249,3 +242,18 @@ function deleteJSON(url, cb) {
   req.open('DELETE', url);
   req.send();
 }
+
+var routes = (
+  <Route handler={App}>
+    <DefaultRoute handler={Index}/>
+    <Route name="new" path="contact/new" handler={NewContact}/>
+    <Route name="not-found" path="contact/not-found" handler={NotFound}/>
+    <Route name="contact" path="contact/:id" handler={Contact}/>
+  </Route>
+);
+
+React.renderComponent(
+  <Routes children={routes}/>,
+  document.getElementById('example')
+);
+
