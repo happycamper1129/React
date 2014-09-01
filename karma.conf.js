@@ -12,12 +12,16 @@ module.exports = function(config) {
     exclude: [],
 
     preprocessors: {
-      'specs/main.js': ['webpack', 'sourcemap']
+      'specs/main.js': ['webpack']
     },
 
     webpack: {
       cache: true,
-      devtool: 'inline-source-map',
+      // TODO: figure out how to get source maps in here, none of this works
+      //devtool: {
+        //'inline-source-map': true,
+        //inlineSourceMap: true
+      //},
       module: {
         loaders: [
           {test: /\.js$/, loader: 'jsx-loader'}
@@ -45,6 +49,13 @@ module.exports = function(config) {
 
     captureTimeout: 60000,
 
-    singleRun: false
+    singleRun: false,
+
+    plugins: [
+      require("karma-mocha"),
+      require("karma-chrome-launcher"),
+      require("karma-firefox-launcher"),
+      require("karma-webpack")
+    ]
   });
 };
