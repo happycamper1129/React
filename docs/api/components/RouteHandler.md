@@ -45,10 +45,6 @@ var routes = (
 React.renderComponent(routes, document.body);
 ```
 
-### `name`
-
-The current route name.
-
 ### `params`
 
 When a route has dynamic segments like `<Route path="users/:userId"/>`,
