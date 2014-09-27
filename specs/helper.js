@@ -13,18 +13,15 @@ beforeEach(function () {
   RouteStore.unregisterAllRoutes();
 });
 
+var transitionTo = require('../modules/actions/LocationActions').transitionTo;
 var MemoryLocation = require('../modules/locations/MemoryLocation');
-var ScrollToTopStrategy = require('../modules/strategies/ScrollToTopStrategy');
-var LocationActions = require('../modules/actions/LocationActions');
-var ScrollStore = require('../modules/stores/ScrollStore');
+var PathStore = require('../modules/stores/PathStore');
 
 beforeEach(function () {
-  ScrollStore.setup(ScrollToTopStrategy);
-  LocationActions.setup(MemoryLocation);
-  LocationActions.transitionTo('/');
+  PathStore.setup(MemoryLocation);
+  transitionTo('/');
 });
 
 afterEach(function () {
-  ScrollStore.teardown();
-  LocationActions.teardown();
+  PathStore.teardown();
 });

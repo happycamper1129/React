@@ -1,23 +1,48 @@
 var warning = require('react/lib/warning');
+var LocationActions = require('../actions/LocationActions');
+var LocationDispatcher = require('../dispatchers/LocationDispatcher');
 
 var _lastPath = null;
 var _currentPath = null;
+
+function getCurrentPath() {
+  return _currentPath || '/';
+}
 
 /**
  * A Location that does not require a DOM.
  */
 var MemoryLocation = {
 
-  push: function (path) {
+  setup: function () {
+    LocationDispatcher.handleViewAction({
+      type: LocationActions.SETUP,
+      path: getCurrentPath()
+    });
+  },
+
+  push: function (path, sender) {
     _lastPath = _currentPath;
     _currentPath = path;
+
+    LocationDispatcher.handleViewAction({
+      type: LocationActions.PUSH,
+      path: getCurrentPath(),
+      sender: sender
+    });
   },
 
-  replace: function (path) {
+  replace: function (path, sender) {
     _currentPath = path;
+
+    LocationDispatcher.handleViewAction({
+      type: LocationActions.REPLACE,
+      path: getCurrentPath(),
+      sender: sender
+    });
   },
 
-  pop: function () {
+  pop: function (sender) {
     warning(
       _lastPath != null,
       'You cannot use MemoryLocation to go back more than once'
@@ -25,10 +50,12 @@ var MemoryLocation = {
 
     _currentPath = _lastPath;
     _lastPath = null;
-  },
 
-  getCurrentPath: function () {
-    return _currentPath || '/';
+    LocationDispatcher.handleViewAction({
+      type: LocationActions.POP,
+      path: getCurrentPath(),
+      sender: sender
+    });
   },
 
   toString: function () {
