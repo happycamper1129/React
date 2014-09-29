@@ -1,23 +1,24 @@
 var EventEmitter = require('events').EventEmitter;
-var LocationActions = require('../actions/LocationActions');
+var ActionTypes = require('../constants/ActionTypes');
 var LocationDispatcher = require('../dispatchers/LocationDispatcher');
+var ScrollStore = require('./ScrollStore');
 
 var CHANGE_EVENT = 'change';
 var _events = new EventEmitter;
+var _currentPath = null;
 
-function notifyChange(sender) {
-  _events.emit(CHANGE_EVENT, sender);
+function notifyChange() {
+  _events.emit(CHANGE_EVENT);
 }
 
-var _currentPath;
-
 /**
- * The PathStore keeps track of the current URL path.
+ * The PathStore keeps track of the current URL path and manages
+ * the location strategy that is used to update the URL.
  */
 var PathStore = {
 
   addChangeListener: function (listener) {
-    _events.addListener(CHANGE_EVENT, listener);
+    _events.on(CHANGE_EVENT, listener);
   },
 
   removeChangeListener: function (listener) {
@@ -32,15 +33,21 @@ var PathStore = {
   },
 
   dispatchToken: LocationDispatcher.register(function (payload) {
+    LocationDispatcher.waitFor([ScrollStore.dispatchToken]);
+
     var action = payload.action;
+    if (_currentPath === action.path) {
+      return;
+    }
 
     switch (action.type) {
-      case LocationActions.SETUP:
-      case LocationActions.PUSH:
-      case LocationActions.REPLACE:
-      case LocationActions.POP:
+      case ActionTypes.SETUP:
+      case ActionTypes.PUSH:
+      case ActionTypes.REPLACE:
+      case ActionTypes.POP:
         _currentPath = action.path;
-        notifyChange(action.sender);
+        notifyChange();
+        break;
     }
   })
 

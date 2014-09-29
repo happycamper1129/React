@@ -1,7 +1,5 @@
 var invariant = require('react/lib/invariant');
 var canUseDOM = require('react/lib/ExecutionEnvironment').canUseDOM;
-var LocationActions = require('../actions/LocationActions');
-var LocationDispatcher = require('../dispatchers/LocationDispatcher');
 var getWindowPath = require('../utils/getWindowPath');
 
 /**
@@ -16,12 +14,6 @@ var RefreshLocation = {
       canUseDOM,
       'You cannot use RefreshLocation in an environment with no DOM'
     );
-
-    LocationDispatcher.handleViewAction({
-      type: LocationActions.SETUP,
-      path: getWindowPath(),
-      sender: window
-    });
   },
 
   push: function (path) {
@@ -35,6 +27,8 @@ var RefreshLocation = {
   pop: function () {
     window.history.back();
   },
+
+  getCurrentPath: getWindowPath,
 
   toString: function () {
     return '<RefreshLocation>';
