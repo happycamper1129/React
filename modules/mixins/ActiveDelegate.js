@@ -41,36 +41,19 @@ var ActiveDelegate = {
     };
   },
 
-  propTypes: {
-    initialState: React.PropTypes.object
-  },
-
-  getDefaultProps: function () {
-    return {
-      initialState: {}
-    };
-  },
-
-  getInitialState: function () {
-    var initialState = this.props.initialState;
-
-    return {
-      activeRoutes: initialState.activeRoutes || [],
-      activeParams: initialState.activeParams || {},
-      activeQuery: initialState.activeQuery || {}
-    };
-  },
-
   /**
    * Returns true if the route with the given name, URL parameters, and
    * query are all currently active.
    */
   isActive: function (routeName, params, query) {
-    var isActive = routeIsActive(this.state.activeRoutes, routeName) &&
-                   paramsAreActive(this.state.activeParams, params);
+    var activeRoutes = this.state.activeRoutes || [];
+    var activeParams = this.state.activeParams || {};
+    var activeQuery = this.state.activeQuery || {};
+
+    var isActive = routeIsActive(activeRoutes, routeName) && paramsAreActive(activeParams, params);
 
     if (query)
-      return isActive && queryIsActive(this.state.activeQuery, query);
+      return isActive && queryIsActive(activeQuery, query);
 
     return isActive;
   }

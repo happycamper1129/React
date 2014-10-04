@@ -11,6 +11,7 @@ var ActiveDelegate = require('./ActiveDelegate');
  *   2. An `isActive` method they can use to check if a route,
  *      params, and query are active.
  *
+ *
  * Example:
  *
  *   var Tab = React.createClass({
@@ -37,17 +38,24 @@ var ActiveState = {
     activeDelegate: React.PropTypes.any.isRequired
   },
 
+  /**
+   * Returns this component's ActiveDelegate component.
+   */
+  getActiveDelegate: function () {
+    return this.context.activeDelegate;
+  },
+
   componentWillMount: function () {
     if (this.updateActiveState)
       this.updateActiveState();
   },
 
   componentDidMount: function () {
-    this.context.activeDelegate.addChangeListener(this.handleActiveStateChange);
+    this.getActiveDelegate().addChangeListener(this.handleActiveStateChange);
   },
 
   componentWillUnmount: function () {
-    this.context.activeDelegate.removeChangeListener(this.handleActiveStateChange);
+    this.getActiveDelegate().removeChangeListener(this.handleActiveStateChange);
   },
 
   handleActiveStateChange: function () {
@@ -60,7 +68,7 @@ var ActiveState = {
    * query are all currently active.
    */
   isActive: function (routeName, params, query) {
-    return this.context.activeDelegate.isActive(routeName, params, query);
+    return this.getActiveDelegate().isActive(routeName, params, query);
   }
 
 };

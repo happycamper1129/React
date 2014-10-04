@@ -1,5 +1,5 @@
-var expect = require('expect');
-var Path = require('../Path');
+require('./helper');
+var Path = require('../modules/utils/Path');
 
 describe('Path.extractParamNames', function () {
   describe('when a pattern contains no dynamic segments', function () {
