@@ -28,14 +28,14 @@ always be in sync.
 
 ### Development
 
-- `scripts/test` will fire up a karma runner and watch for changes in the
+- `script/test` will fire up a karma runner and watch for changes in the
   specs directory.
 - `npm test` will do the same but doesn't watch, just runs the tests.
-- `scripts/build-examples` does exactly that.
+- `script/build-examples` does exactly that.
 
 ### Build
 
-Please do not include the output of `scripts/build` in your commits, we
+Please do not include the output of `script/build` in your commits, we
 only do this when we release. (Also, you probably don't need to build
 anyway unless you are fixing something around our global build.)
 
