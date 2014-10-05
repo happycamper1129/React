@@ -7,11 +7,6 @@ var DefaultRoute = require('../DefaultRoute');
 var Routes = require('../Routes');
 var Link = require('../Link');
 
-afterEach(function () {
-  // For some reason unmountComponentAtNode doesn't call componentWillUnmount :/
-  PathStore.removeAllChangeListeners();
-});
-
 describe('A Link', function () {
   describe('when its route is active', function () {
     var Home = React.createClass({
@@ -31,6 +26,8 @@ describe('A Link', function () {
 
     afterEach(function () {
       React.unmountComponentAtNode(component.getDOMNode());
+      // For some reason unmountComponentAtNode doesn't call componentWillUnmount :/
+      PathStore.removeAllChangeListeners();
     });
 
     it('is active', function () {
