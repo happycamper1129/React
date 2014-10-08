@@ -1,11 +1,11 @@
 var React = require('react');
 var Route = require('./Route');
 
-function createRedirectHandler(to, _params, _query) {
+function createRedirectHandler(to) {
   return React.createClass({
     statics: {
       willTransitionTo: function (transition, params, query) {
-        transition.redirect(to, _params || params, _query || query);
+        transition.redirect(to, params, query);
       }
     },
 
@@ -23,7 +23,7 @@ function Redirect(props) {
   return Route({
     name: props.name,
     path: props.from || props.path || '*',
-    handler: createRedirectHandler(props.to, props.params, props.query)
+    handler: createRedirectHandler(props.to)
   });
 }
 

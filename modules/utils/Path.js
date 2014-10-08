@@ -14,8 +14,7 @@ function encodeURLPath(path) {
   return String(path).split('/').map(encodeURL).join('/');
 }
 
-var paramCompileMatcher = /:([a-zA-Z_$][a-zA-Z0-9_$]*)|[*.()\[\]\\+|{}^$]/g;
-var paramInjectMatcher = /:([a-zA-Z_$][a-zA-Z0-9_$]*)|[*]/g;
+var paramMatcher = /:([a-zA-Z_$][a-zA-Z0-9_$]*)|[*.()\[\]\\+|{}^$]/g;
 var queryMatcher = /\?(.+)/;
 
 var _compiledPatterns = {};
@@ -23,7 +22,7 @@ var _compiledPatterns = {};
 function compilePattern(pattern) {
   if (!(pattern in _compiledPatterns)) {
     var paramNames = [];
-    var source = pattern.replace(paramCompileMatcher, function (match, paramName) {
+    var source = pattern.replace(paramMatcher, function (match, paramName) {
       if (paramName) {
         paramNames.push(paramName);
         return '([^/?#]+)';
@@ -83,7 +82,7 @@ var Path = {
 
     var splatIndex = 0;
 
-    return pattern.replace(paramInjectMatcher, function (match, paramName) {
+    return pattern.replace(paramMatcher, function (match, paramName) {
       paramName = paramName || 'splat';
 
       invariant(
