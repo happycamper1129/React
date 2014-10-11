@@ -32,7 +32,7 @@ function findMatches(path, routes, defaultRoute, notFoundRoute) {
 
     if (matches != null) {
       var rootParams = getRootMatch(matches).params;
-
+      
       params = route.props.paramNames.reduce(function (params, paramName) {
         params[paramName] = rootParams[paramName];
         return params;
@@ -163,6 +163,16 @@ function updateMatchComponents(matches, refs) {
   }
 }
 
+function shouldUpdateScroll(currentMatches, previousMatches) {
+  var commonMatches = currentMatches.filter(function (match) {
+    return previousMatches.indexOf(match) !== -1;
+  });
+
+  return !commonMatches.some(function (match) {
+    return match.route.props.ignoreScrollBehavior;
+  });
+}
+
 function returnNull() {
   return null;
 }
@@ -285,16 +295,19 @@ var Routes = React.createClass({
       } else if (abortReason) {
         this.goBack();
       } else {
-        this._handleStateChange = this.handleStateChange.bind(this, path, actionType);
+        this._handleStateChange = this.handleStateChange.bind(this, path, actionType, this.state.matches);
         this.setState(nextState);
       }
-    }.bind(this));
+    });
   },
 
-  handleStateChange: function (path, actionType) {
-    updateMatchComponents(this.state.matches, this.refs);
+  handleStateChange: function (path, actionType, previousMatches) {
+    var currentMatches = this.state.matches;
+    updateMatchComponents(currentMatches, this.refs);
 
-    this.updateScroll(path, actionType);
+    if (shouldUpdateScroll(currentMatches, previousMatches)) {
+      this.updateScroll(path, actionType);
+    }
 
     if (this.props.onChange)
       this.props.onChange.call(this);
@@ -340,15 +353,16 @@ var Routes = React.createClass({
       toMatches = nextMatches;
     }
 
+    var callbackScope = this;
     var query = Path.extractQuery(path) || {};
 
     runTransitionFromHooks(fromMatches, transition, function (error) {
       if (error || transition.isAborted)
-        return callback(error, transition.abortReason);
+        return callback.call(callbackScope, error, transition.abortReason);
 
       runTransitionToHooks(toMatches, transition, query, function (error) {
         if (error || transition.isAborted)
-          return callback(error, transition.abortReason);
+          return callback.call(callbackScope, error, transition.abortReason);
 
         var matches = currentMatches.slice(0, currentMatches.length - fromMatches.length).concat(toMatches);
         var rootMatch = getRootMatch(matches);
@@ -357,7 +371,7 @@ var Routes = React.createClass({
           return match.route;
         });
 
-        callback(null, null, {
+        callback.call(callbackScope, null, null, {
           path: path,
           matches: matches,
           activeRoutes: routes,

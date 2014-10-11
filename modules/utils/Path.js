@@ -15,8 +15,7 @@ function encodeURLPath(path) {
 }
 
 var paramCompileMatcher = /:([a-zA-Z_$][a-zA-Z0-9_$]*)|[*.()\[\]\\+|{}^$]/g;
-var paramInjectMatcher = /:([a-zA-Z_$][a-zA-Z0-9_$?]*[?]?)|[*]/g;
-var paramInjectTrailingSlashMatcher = /\/\/\?|\/\?/g;
+var paramInjectMatcher = /:([a-zA-Z_$][a-zA-Z0-9_$]*)|[*]/g;
 var queryMatcher = /\?(.+)/;
 
 var _compiledPatterns = {};
@@ -87,18 +86,10 @@ var Path = {
     return pattern.replace(paramInjectMatcher, function (match, paramName) {
       paramName = paramName || 'splat';
 
-      // If param is optional don't check for existence
-      if (paramName.slice(-1) !== '?') {
-        invariant(
-          params[paramName] != null,
-          'Missing "' + paramName + '" parameter for path "' + pattern + '"'
-        );
-      } else {
-        paramName = paramName.slice(0, -1)
-        if (params[paramName] == null) {
-            return '';
-        }
-      }
+      invariant(
+        params[paramName] != null,
+        'Missing "' + paramName + '" parameter for path "' + pattern + '"'
+      );
 
       var segment;
       if (paramName === 'splat' && Array.isArray(params[paramName])) {
@@ -113,7 +104,7 @@ var Path = {
       }
 
       return encodeURLPath(segment);
-    }).replace(paramInjectTrailingSlashMatcher, '/');
+    });
   },
 
   /**
