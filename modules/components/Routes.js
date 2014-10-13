@@ -163,16 +163,6 @@ function updateMatchComponents(matches, refs) {
   }
 }
 
-function shouldUpdateScroll(currentMatches, previousMatches) {
-  var commonMatches = currentMatches.filter(function (match) {
-    return previousMatches.indexOf(match) !== -1;
-  });
-
-  return !commonMatches.some(function (match) {
-    return match.route.props.ignoreScrollBehavior;
-  });
-}
-
 function returnNull() {
   return null;
 }
@@ -295,19 +285,16 @@ var Routes = React.createClass({
       } else if (abortReason) {
         this.goBack();
       } else {
-        this._handleStateChange = this.handleStateChange.bind(this, path, actionType, this.state.matches);
+        this._handleStateChange = this.handleStateChange.bind(this, path, actionType);
         this.setState(nextState);
       }
     });
   },
 
-  handleStateChange: function (path, actionType, previousMatches) {
-    var currentMatches = this.state.matches;
-    updateMatchComponents(currentMatches, this.refs);
+  handleStateChange: function (path, actionType) {
+    updateMatchComponents(this.state.matches, this.refs);
 
-    if (shouldUpdateScroll(currentMatches, previousMatches)) {
-      this.updateScroll(path, actionType);
-    }
+    this.updateScroll(path, actionType);
 
     if (this.props.onChange)
       this.props.onChange.call(this);

@@ -53,8 +53,7 @@ var Route = React.createClass({
     handler: React.PropTypes.any.isRequired,
     getAsyncProps: React.PropTypes.func,
     path: React.PropTypes.string,
-    name: React.PropTypes.string,
-    ignoreScrollBehavior: React.PropTypes.bool
+    name: React.PropTypes.string
   },
 
   render: function () {
