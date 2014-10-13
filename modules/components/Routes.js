@@ -32,7 +32,7 @@ function findMatches(path, routes, defaultRoute, notFoundRoute) {
 
     if (matches != null) {
       var rootParams = getRootMatch(matches).params;
-      
+
       params = route.props.paramNames.reduce(function (params, paramName) {
         params[paramName] = rootParams[paramName];
         return params;
@@ -387,7 +387,7 @@ var Routes = React.createClass({
     reversedArray(matches).forEach(function (match) {
       var route = match.route;
 
-      props = {};
+      props = Route.getUnreservedProps(route.props);
 
       props.ref = '__activeRoute__';
       props.params = match.params;
