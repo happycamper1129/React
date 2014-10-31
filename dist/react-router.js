@@ -1463,12 +1463,11 @@ function processRoute(route, container, namedRoutes) {
   // Note: parentRoute may be a <Route> _or_ a <Routes>.
   var props = route.props;
 
-  // TODO: use isValidElement when we update everything for React 0.12
-  //invariant(
-    //React.isValidClass(props.handler),
-    //'The handler for the "%s" route must be a valid React class',
-    //props.name || props.path
-  //);
+  invariant(
+    React.isValidClass(props.handler),
+    'The handler for the "%s" route must be a valid React class',
+    props.name || props.path
+  );
 
   var parentPath = (container && container.props.path) || '/';
 
@@ -2155,21 +2154,25 @@ function Transition(routesComponent, path) {
   this.isAborted = false;
 }
 
-Transition.prototype.abort = function (reason) {
-  this.abortReason = reason;
-  this.isAborted = true;
-};
+Transition.prototype = {
 
-Transition.prototype.redirect = function (to, params, query) {
-  this.abort(new Redirect(to, params, query));
-};
+  abort: function (reason) {
+    this.abortReason = reason;
+    this.isAborted = true;
+  },
 
-Transition.prototype.wait = function (value) {
-  this.promise = Promise.resolve(value);
-};
+  redirect: function (to, params, query) {
+    this.abort(new Redirect(to, params, query));
+  },
 
-Transition.prototype.retry = function () {
-  this.routesComponent.replaceWith(this.path);
+  wait: function (value) {
+    this.promise = Promise.resolve(value);
+  },
+
+  retry: function () {
+    this.routesComponent.replaceWith(this.path);
+  }
+
 };
 
 module.exports = Transition;
