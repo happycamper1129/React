@@ -68,7 +68,7 @@ var ScrollToTopBehavior = {
 module.exports = ScrollToTopBehavior;
 
 },{}],4:[function(_dereq_,module,exports){
-var merge = _dereq_('react/lib/merge');
+var objectAssign = _dereq_('react/lib/Object.assign');
 var Route = _dereq_('./Route');
 
 /**
@@ -79,7 +79,7 @@ var Route = _dereq_('./Route');
  */
 function DefaultRoute(props) {
   return Route(
-    merge(props, {
+    objectAssign({}, props, {
       path: null,
       isDefault: true
     })
@@ -88,10 +88,10 @@ function DefaultRoute(props) {
 
 module.exports = DefaultRoute;
 
-},{"./Route":8,"react/lib/merge":75}],5:[function(_dereq_,module,exports){
+},{"./Route":8,"react/lib/Object.assign":43}],5:[function(_dereq_,module,exports){
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
 var classSet = _dereq_('react/lib/cx');
-var merge = _dereq_('react/lib/merge');
+var objectAssign = _dereq_('react/lib/Object.assign');
 var ActiveState = _dereq_('../mixins/ActiveState');
 var Navigation = _dereq_('../mixins/Navigation');
 
@@ -184,7 +184,7 @@ var Link = React.createClass({
   },
 
   render: function () {
-    var props = merge(this.props, {
+    var props = objectAssign({}, this.props, {
       href: this.getHref(),
       className: this.getClassName(),
       onClick: this.handleClick
@@ -197,8 +197,8 @@ var Link = React.createClass({
 
 module.exports = Link;
 
-},{"../mixins/ActiveState":15,"../mixins/Navigation":18,"react/lib/cx":65,"react/lib/merge":75}],6:[function(_dereq_,module,exports){
-var merge = _dereq_('react/lib/merge');
+},{"../mixins/ActiveState":15,"../mixins/Navigation":18,"react/lib/Object.assign":43,"react/lib/cx":64}],6:[function(_dereq_,module,exports){
+var objectAssign = _dereq_('react/lib/Object.assign');
 var Route = _dereq_('./Route');
 
 /**
@@ -210,7 +210,7 @@ var Route = _dereq_('./Route');
  */
 function NotFoundRoute(props) {
   return Route(
-    merge(props, {
+    objectAssign({}, props, {
       path: null,
       catchAll: true
     })
@@ -219,7 +219,7 @@ function NotFoundRoute(props) {
 
 module.exports = NotFoundRoute;
 
-},{"./Route":8,"react/lib/merge":75}],7:[function(_dereq_,module,exports){
+},{"./Route":8,"react/lib/Object.assign":43}],7:[function(_dereq_,module,exports){
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
 var Route = _dereq_('./Route');
 
@@ -348,7 +348,7 @@ module.exports = Route;
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
 var warning = _dereq_('react/lib/warning');
 var invariant = _dereq_('react/lib/invariant');
-var copyProperties = _dereq_('react/lib/copyProperties');
+var objectAssign = _dereq_('react/lib/Object.assign');
 var HashLocation = _dereq_('../locations/HashLocation');
 var ActiveContext = _dereq_('../mixins/ActiveContext');
 var LocationContext = _dereq_('../mixins/LocationContext');
@@ -763,7 +763,7 @@ var Routes = React.createClass({
           throw new Error('Passing children to a route handler is not supported');
 
         return route.props.handler(
-          copyProperties(props, addedProps)
+          objectAssign(props, addedProps)
         );
       }.bind(this, props);
     });
@@ -915,7 +915,7 @@ var Routes = React.createClass({
 
 module.exports = Routes;
 
-},{"../locations/HashLocation":11,"../mixins/ActiveContext":14,"../mixins/LocationContext":17,"../mixins/RouteContext":19,"../mixins/ScrollContext":20,"../utils/Path":22,"../utils/Redirect":24,"../utils/Transition":26,"../utils/reversedArray":28,"./Route":8,"react/lib/copyProperties":64,"react/lib/invariant":70,"react/lib/warning":77}],10:[function(_dereq_,module,exports){
+},{"../locations/HashLocation":11,"../mixins/ActiveContext":14,"../mixins/LocationContext":17,"../mixins/RouteContext":19,"../mixins/ScrollContext":20,"../utils/Path":22,"../utils/Redirect":24,"../utils/Transition":26,"../utils/reversedArray":28,"./Route":8,"react/lib/Object.assign":43,"react/lib/invariant":69,"react/lib/warning":75}],10:[function(_dereq_,module,exports){
 exports.DefaultRoute = _dereq_('./components/DefaultRoute');
 exports.Link = _dereq_('./components/Link');
 exports.NotFoundRoute = _dereq_('./components/NotFoundRoute');
@@ -1123,7 +1123,7 @@ module.exports = RefreshLocation;
 
 },{"../utils/getWindowPath":27}],14:[function(_dereq_,module,exports){
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
-var copyProperties = _dereq_('react/lib/copyProperties');
+var objectAssign = _dereq_('react/lib/Object.assign');
 
 /**
  * A mixin for components that store the active state of routes,
@@ -1164,14 +1164,14 @@ var ActiveContext = {
    * Returns a read-only object of the currently active URL parameters.
    */
   getActiveParams: function () {
-    return copyProperties({}, this.state.activeParams);
+    return objectAssign({}, this.state.activeParams);
   },
 
   /**
    * Returns a read-only object of the currently active query parameters.
    */
   getActiveQuery: function () {
-    return copyProperties({}, this.state.activeQuery);
+    return objectAssign({}, this.state.activeQuery);
   },
 
   childContextTypes: {
@@ -1192,7 +1192,7 @@ var ActiveContext = {
 
 module.exports = ActiveContext;
 
-},{"react/lib/copyProperties":64}],15:[function(_dereq_,module,exports){
+},{"react/lib/Object.assign":43}],15:[function(_dereq_,module,exports){
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
 
 /**
@@ -1391,7 +1391,7 @@ var LocationContext = {
 
 module.exports = LocationContext;
 
-},{"../locations/HashLocation":11,"../locations/HistoryLocation":12,"../locations/RefreshLocation":13,"../stores/PathStore":21,"../utils/supportsHistory":29,"react/lib/ExecutionEnvironment":42,"react/lib/invariant":70}],18:[function(_dereq_,module,exports){
+},{"../locations/HashLocation":11,"../locations/HistoryLocation":12,"../locations/RefreshLocation":13,"../stores/PathStore":21,"../utils/supportsHistory":29,"react/lib/ExecutionEnvironment":42,"react/lib/invariant":69}],18:[function(_dereq_,module,exports){
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
 
 /**
@@ -1463,11 +1463,12 @@ function processRoute(route, container, namedRoutes) {
   // Note: parentRoute may be a <Route> _or_ a <Routes>.
   var props = route.props;
 
-  invariant(
-    React.isValidClass(props.handler),
-    'The handler for the "%s" route must be a valid React class',
-    props.name || props.path
-  );
+  // TODO: use isValidElement when we update everything for React 0.12
+  //invariant(
+    //React.isValidClass(props.handler),
+    //'The handler for the "%s" route must be a valid React class',
+    //props.name || props.path
+  //);
 
   var parentPath = (container && container.props.path) || '/';
 
@@ -1621,7 +1622,7 @@ var RouteContext = {
 
 module.exports = RouteContext;
 
-},{"../utils/Path":22,"react/lib/invariant":70}],20:[function(_dereq_,module,exports){
+},{"../utils/Path":22,"react/lib/invariant":69}],20:[function(_dereq_,module,exports){
 var React = (typeof window !== "undefined" ? window.React : typeof global !== "undefined" ? global.React : null);
 var invariant = _dereq_('react/lib/invariant');
 var canUseDOM = _dereq_('react/lib/ExecutionEnvironment').canUseDOM;
@@ -1738,7 +1739,7 @@ var ScrollContext = {
 
 module.exports = ScrollContext;
 
-},{"../behaviors/ImitateBrowserBehavior":2,"../behaviors/ScrollToTopBehavior":3,"react/lib/ExecutionEnvironment":42,"react/lib/invariant":70}],21:[function(_dereq_,module,exports){
+},{"../behaviors/ImitateBrowserBehavior":2,"../behaviors/ScrollToTopBehavior":3,"react/lib/ExecutionEnvironment":42,"react/lib/invariant":69}],21:[function(_dereq_,module,exports){
 var invariant = _dereq_('react/lib/invariant');
 var EventEmitter = _dereq_('events').EventEmitter;
 var LocationActions = _dereq_('../actions/LocationActions');
@@ -1829,7 +1830,7 @@ var PathStore = {
 
 module.exports = PathStore;
 
-},{"../actions/LocationActions":1,"events":31,"react/lib/invariant":70}],22:[function(_dereq_,module,exports){
+},{"../actions/LocationActions":1,"events":31,"react/lib/invariant":69}],22:[function(_dereq_,module,exports){
 var invariant = _dereq_('react/lib/invariant');
 var merge = _dereq_('qs/lib/utils').merge;
 var qs = _dereq_('qs');
@@ -2007,7 +2008,7 @@ var Path = {
 
 module.exports = Path;
 
-},{"qs":32,"qs/lib/utils":36,"react/lib/invariant":70}],23:[function(_dereq_,module,exports){
+},{"qs":32,"qs/lib/utils":36,"react/lib/invariant":69}],23:[function(_dereq_,module,exports){
 var Promise = _dereq_('when/lib/Promise');
 
 // TODO: Use process.env.NODE_ENV check + envify to enable
@@ -2015,7 +2016,7 @@ var Promise = _dereq_('when/lib/Promise');
 
 module.exports = Promise;
 
-},{"when/lib/Promise":78}],24:[function(_dereq_,module,exports){
+},{"when/lib/Promise":76}],24:[function(_dereq_,module,exports){
 /**
  * Encapsulates a redirect to the given route.
  */
@@ -2034,7 +2035,7 @@ var ReactMarkupChecksum = _dereq_('react/lib/ReactMarkupChecksum');
 var ReactServerRenderingTransaction = _dereq_('react/lib/ReactServerRenderingTransaction');
 
 var cloneWithProps = _dereq_('react/lib/cloneWithProps');
-var copyProperties = _dereq_('react/lib/copyProperties');
+var objectAssign = _dereq_('react/lib/Object.assign');
 var instantiateReactComponent = _dereq_('react/lib/instantiateReactComponent');
 var invariant = _dereq_('react/lib/invariant');
 
@@ -2046,7 +2047,7 @@ function cloneRoutesForServerRendering(routes) {
 }
 
 function mergeStateIntoInitialProps(state, props) {
-  copyProperties(props, {
+  objectAssign(props, {
     initialPath: state.path,
     initialMatches: state.matches,
     initialActiveRoutes: state.activeRoutes,
@@ -2137,7 +2138,7 @@ module.exports = {
   renderRoutesToStaticMarkup: renderRoutesToStaticMarkup
 };
 
-},{"react/lib/ReactElement":48,"react/lib/ReactInstanceHandles":51,"react/lib/ReactMarkupChecksum":53,"react/lib/ReactServerRenderingTransaction":58,"react/lib/cloneWithProps":63,"react/lib/copyProperties":64,"react/lib/instantiateReactComponent":69,"react/lib/invariant":70}],26:[function(_dereq_,module,exports){
+},{"react/lib/Object.assign":43,"react/lib/ReactElement":48,"react/lib/ReactInstanceHandles":51,"react/lib/ReactMarkupChecksum":53,"react/lib/ReactServerRenderingTransaction":58,"react/lib/cloneWithProps":63,"react/lib/instantiateReactComponent":68,"react/lib/invariant":69}],26:[function(_dereq_,module,exports){
 var Promise = _dereq_('./Promise');
 var Redirect = _dereq_('./Redirect');
 
@@ -2154,25 +2155,21 @@ function Transition(routesComponent, path) {
   this.isAborted = false;
 }
 
-Transition.prototype = {
+Transition.prototype.abort = function (reason) {
+  this.abortReason = reason;
+  this.isAborted = true;
+};
 
-  abort: function (reason) {
-    this.abortReason = reason;
-    this.isAborted = true;
-  },
+Transition.prototype.redirect = function (to, params, query) {
+  this.abort(new Redirect(to, params, query));
+};
 
-  redirect: function (to, params, query) {
-    this.abort(new Redirect(to, params, query));
-  },
+Transition.prototype.wait = function (value) {
+  this.promise = Promise.resolve(value);
+};
 
-  wait: function (value) {
-    this.promise = Promise.resolve(value);
-  },
-
-  retry: function () {
-    this.routesComponent.replaceWith(this.path);
-  }
-
+Transition.prototype.retry = function () {
+  this.routesComponent.replaceWith(this.path);
 };
 
 module.exports = Transition;
@@ -3006,7 +3003,7 @@ PooledClass.addPoolingTo(CallbackQueue);
 
 module.exports = CallbackQueue;
 
-},{"./Object.assign":43,"./PooledClass":44,"./invariant":70}],38:[function(_dereq_,module,exports){
+},{"./Object.assign":43,"./PooledClass":44,"./invariant":69}],38:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -3078,7 +3075,7 @@ var EventConstants = {
 
 module.exports = EventConstants;
 
-},{"./keyMirror":73}],39:[function(_dereq_,module,exports){
+},{"./keyMirror":72}],39:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -3352,7 +3349,7 @@ var EventPluginHub = {
 
 module.exports = EventPluginHub;
 
-},{"./EventPluginRegistry":40,"./EventPluginUtils":41,"./accumulateInto":61,"./forEachAccumulated":67,"./invariant":70}],40:[function(_dereq_,module,exports){
+},{"./EventPluginRegistry":40,"./EventPluginUtils":41,"./accumulateInto":61,"./forEachAccumulated":66,"./invariant":69}],40:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -3630,7 +3627,7 @@ var EventPluginRegistry = {
 
 module.exports = EventPluginRegistry;
 
-},{"./invariant":70}],41:[function(_dereq_,module,exports){
+},{"./invariant":69}],41:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -3849,7 +3846,7 @@ var EventPluginUtils = {
 
 module.exports = EventPluginUtils;
 
-},{"./EventConstants":38,"./invariant":70}],42:[function(_dereq_,module,exports){
+},{"./EventConstants":38,"./invariant":69}],42:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -4055,7 +4052,7 @@ var PooledClass = {
 
 module.exports = PooledClass;
 
-},{"./invariant":70}],45:[function(_dereq_,module,exports){
+},{"./invariant":69}],45:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -4410,7 +4407,7 @@ var ReactBrowserEventEmitter = assign({}, ReactEventEmitterMixin, {
 
 module.exports = ReactBrowserEventEmitter;
 
-},{"./EventConstants":38,"./EventPluginHub":39,"./EventPluginRegistry":40,"./Object.assign":43,"./ReactEventEmitterMixin":50,"./ViewportMetrics":60,"./isEventSupported":71}],46:[function(_dereq_,module,exports){
+},{"./EventConstants":38,"./EventPluginHub":39,"./EventPluginRegistry":40,"./Object.assign":43,"./ReactEventEmitterMixin":50,"./ViewportMetrics":60,"./isEventSupported":70}],46:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -4750,7 +4747,7 @@ ReactElement.isValidElement = function(object) {
 
 module.exports = ReactElement;
 
-},{"./ReactContext":46,"./ReactCurrentOwner":47,"./warning":77}],49:[function(_dereq_,module,exports){
+},{"./ReactContext":46,"./ReactCurrentOwner":47,"./warning":75}],49:[function(_dereq_,module,exports){
 /**
  * Copyright 2014, Facebook, Inc.
  * All rights reserved.
@@ -4825,7 +4822,7 @@ var ReactEmptyComponent = {
 
 module.exports = ReactEmptyComponent;
 
-},{"./ReactElement":48,"./invariant":70}],50:[function(_dereq_,module,exports){
+},{"./ReactElement":48,"./invariant":69}],50:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -5208,7 +5205,7 @@ var ReactInstanceHandles = {
 
 module.exports = ReactInstanceHandles;
 
-},{"./ReactRootIndex":57,"./invariant":70}],52:[function(_dereq_,module,exports){
+},{"./ReactRootIndex":57,"./invariant":69}],52:[function(_dereq_,module,exports){
 /**
  * Copyright 2014, Facebook, Inc.
  * All rights reserved.
@@ -5453,7 +5450,7 @@ ReactLegacyElementFactory._isLegacyCallWarningEnabled = true;
 
 module.exports = ReactLegacyElementFactory;
 
-},{"./ReactCurrentOwner":47,"./invariant":70,"./monitorCodeUse":76,"./warning":77}],53:[function(_dereq_,module,exports){
+},{"./ReactCurrentOwner":47,"./invariant":69,"./monitorCodeUse":74,"./warning":75}],53:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -5572,7 +5569,7 @@ var ReactNativeComponent = {
 
 module.exports = ReactNativeComponent;
 
-},{"./Object.assign":43,"./invariant":70}],55:[function(_dereq_,module,exports){
+},{"./Object.assign":43,"./invariant":69}],55:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -5737,7 +5734,7 @@ var ReactPropTransferer = {
 
 module.exports = ReactPropTransferer;
 
-},{"./Object.assign":43,"./emptyFunction":66,"./invariant":70,"./joinClasses":72,"./warning":77}],56:[function(_dereq_,module,exports){
+},{"./Object.assign":43,"./emptyFunction":65,"./invariant":69,"./joinClasses":71,"./warning":75}],56:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -5937,7 +5934,7 @@ PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
 
-},{"./CallbackQueue":37,"./Object.assign":43,"./PooledClass":44,"./ReactPutListenerQueue":56,"./Transaction":59,"./emptyFunction":66}],59:[function(_dereq_,module,exports){
+},{"./CallbackQueue":37,"./Object.assign":43,"./PooledClass":44,"./ReactPutListenerQueue":56,"./Transaction":59,"./emptyFunction":65}],59:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6176,7 +6173,7 @@ var Transaction = {
 
 module.exports = Transaction;
 
-},{"./invariant":70}],60:[function(_dereq_,module,exports){
+},{"./invariant":69}],60:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6208,7 +6205,7 @@ var ViewportMetrics = {
 
 module.exports = ViewportMetrics;
 
-},{"./getUnboundedScrollPosition":68}],61:[function(_dereq_,module,exports){
+},{"./getUnboundedScrollPosition":67}],61:[function(_dereq_,module,exports){
 /**
  * Copyright 2014, Facebook, Inc.
  * All rights reserved.
@@ -6272,7 +6269,7 @@ function accumulateInto(current, next) {
 
 module.exports = accumulateInto;
 
-},{"./invariant":70}],62:[function(_dereq_,module,exports){
+},{"./invariant":69}],62:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6363,63 +6360,7 @@ function cloneWithProps(child, props) {
 
 module.exports = cloneWithProps;
 
-},{"./ReactElement":48,"./ReactPropTransferer":55,"./keyOf":74,"./warning":77}],64:[function(_dereq_,module,exports){
-/**
- * Copyright 2013-2014, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule copyProperties
- */
-
-/**
- * Copy properties from one or more objects (up to 5) into the first object.
- * This is a shallow copy. It mutates the first object and also returns it.
- *
- * NOTE: `arguments` has a very significant performance penalty, which is why
- * we don't support unlimited arguments.
- */
-function copyProperties(obj, a, b, c, d, e, f) {
-  obj = obj || {};
-
-  if ("production" !== "production") {
-    if (f) {
-      throw new Error('Too many arguments passed to copyProperties');
-    }
-  }
-
-  var args = [a, b, c, d, e];
-  var ii = 0, v;
-  while (args[ii]) {
-    v = args[ii++];
-    for (var k in v) {
-      obj[k] = v[k];
-    }
-
-    // IE ignores toString in object iteration.. See:
-    // webreflection.blogspot.com/2007/07/quick-fix-internet-explorer-and.html
-    if (v.hasOwnProperty && v.hasOwnProperty('toString') &&
-        (typeof v.toString != 'undefined') && (obj.toString !== v.toString)) {
-      obj.toString = v.toString;
-    }
-  }
-
-  return obj;
-}
-
-module.exports = copyProperties;
-
-// deprecation notice
-console.warn(
-  'react/lib/copyProperties has been deprecated and will be removed in the ' +
-  'next version of React. All uses can be replaced with ' +
-  'Object.assign(obj, a, b, ...) or _.extend(obj, a, b, ...).'
-);
-
-},{}],65:[function(_dereq_,module,exports){
+},{"./ReactElement":48,"./ReactPropTransferer":55,"./keyOf":73,"./warning":75}],64:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6458,7 +6399,7 @@ function cx(classNames) {
 
 module.exports = cx;
 
-},{}],66:[function(_dereq_,module,exports){
+},{}],65:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6492,7 +6433,7 @@ emptyFunction.thatReturnsArgument = function(arg) { return arg; };
 
 module.exports = emptyFunction;
 
-},{}],67:[function(_dereq_,module,exports){
+},{}],66:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6523,7 +6464,7 @@ var forEachAccumulated = function(arr, cb, scope) {
 
 module.exports = forEachAccumulated;
 
-},{}],68:[function(_dereq_,module,exports){
+},{}],67:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6563,7 +6504,7 @@ function getUnboundedScrollPosition(scrollable) {
 
 module.exports = getUnboundedScrollPosition;
 
-},{}],69:[function(_dereq_,module,exports){
+},{}],68:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6675,7 +6616,7 @@ function instantiateReactComponent(element, parentCompositeType) {
 
 module.exports = instantiateReactComponent;
 
-},{"./ReactElement":48,"./ReactEmptyComponent":49,"./ReactLegacyElement":52,"./ReactNativeComponent":54,"./warning":77}],70:[function(_dereq_,module,exports){
+},{"./ReactElement":48,"./ReactEmptyComponent":49,"./ReactLegacyElement":52,"./ReactNativeComponent":54,"./warning":75}],69:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6730,7 +6671,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-},{}],71:[function(_dereq_,module,exports){
+},{}],70:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6795,7 +6736,7 @@ function isEventSupported(eventNameSuffix, capture) {
 
 module.exports = isEventSupported;
 
-},{"./ExecutionEnvironment":42}],72:[function(_dereq_,module,exports){
+},{"./ExecutionEnvironment":42}],71:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6836,7 +6777,7 @@ function joinClasses(className/*, ... */) {
 
 module.exports = joinClasses;
 
-},{}],73:[function(_dereq_,module,exports){
+},{}],72:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6889,7 +6830,7 @@ var keyMirror = function(obj) {
 
 module.exports = keyMirror;
 
-},{"./invariant":70}],74:[function(_dereq_,module,exports){
+},{"./invariant":69}],73:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2014, Facebook, Inc.
  * All rights reserved.
@@ -6925,43 +6866,7 @@ var keyOf = function(oneKeyObj) {
 
 module.exports = keyOf;
 
-},{}],75:[function(_dereq_,module,exports){
-/**
- * Copyright 2013-2014, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule merge
- */
-
-"use strict";
-
-var assign = _dereq_("./Object.assign");
-
-/**
- * Shallow merges two structures into a return value, without mutating either.
- *
- * @param {?object} one Optional object with properties to merge from.
- * @param {?object} two Optional object with properties to merge from.
- * @return {object} The shallow extension of one by two.
- */
-var merge = function(one, two) {
-  return assign({}, one, two);
-};
-
-module.exports = merge;
-
-// deprecation notice
-console.warn(
-  'react/lib/merge has been deprecated and will be removed in the ' +
-  'next version of React. All uses can be replaced with ' +
-  'Object.assign({}, a, b) or _.extend({}, a, b).'
-);
-
-},{"./Object.assign":43}],76:[function(_dereq_,module,exports){
+},{}],74:[function(_dereq_,module,exports){
 /**
  * Copyright 2014, Facebook, Inc.
  * All rights reserved.
@@ -6993,7 +6898,7 @@ function monitorCodeUse(eventName, data) {
 
 module.exports = monitorCodeUse;
 
-},{"./invariant":70}],77:[function(_dereq_,module,exports){
+},{"./invariant":69}],75:[function(_dereq_,module,exports){
 /**
  * Copyright 2014, Facebook, Inc.
  * All rights reserved.
@@ -7036,7 +6941,7 @@ if ("production" !== "production") {
 
 module.exports = warning;
 
-},{"./emptyFunction":66}],78:[function(_dereq_,module,exports){
+},{"./emptyFunction":65}],76:[function(_dereq_,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -7055,7 +6960,7 @@ define(function (_dereq_) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(_dereq_); });
 
-},{"./Scheduler":80,"./async":81,"./makePromise":82}],79:[function(_dereq_,module,exports){
+},{"./Scheduler":78,"./async":79,"./makePromise":80}],77:[function(_dereq_,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -7127,7 +7032,7 @@ define(function() {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-},{}],80:[function(_dereq_,module,exports){
+},{}],78:[function(_dereq_,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -7211,7 +7116,7 @@ define(function(_dereq_) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(_dereq_); }));
 
-},{"./Queue":79}],81:[function(_dereq_,module,exports){
+},{"./Queue":77}],79:[function(_dereq_,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
@@ -7284,7 +7189,7 @@ define(function(_dereq_) {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(_dereq_); }));
 
-},{}],82:[function(_dereq_,module,exports){
+},{}],80:[function(_dereq_,module,exports){
 /** @license MIT License (c) copyright 2010-2014 original author or authors */
 /** @author Brian Cavalier */
 /** @author John Hann */
