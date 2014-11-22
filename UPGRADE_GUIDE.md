@@ -188,7 +188,7 @@ an option:
 
 // 0.11.x
 var router = Router.create({
-  onError: fn,
+  onErorr: fn,
   // ...
 });
 router.run(callback);
