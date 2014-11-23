@@ -6,7 +6,6 @@ var ImitateBrowserBehavior = require('../behaviors/ImitateBrowserBehavior');
 var RouteHandler = require('../components/RouteHandler');
 var HashLocation = require('../locations/HashLocation');
 var HistoryLocation = require('../locations/HistoryLocation');
-var RefreshLocation = require('../locations/RefreshLocation');
 var NavigationContext = require('../mixins/NavigationContext');
 var StateContext = require('../mixins/StateContext');
 var Scrolling = require('../mixins/Scrolling');
@@ -297,6 +296,16 @@ function createRouter(options) {
         } else {
           fromRoutes = [];
           toRoutes = nextRoutes;
+        }
+
+        // If routes' hooks arrays are empty, then we transition to current route.
+        // But path is somehow still get changed.
+        // That could be only because of route query changes.
+        // Need to push current route to routes' hooks arrays.
+        if (!toRoutes.length && !fromRoutes.length) {
+          var currentRoute = state.routes[state.routes.length-1];
+          fromRoutes = [currentRoute];
+          toRoutes = [currentRoute];
         }
 
         var transition = new Transition(path, this.replaceWith.bind(this, path));
