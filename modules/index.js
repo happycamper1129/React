@@ -9,9 +9,6 @@ exports.HashLocation = require('./locations/HashLocation');
 exports.HistoryLocation = require('./locations/HistoryLocation');
 exports.RefreshLocation = require('./locations/RefreshLocation');
 
-exports.ImitateBrowserBehavior = require('./behaviors/ImitateBrowserBehavior');
-exports.ScrollToTopBehavior = require('./behaviors/ScrollToTopBehavior');
-
 exports.Navigation = require('./mixins/Navigation');
 exports.State = require('./mixins/State');
 
