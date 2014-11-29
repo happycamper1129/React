@@ -55,17 +55,12 @@ for you to render.
 
 An object containing the matched state.
 
-#### `state.path`
+##### `state.matches`
 
-The current URL path with query string.
+An array of the matched [routes][1]. Very useful for fetching data before
+rendering.
 
-#### `state.action`
-
-The action that lead to the route change.
-
-#### `state.pathname`
-
-The current URL path without the query string.
+See also: [Route][1].
 
 ##### `state.params`
 
@@ -75,12 +70,9 @@ The active params in the location match.
 
 The active query in the location match.
 
-##### `state.routes`
+#### `state.path`
 
-An array of the matched [routes][1]. Very useful for fetching data before
-rendering.
-
-See also: [Route][1].
+The path matched.
 
 Examples
 --------
@@ -94,7 +86,7 @@ Router.run(routes, function (Handler) {
 });
 ```
 
-Sample data fetching using `state.routes`. Check out the
+Sample data fetching using `state.matches`. Check out the
 [async-data][2] example.
 
 ```js
@@ -113,12 +105,12 @@ var SampleHandler = React.createClass({
 Router.run(routes, Router.HistoryLocation, function (Handler, state) {
   
   // create the promises hash
-  var promises = state.routes.filter(function (route) {
+  var promises = state.matches.filter(function (match) {
     // gather up the handlers that have a static `fetchData` method
-    return route.handler.fetchData;
-  }).reduce(function (promises, route) {
+    return match.route.handler.fetchData;
+  }).reduce(function (promises, match) {
     // reduce to a hash of `key:promise`
-    promises[route.name] = route.handler.fetchData(state.params);
+    promises[match.route.name] = match.route.handler.fetchData(state.params)
     return promises;
   }, {});
 

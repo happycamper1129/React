@@ -5,9 +5,8 @@ var Router = require('../../index');
 var ReactTestUtils = React.addons.TestUtils;
 var Route = require('../Route');
 var Link = require('../Link');
-var RouteHandler = require('../RouteHandler');
 var TestLocation = require('../../locations/TestLocation');
-var { Foo, Bar } = require('../../__tests__/TestHandlers');
+var { Foo } = require('../../__tests__/TestHandlers');
 var { click } = React.addons.TestUtils.Simulate;
 
 describe('A Link', function () {
@@ -37,61 +36,25 @@ describe('A Link', function () {
   });
 
   describe('when its route is active', function () {
-    it('has an active class name', function (done) {
+    it('has an active class name', function () {
       var LinkHandler = React.createClass({
         render: function () {
-          return (
-            <div>
-              <Link
-                to="foo"
-                className="dontKillMe"
-                activeClassName="highlight"
-              >Link</Link>
-              <RouteHandler/>
-            </div>
-          );
+          return <Link
+            to="foo"
+            className="dontKillMe"
+            activeClassName="highlight"
+          >Link</Link>;
         }
       });
 
-      var routes = (
-        <Route path="/" handler={LinkHandler}>
-          <Route name="foo" handler={Foo} />
-          <Route name="bar" handler={Bar} />
-        </Route>
-      );
-
+      var routes = <Route name="foo" handler={LinkHandler} />;
       var div = document.createElement('div');
       TestLocation.history = ['/foo'];
-      var steps = [];
-
-      function assertActive () {
-        var a = div.querySelector('a');
-        expect(a.className.split(' ').sort().join(' ')).toEqual('dontKillMe highlight');
-      }
-
-      function assertInactive () {
-        var a = div.querySelector('a');
-        expect(a.className).toEqual('dontKillMe');
-      }
-
-      steps.push(() => {
-        assertActive();
-        TestLocation.push('/bar');
-      });
-
-      steps.push(() => {
-        assertInactive();
-        TestLocation.push('/foo');
-      });
-
-      steps.push(() => {
-        assertActive();
-        done();
-      });
 
       Router.run(routes, TestLocation, function (Handler) {
-        React.render(<Handler/>, div, () => {
-          steps.shift()();
+        React.render(<Handler/>, div, function () {
+          var a = div.querySelector('a');
+          expect(a.className.split(' ').sort().join(' ')).toEqual('dontKillMe highlight');
         });
       });
     });

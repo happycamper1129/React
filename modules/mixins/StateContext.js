@@ -44,13 +44,6 @@ var StateContext = {
   },
 
   /**
-   * Returns the current URL path without the query string.
-   */
-  getCurrentPathname: function () {
-    return this.state.pathname;
-  },
-
-  /**
    * Returns a read-only object of the currently active URL parameters.
    */
   getCurrentParams: function () {
@@ -79,7 +72,6 @@ var StateContext = {
   childContextTypes: {
     getCurrentPath: React.PropTypes.func.isRequired,
     getCurrentRoutes: React.PropTypes.func.isRequired,
-    getCurrentPathname: React.PropTypes.func.isRequired,
     getCurrentParams: React.PropTypes.func.isRequired,
     getCurrentQuery: React.PropTypes.func.isRequired,
     isActive: React.PropTypes.func.isRequired
@@ -89,7 +81,6 @@ var StateContext = {
     return {
       getCurrentPath: this.getCurrentPath,
       getCurrentRoutes: this.getCurrentRoutes,
-      getCurrentPathname: this.getCurrentPathname,
       getCurrentParams: this.getCurrentParams,
       getCurrentQuery: this.getCurrentQuery,
       isActive: this.isActive

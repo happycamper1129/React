@@ -8,14 +8,6 @@ use this.
 Instance Methods
 ----------------
 
-### `getPath()`
-
-Returns the current URL path, including query string.
-
-### `getPathname()`
-
-Returns the current URL path without the query string.
-
 ### `getParams()`
 
 Returns a hash of the currently active URL params.
@@ -29,9 +21,13 @@ Returns a hash of the currently active query params.
 Returns `true` if a route, params, and query are active, `false`
 otherwise.
 
+### `getPath()`
+
+Returns the current path.
+
 ### `getRoutes()`
 
-Returns an array of the currently active routes, in nesting order.
+Returns the active route tree.
 
 Examples
 --------
