@@ -252,11 +252,11 @@ function createRouter(options) {
       },
 
       /**
-       * Performs a match of the given path against this router and returns an object with
-       * the { path, routes, params, query } that match. Returns null if no match can be made.
+       * Performs a match of the given pathname against this router and returns an object
+       * with the { routes, params } that match. Returns null if no match can be made.
        */
-      match: function (path) {
-        return findMatch(Path.withoutQuery(path), routes, this.defaultRoute, this.notFoundRoute) || null;
+      match: function (pathname) {
+        return findMatch(pathname, routes, this.defaultRoute, this.notFoundRoute) || null;
       },
 
       /**
@@ -277,7 +277,7 @@ function createRouter(options) {
        */
       dispatch: function (path, action, callback) {
         if (pendingTransition) {
-          pendingTransition.abort(new Cancellation());
+          pendingTransition.abort(new Cancellation);
           pendingTransition = null;
         }
 
@@ -285,11 +285,13 @@ function createRouter(options) {
         if (prevPath === path)
           return; // Nothing to do!
 
-        if (prevPath && action !== LocationActions.REPLACE) {
+        // Record the scroll position as early as possible to
+        // get it before browsers try update it automatically.
+        if (prevPath && action !== LocationActions.REPLACE)
           this.recordScrollPosition(prevPath);
-        }
 
-        var match = this.match(path);
+        var pathname = Path.withoutQuery(path);
+        var match = this.match(pathname);
 
         warning(
           match != null,
@@ -334,6 +336,7 @@ function createRouter(options) {
 
             nextState.path = path;
             nextState.action = action;
+            nextState.pathname = pathname;
             nextState.routes = nextRoutes;
             nextState.params = nextParams;
             nextState.query = nextQuery;
@@ -351,7 +354,7 @@ function createRouter(options) {
        * Router.*Location objects (e.g. Router.HashLocation or Router.HistoryLocation).
        */
       run: function (callback) {
-        var dispatchHandler = function(error, transition) {
+        function dispatchHandler(error, transition) {
           pendingTransition = null;
 
           if (error) {
@@ -380,7 +383,7 @@ function createRouter(options) {
           );
 
           // Listen for changes to the location.
-          var changeListener = function(change) {
+          function changeListener(change) {
             router.dispatch(change.path, change.type, dispatchHandler);
           }
 
