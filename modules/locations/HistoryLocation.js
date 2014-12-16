@@ -81,7 +81,9 @@ var HistoryLocation = {
     notifyChange(LocationActions.REPLACE);
   },
 
-  pop: History.back,
+  pop: function () {
+    History.back();
+  },
 
   getCurrentPath: getWindowPath,
 

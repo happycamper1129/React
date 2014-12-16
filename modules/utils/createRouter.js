@@ -1,4 +1,5 @@
 /* jshint -W058 */
+
 var React = require('react');
 var warning = require('react/lib/warning');
 var invariant = require('react/lib/invariant');
@@ -153,20 +154,6 @@ function createRouter(options) {
     nextState = {};
   }
 
-  if (typeof location === 'string') {
-    warning(
-      !canUseDOM || process.env.NODE_ENV === 'test',
-      'You should not use a static location in a DOM environment because ' +
-      'the router will not be kept in sync with the current URL'
-    );
-  } else {
-    invariant(
-      canUseDOM,
-      'You cannot use %s without a DOM',
-      location
-    );
-  }
-
   // Automatically fall back to full page refreshes in
   // browsers that don't support the HTML history API.
   if (location === HistoryLocation && !supportsHistory())
@@ -256,15 +243,8 @@ function createRouter(options) {
       },
 
       /**
-       * Transitions to the previous URL if one is available. Returns true if the
-       * router was able to go back, false otherwise.
-       *
-       * Note: The router only tracks history entries in your application, not the
-       * current browser session, so you can safely call this function without guarding
-       * against sending the user back to some other site. However, when using
-       * RefreshLocation (which is the fallback for HistoryLocation in browsers that
-       * don't support HTML5 history) this method will *always* send the client back
-       * because we cannot reliably track history length.
+       * Transitions to the previous URL. Returns true if the router
+       * was able to go back, false otherwise.
        */
       goBack: function () {
         invariant(
@@ -272,7 +252,7 @@ function createRouter(options) {
           'You cannot use goBack with a static location'
         );
 
-        if (History.length > 1 || location === RefreshLocation) {
+        if (History.length > 1) {
           location.pop();
           return true;
         }
@@ -408,8 +388,21 @@ function createRouter(options) {
         };
 
         if (typeof location === 'string') {
+          warning(
+            !canUseDOM || process.env.NODE_ENV === 'test',
+            'You should not use a static location in a DOM environment because ' +
+            'the router will not be kept in sync with the current URL'
+          );
+
+          // Dispatch the location.
           router.dispatch(location, null, dispatchHandler);
         } else {
+          invariant(
+            canUseDOM,
+            'You cannot use %s in a non-DOM environment',
+            location
+          );
+
           // Listen for changes to the location.
           var changeListener = function (change) {
             router.dispatch(change.path, change.type, dispatchHandler);
