@@ -20,12 +20,12 @@ var AsyncElement = {
   },
 
   render: function () {
-    var Component = this.constructor.loadedComponent;
-    if (Component) {
+    var component = this.constructor.loadedComponent;
+    if (component) {
       // can't find RouteHandler in the loaded component, so we just grab
       // it here first.
       this.props.activeRoute = <RouteHandler/>;
-      return <Component {...this.props}/>;
+      return component(this.props);
     }
     return this.preRender();
   }
