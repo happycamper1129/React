@@ -62,9 +62,9 @@ var App = React.createClass({
   },
 
   renderContacts () {
-    return this.props.data.contacts.map((contact, i) => {
+    return this.props.data.contacts.map((contact) => {
       return (
-        <li key={i}>
+        <li>
           <Link to="contact" params={contact}>{contact.first} {contact.last}</Link>
         </li>
       );
