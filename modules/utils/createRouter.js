@@ -160,6 +160,7 @@ function createRouter(options) {
 
   function updateState() {
     state = nextState;
+    nextState = {};
   }
 
   if (typeof location === 'string') {
@@ -375,7 +376,6 @@ function createRouter(options) {
             if (error || transition.isAborted)
               return callback.call(router, error, transition);
 
-            nextState = {};
             nextState.path = path;
             nextState.action = action;
             nextState.pathname = pathname;
