@@ -1,5 +1,6 @@
 var React = require('react');
 var Router = require('react-router');
+var whenKeys = require('when/keys');
 var EventEmitter = require('events').EventEmitter;
 var { Route, DefaultRoute, RouteHandler, Link } = Router;
 
@@ -119,13 +120,12 @@ var routes = (
 );
 
 function fetchData(routes, params) {
-  var data = {};
-  return Promise.all(routes
-    .filter(route => route.handler.fetchData)
-    .map(route => {
-      return route.handler.fetchData(params).then(d => {data[route.name] = d;});
-    })
-  ).then(() => data);
+  return whenKeys.all(routes.filter((route) => {
+    return route.handler.fetchData;
+  }).reduce((data, route) => {
+    data[route.name] = route.handler.fetchData(params);
+    return data;
+  }, {}));
 }
 
 Router.run(routes, function (Handler, state) {
