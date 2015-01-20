@@ -138,7 +138,7 @@ something.serve(function (req, res) {
     // could fetch data like in the previous example
     fetchData(state.matches).then(function (data) {
       var html = React.renderToString(<Handler data={data} />);
-      res.send(html);
+      req.send(html);
     });
   });
 });
