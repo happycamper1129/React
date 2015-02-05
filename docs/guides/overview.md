@@ -145,11 +145,8 @@ Here's how it works:
 
 ```js
 var Router = require('react-router'); // or var Router = ReactRouter; in browsers
-
-var DefaultRoute = Router.DefaultRoute;
-var Link = Router.Link;
-var Route = Router.Route;
-var RouteHandler = Router.RouteHandler;
+var Route = Router.Route, DefaultRoute = Router.DefaultRoute,
+  Link=Router.Link, RouteHandler = Router.RouteHandler;
 
 var App = React.createClass({
   render: function () {
@@ -350,7 +347,8 @@ Important Note About Dynamic Segments
 -------------------------------------
 
 If you have dynamic segments in your URL, a transition from `/users/123`
-to `/users/456` does not call `getInitialState`, `componentWillMount`, `componentWillUnmount` or `componentDidMount`. If you are using those lifecycle hooks to fetch
+to `/users/456` does not call `getInitialState`, `componentWillMount` or
+`componentWillUnmount`. If you are using those lifecycle hooks to fetch
 data and set state, you will also need to implement
 `componentWillReceiveProps` on your handler, just like any other
 component whose props are changing. This way you can leverage the
