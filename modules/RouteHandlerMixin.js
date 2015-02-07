@@ -30,10 +30,6 @@ var RouteHandlerMixin = {
     this._updateRouteComponent();
   },
 
-  componentWillUnmount: function () {
-    this.context.setRouteComponentAtDepth(this.getRouteDepth(), null);
-  },
-
   _updateRouteComponent: function () {
     this.context.setRouteComponentAtDepth(this.getRouteDepth(), this.refs[REF_NAME]);
   },
