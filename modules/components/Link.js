@@ -42,7 +42,6 @@ var Link = React.createClass({
     to: PropTypes.string.isRequired,
     params: PropTypes.object,
     query: PropTypes.object,
-    activeStyle: PropTypes.object,
     onClick: PropTypes.func
   },
 
@@ -88,14 +87,10 @@ var Link = React.createClass({
     if (this.props.className)
       classNames[this.props.className] = true;
 
-    if (this.getActiveState())
+    if (this.isActive(this.props.to, this.props.params, this.props.query))
       classNames[this.props.activeClassName] = true;
 
     return classSet(classNames);
-  },
-
-  getActiveState: function () {
-    return this.isActive(this.props.to, this.props.params, this.props.query);
   },
 
   render: function () {
@@ -104,9 +99,6 @@ var Link = React.createClass({
       className: this.getClassName(),
       onClick: this.handleClick
     });
-
-    if (props.activeStyle && this.getActiveState())
-      props.style = props.activeStyle;
 
     return React.DOM.a(props, this.props.children);
   }
