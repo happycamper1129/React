@@ -146,6 +146,13 @@ var Path = {
   },
 
   /**
+   * Returns a normalized version of the given path.
+   */
+  normalize: function (path, parentRoute) {
+    return path.replace(/^\/*/, '/');
+  },
+
+  /**
    * Joins two URL paths together.
    */
   join: function (a, b) {
