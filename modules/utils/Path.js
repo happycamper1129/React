@@ -133,7 +133,7 @@ var Path = {
     var queryString = qs.stringify(query, { indices: false });
 
     if (queryString)
-      return Path.withoutQuery(path) + '?' + decodeURIComponent(queryString);
+      return Path.withoutQuery(path) + '?' + queryString;
 
     return path;
   },
@@ -143,13 +143,6 @@ var Path = {
    */
   isAbsolute: function (path) {
     return path.charAt(0) === '/';
-  },
-
-  /**
-   * Returns a normalized version of the given path.
-   */
-  normalize: function (path, parentRoute) {
-    return path.replace(/^\/*/, '/');
   },
 
   /**

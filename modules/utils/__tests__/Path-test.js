@@ -318,24 +318,8 @@ describe('Path.withQuery', function () {
   it('merges two query strings', function () {
     expect(Path.withQuery('/path?a=b', { c: [ 'd', 'e' ] })).toEqual('/path?a=b&c=d&c=e');
   });
-});
 
-describe('Path.normalize', function () {
-  describe('on a path with no slashes at the beginning', function () {
-    it('adds a slash', function () {
-      expect(Path.normalize('a/b/c')).toEqual('/a/b/c');
-    });
-  });
-
-  describe('on a path with a single slash at the beginning', function () {
-    it('preserves the slash', function () {
-      expect(Path.normalize('/a/b/c')).toEqual('/a/b/c');
-    });
-  });
-
-  describe('on a path with many slashes at the beginning', function () {
-    it('reduces them to a single slash', function () {
-      expect(Path.normalize('//a/b/c')).toEqual('/a/b/c');
-    });
+  it('handles special characters', function () {
+    expect(Path.withQuery('/path?a=b', { c: [ 'd#e', 'f&a=i#j+k' ] })).toEqual('/path?a=b&c=d%23e&c=f%26a%3Di%23j%2Bk');
   });
 });
