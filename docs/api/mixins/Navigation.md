@@ -36,18 +36,12 @@ this.replaceWith('/users/10?showAge=true');
 ### `goBack()`
 
 Programmatically go back to the last route and remove the most recent
-entry from the browser history. Return false if it's the first entry in the app history, true otherwise.
+entry from the browser history.
 
 #### Example
 
 ```js
 this.goBack();
-```
-If you want to make sure there is an history entry
-```js
-if (!this.goBack()) {
-  this.transitionTo('/otherpage')
-}
 ```
 
 ### `makePath(routeName, params, query)`
