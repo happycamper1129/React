@@ -320,7 +320,7 @@ describe('PathUtils.withQuery', function () {
   });
 
   it('removes query string', function () {
-    expect(PathUtils.withQuery('/a/b/c?a=b', { a: undefined })).toEqual('/a/b/c');
+    expect(Path.withQuery('/a/b/c?a=b', { a: undefined })).toEqual('/a/b/c');
   });
 
   it('handles special characters', function () {
