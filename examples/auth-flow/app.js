@@ -3,7 +3,8 @@ var Router = require('react-router');
 var { Route, RouteHandler, Link } = Router;
 
 class App extends React.Component {
-  constructor () {
+  constructor (props) {
+    super(props);
     this.state = {
       loggedIn: auth.loggedIn()
     };
@@ -68,7 +69,8 @@ var Dashboard = requireAuth(class extends React.Component {
 
 class Login extends React.Component {
 
-  constructor () {
+  constructor (props) {
+    super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
       error: false
