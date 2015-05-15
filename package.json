@@ -2,7 +2,7 @@
   "name": "react-router",
   "version": "0.13.3",
   "description": "A complete routing library for React.js",
-  "main": "lib",
+  "main": "modules",
   "repository": {
     "type": "git",
     "url": "https://github.com/rackt/react-router.git"
@@ -11,11 +11,9 @@
   "bugs": "https://github.com/rackt/react-router/issues",
   "scripts": {
     "build": "scripts/build.sh",
-    "watch": "babel ./modules --watch -d lib",
-    "build-website": "babel-node website/scripts/build.js > website/index.html",
     "examples": "webpack-dev-server --config examples/webpack.config.js --content-base examples",
-    "prepublish": "npm run build",
-    "test": "jsxhint modules && karma start"
+    "test": "jsxhint modules && karma start",
+    "build-website": "babel-node website/scripts/build.js > website/index.html"
   },
   "authors": [
     "Ryan Florence",

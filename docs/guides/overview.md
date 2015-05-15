@@ -407,9 +407,6 @@ functionality like control/command clicking to open in a new tab. Also,
 when the route a link references is active, you get the `active` css
 class to easily style your UI.
 
-Pass params to `<Link/>` using `<Link params={route_params} />` when 
-navigating users through routes that include dynamic segments.
-
 ### `<NotFoundRoute/>`
 
 At any level of your UI nesting, you can render a handler if the url
@@ -452,7 +449,7 @@ API Documentation
 -----------------
 
 That's the gist of what this router is all about, but there's a lot more
-it has to offer. Check out the [API Docs](http://rackt.github.io/react-router/) to learn about
+it has to offer. Check out the [API Docs](../api) to learn about
 redirecting transitions, query parameters and more.
 
 CommonJS Guide
