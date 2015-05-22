@@ -4,7 +4,7 @@
  */
 var ScrollToTopBehavior = {
 
-  updateScrollPosition() {
+  updateScrollPosition: function () {
     window.scrollTo(0, 0);
   }
 

@@ -1,16 +1,16 @@
 var React = require('react');
-var { createRouter, Route, Link, TransitionHook } = require('react-router');
-var HashHistory = require('react-router/HashHistory');
+var Router = require('react-router');
+var { Route, DefaultRoute, RouteHandler, Link } = Router;
 
 var App = React.createClass({
   render: function () {
     return (
       <div>
         <ul>
-          <li><Link to="/dashboard">Dashboard</Link></li>
-          <li><Link to="/form">Form</Link></li>
+          <li><Link to="dashboard">Dashboard</Link></li>
+          <li><Link to="form">Form</Link></li>
         </ul>
-        {this.props.children}
+        <RouteHandler/>
       </div>
     );
   }
@@ -30,12 +30,16 @@ var Dashboard = React.createClass({
 
 var Form = React.createClass({
 
-  mixins: [ TransitionHook ],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
 
-  routerWillLeave: function (router) {
-    if (this.refs.userInput.getDOMNode().value !== '') {
-      if (!confirm('You have unsaved information, are you sure you want to leave this page?')) {
-        router.cancelTransition();
+  statics: {
+    willTransitionFrom: function (transition, element) {
+      if (element.refs.userInput.getDOMNode().value !== '') {
+        if (!confirm('You have unsaved information, are you sure you want to leave this page?')) {
+          transition.abort();
+        }
       }
     }
   },
@@ -59,11 +63,14 @@ var Form = React.createClass({
   }
 });
 
-var Router = createRouter(
-  <Route path="/" component={App}>
-    <Route path="dashboard" component={Dashboard}/>
-    <Route path="form" component={Form}/>
+var routes = (
+  <Route handler={App}>
+    <DefaultRoute handler={Home}/>
+    <Route name="dashboard" handler={Dashboard}/>
+    <Route name="form" handler={Form}/>
   </Route>
 );
 
-React.render(<Router history={HashHistory}/>, document.getElementById('example'));
+Router.run(routes, function (Handler) {
+  React.render(<Handler/>, document.getElementById('example'));
+});
