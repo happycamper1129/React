@@ -394,7 +394,7 @@ By default, the router will manage the scroll position between route
 transitions. When a user clicks "back" or "forward", it will restore
 their scroll position. If they visit a new route, it will automatically
 scroll the window to the top. You can configure this option with
-[Router.create](../api/create.md).
+[Router.create][create].
 
 Bells and Whistles
 ------------------
@@ -406,9 +406,6 @@ the application with accessible anchor tags that don't break normal link
 functionality like control/command clicking to open in a new tab. Also,
 when the route a link references is active, you get the `active` css
 class to easily style your UI.
-
-Pass params to `<Link/>` using `<Link params={route_params} />` when 
-navigating users through routes that include dynamic segments.
 
 ### `<NotFoundRoute/>`
 
@@ -467,5 +464,4 @@ var NotFoundRoute = Router.NotFoundRoute;
 var DefaultRoute = Router.DefaultRoute;
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
-var Redirect = Router.Redirect;
 ```

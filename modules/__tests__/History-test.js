@@ -1,64 +1,104 @@
 var expect = require('expect');
-var React = require('react');
-var { Foo, RedirectToFoo } = require('../TestUtils');
-var TestLocation = require('../locations/TestLocation');
-var Route = require('../components/Route');
+var describeHistory = require('./describeHistory');
 var History = require('../History');
-var Router = require('../index');
 
 describe('History', function () {
-  describe('on the initial page load', function () {
+  describeHistory(new History('/'));
+
+  var history
+  beforeEach(function () {
+    history = new History('/');
+  });
+
+  describe('when first created', function () {
     it('has length 1', function () {
-      expect(History.length).toEqual(1);
+      expect(history.length).toEqual(1);
+    });
+
+    it('cannot go back', function () {
+      expect(history.canGoBack()).toBe(false);
+    });
+
+    it('cannot go forward', function () {
+      expect(history.canGoForward()).toBe(false);
     });
   });
 
-  describe('after navigating to a route', function () {
-    var location;
+  describe('when pushing a new path', function () {
     beforeEach(function () {
-      location = new TestLocation([ '/foo' ]);
+      history.push('/push');
     });
 
-    it('has length 2', function (done) {
-      var routes = [
-        <Route name="foo" handler={Foo}/>,
-        <Route name="about" handler={Foo}/>
-      ];
+    it('increments length by one', function () {
+      expect(history.length).toEqual(2);
+    });
 
-      var count = 0;
+    it('increments current index by one', function () {
+      expect(history.current).toEqual(1);
+    });
 
-      var router = Router.run(routes, location, function (Handler) {
-        count += 1;
+    it('has the correct path', function () {
+      expect(history.getPath()).toEqual('/push');
+    });
 
-        if (count === 2) {
-          expect(History.length).toEqual(2);
-          done();
-        }
+    it('can go back', function () {
+      expect(history.canGoBack()).toBe(true);
+    });
+
+    it('cannot go forward', function () {
+      expect(history.canGoForward()).toBe(false);
+    });
+ 
+    describe('and then replacing that path', function () {
+      beforeEach(function () {
+        history.replace('/replace');
       });
 
-      router.transitionTo('about');
-    });
+      it('maintains the length', function () {
+        expect(history.length).toEqual(2);
+      });
+  
+      it('maintains the current index', function () {
+        expect(history.current).toEqual(1);
+      });
 
-    describe('that redirects to another route', function () {
-      it('has length 2', function (done) {
-        var routes = [
-          <Route name="foo" handler={Foo}/>,
-          <Route name="about" handler={RedirectToFoo}/>
-        ];
+      it('returns the correct path', function () {
+        expect(history.getPath()).toEqual('/replace');
+      });
 
-        var count = 0;
+      it('can go back', function () {
+        expect(history.canGoBack()).toBe(true);
+      });
 
-        var router = Router.run(routes, location, function (Handler) {
-          count += 1;
-
-          if (count === 2) {
-            expect(History.length).toEqual(2);
-            done();
-          }
-        });
-
-        router.transitionTo('about');
+      it('cannot go forward', function () {
+        expect(history.canGoForward()).toBe(false);
       });
     });
+
+    describe('and then going back', function () {
+      beforeEach(function () {
+        history.back();
+      });
+
+      it('maintains the length', function () {
+        expect(history.length).toEqual(2);
+      });
+
+      it('decrements current index by one', function () {
+        expect(history.current).toEqual(0);
+      });
+
+      it('has the correct path', function () {
+        expect(history.getPath()).toEqual('/');
+      });
+
+      it('cannot go back', function () {
+        expect(history.canGoBack()).toBe(false);
+      });
+
+      it('can go forward', function () {
+        expect(history.canGoForward()).toBe(true);
+      });
+     });
   });
 });
