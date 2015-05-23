@@ -1,104 +1,64 @@
 var expect = require('expect');
-var describeHistory = require('./describeHistory');
+var React = require('react');
+var { Foo, RedirectToFoo } = require('../TestUtils');
+var TestLocation = require('../locations/TestLocation');
+var Route = require('../components/Route');
 var History = require('../History');
+var Router = require('../index');
 
 describe('History', function () {
-  describeHistory(new History('/'));
-
-  var history
-  beforeEach(function () {
-    history = new History('/');
-  });
-
-  describe('when first created', function () {
+  describe('on the initial page load', function () {
     it('has length 1', function () {
-      expect(history.length).toEqual(1);
-    });
-
-    it('cannot go back', function () {
-      expect(history.canGoBack()).toBe(false);
-    });
-
-    it('cannot go forward', function () {
-      expect(history.canGoForward()).toBe(false);
+      expect(History.length).toEqual(1);
     });
   });
 
-  describe('when pushing a new path', function () {
+  describe('after navigating to a route', function () {
+    var location;
     beforeEach(function () {
-      history.push('/push');
+      location = new TestLocation([ '/foo' ]);
     });
 
-    it('increments length by one', function () {
-      expect(history.length).toEqual(2);
+    it('has length 2', function (done) {
+      var routes = [
+        <Route name="foo" handler={Foo}/>,
+        <Route name="about" handler={Foo}/>
+      ];
+
+      var count = 0;
+
+      var router = Router.run(routes, location, function (Handler) {
+        count += 1;
+
+        if (count === 2) {
+          expect(History.length).toEqual(2);
+          done();
+        }
+      });
+
+      router.transitionTo('about');
     });
 
-    it('increments current index by one', function () {
-      expect(history.current).toEqual(1);
-    });
+    describe('that redirects to another route', function () {
+      it('has length 2', function (done) {
+        var routes = [
+          <Route name="foo" handler={Foo}/>,
+          <Route name="about" handler={RedirectToFoo}/>
+        ];
 
-    it('has the correct path', function () {
-      expect(history.getPath()).toEqual('/push');
-    });
+        var count = 0;
 
-    it('can go back', function () {
-      expect(history.canGoBack()).toBe(true);
-    });
+        var router = Router.run(routes, location, function (Handler) {
+          count += 1;
 
-    it('cannot go forward', function () {
-      expect(history.canGoForward()).toBe(false);
-    });
- 
-    describe('and then replacing that path', function () {
-      beforeEach(function () {
-        history.replace('/replace');
-      });
+          if (count === 2) {
+            expect(History.length).toEqual(2);
+            done();
+          }
+        });
 
-      it('maintains the length', function () {
-        expect(history.length).toEqual(2);
-      });
-  
-      it('maintains the current index', function () {
-        expect(history.current).toEqual(1);
-      });
-
-      it('returns the correct path', function () {
-        expect(history.getPath()).toEqual('/replace');
-      });
-
-      it('can go back', function () {
-        expect(history.canGoBack()).toBe(true);
-      });
-
-      it('cannot go forward', function () {
-        expect(history.canGoForward()).toBe(false);
+        router.transitionTo('about');
       });
     });
-
-    describe('and then going back', function () {
-      beforeEach(function () {
-        history.back();
-      });
-
-      it('maintains the length', function () {
-        expect(history.length).toEqual(2);
-      });
-
-      it('decrements current index by one', function () {
-        expect(history.current).toEqual(0);
-      });
-
-      it('has the correct path', function () {
-        expect(history.getPath()).toEqual('/');
-      });
-
-      it('cannot go back', function () {
-        expect(history.canGoBack()).toBe(false);
-      });
-
-      it('can go forward', function () {
-        expect(history.canGoForward()).toBe(true);
-      });
-     });
   });
 });

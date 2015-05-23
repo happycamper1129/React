@@ -1,22 +1,25 @@
-var React = require('react/addons');
-var { CSSTransitionGroup } = React.addons;
-var { createRouter, Route, Link } = require('react-router');
-var HashHistory = require('react-router/HashHistory');
-//var HashHistory = require('react-router/lib/HashHistory'); <-- what you use from npm
+var React = require('react');
+var TransitionGroup = require('react/lib/ReactCSSTransitionGroup');
+var Router = require('react-router');
+var { Route, RouteHandler, Link } = Router;
 
 var App = React.createClass({
 
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+
   render: function () {
-    var key = this.props.location.path;
+    var name = this.context.router.getCurrentPath();
     return (
       <div>
         <ul>
           <li><Link to="page1">Page 1</Link></li>
           <li><Link to="page2">Page 2</Link></li>
         </ul>
-        <CSSTransitionGroup component="div" transitionName="example">
-          {React.cloneElement(this.props.children || <div/>, { key: key })}
-        </CSSTransitionGroup>
+        <TransitionGroup component="div" transitionName="example">
+          <RouteHandler key={name}/>
+        </TransitionGroup>
       </div>
     );
   }
@@ -44,12 +47,13 @@ var Page2 = React.createClass({
   }
 });
 
-var Router = createRouter(
-  <Route component={App}>
-    <Route name="page1" component={Page1} />
-    <Route name="page2" component={Page2} />
+var routes = (
+  <Route handler={App}>
+    <Route name="page1" handler={Page1} />
+    <Route name="page2" handler={Page2} />
   </Route>
 );
 
-React.render(<Router history={HashHistory}/>, document.getElementById('example'));
-
+Router.run(routes, function (Handler) {
+  React.render(<Handler/>, document.getElementById('example'));
+});
