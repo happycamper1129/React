@@ -1,31 +1,106 @@
-var invariant = require('react/lib/invariant');
-var canUseDOM = require('react/lib/ExecutionEnvironment').canUseDOM;
+import React from 'react';
+import invariant from 'invariant';
+import { parse: parseQueryString, stringify } from 'qs';
+import { history } from './PropTypes';
 
-var History = {
+var RequiredSubclassMethods = [ 'push', 'replace', 'go' ];
 
-  /**
-   * The current number of entries in the history.
-   *
-   * Note: This property is read-only.
-   */
-  length: 1,
+function stringifyQuery(query) {
+  return stringify(query, { arrayFormat: 'brackets' });
+}
 
-  /**
-   * Sends the browser back one entry in the history.
-   */
-  back: function () {
-    invariant(
-      canUseDOM,
-      'Cannot use History.back without a DOM'
-    );
+/**
+ * A history interface that normalizes the differences across
+ * various environments and implementations. Requires concrete
+ * subclasses to implement the following methods:
+ *
+ * - push(path)
+ * - replace(path)
+ * - go(n)
+ */
+class History extends React.Component {
 
-    // Do this first so that History.length will
-    // be accurate in location change listeners.
-    History.length -= 1;
+  static propTypes = {
+    parseQueryString: func.isRequired,
+    stringifyQuery: func.isRequired
+  };
 
-    window.history.back();
+  static defaultProps = {
+    parseQueryString,
+    stringifyQuery
+  };
+
+  static childContextTypes = {
+    history
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      location: null
+    };
   }
 
-};
+  getChildContext() {
+    return {
+      history: this
+    };
+  }
 
-module.exports = History;
+  componentWillMount() {
+    invariant(
+      this.constructor !== History,
+      'History is not usable directly; you must use one of its subclasses'
+    );
+
+    RequiredSubclassMethods.forEach(function (method) {
+      invariant(
+        typeof this[method] === 'function',
+        '%s needs a "%s" method',
+        this.constructor.name, method
+      );
+    }, this);
+  }
+
+  back() {
+    this.go(-1);
+  }
+
+  forward() {
+    this.go(1);
+  }
+
+  parseQueryString(queryString) {
+    return this.props.parseQueryString(queryString);
+  }
+
+  stringifyQuery(query) {
+    return this.props.stringifyQuery(query);
+  }
+
+  makePath(path, query) {
+    if (query) {
+      var queryString = this.stringifyQuery(query);
+
+      if (queryString !== '')
+        return path + '?' + queryString;
+    }
+
+    return path;
+  }
+
+  makeHref(path, query) {
+    return this.makePath(path, query);
+  }
+
+  render() {
+    var element = React.Children.only(this.props.children);
+
+    return React.cloneElement(element, {
+      location: this.state.location
+    });
+  }
+
+}
+
+export default History;
