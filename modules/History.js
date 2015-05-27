@@ -1,98 +1,31 @@
-import React from 'react';
-import invariant from 'invariant';
-import qs from 'qs';
-import { history } from './PropTypes';
-var { func } = React.PropTypes;
+var invariant = require('react/lib/invariant');
+var canUseDOM = require('react/lib/ExecutionEnvironment').canUseDOM;
 
-var RequiredSubclassMethods = [ 'push', 'replace', 'go' ];
+var History = {
 
-function stringifyQuery(query) {
-  return stringify(query, { arrayFormat: 'brackets' });
-}
+  /**
+   * The current number of entries in the history.
+   *
+   * Note: This property is read-only.
+   */
+  length: 1,
 
-/**
- * A history interface that normalizes the differences across
- * various environments and implementations. Requires concrete
- * subclasses to implement the following methods:
- *
- * - push(path)
- * - replace(path)
- * - go(n)
- */
-class History extends React.Component {
-
-  static propTypes = {
-    parseQueryString: func.isRequired,
-    stringifyQuery: func.isRequired
-  };
-
-  static defaultProps = {
-    parseQueryString: qs.parse,
-    stringifyQuery: qs.stringify
-  };
-
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      location: null
-    };
-  }
-
-  componentWillMount() {
+  /**
+   * Sends the browser back one entry in the history.
+   */
+  back: function () {
     invariant(
-      this.constructor !== History,
-      'History is not usable directly; you must use one of its subclasses'
+      canUseDOM,
+      'Cannot use History.back without a DOM'
     );
 
-    RequiredSubclassMethods.forEach(function (method) {
-      invariant(
-        typeof this[method] === 'function',
-        '%s needs a "%s" method',
-        this.constructor.name, method
-      );
-    }, this);
+    // Do this first so that History.length will
+    // be accurate in location change listeners.
+    History.length -= 1;
+
+    window.history.back();
   }
 
-  back() {
-    this.go(-1);
-  }
+};
 
-  forward() {
-    this.go(1);
-  }
-
-  parseQueryString(queryString) {
-    return this.props.parseQueryString(queryString);
-  }
-
-  stringifyQuery(query) {
-    return this.props.stringifyQuery(query);
-  }
-
-  makePath(path, query) {
-    if (query) {
-      var queryString = this.stringifyQuery(query);
-
-      if (queryString !== '')
-        return path + '?' + queryString;
-    }
-
-    return path;
-  }
-
-  makeHref(path, query) {
-    return this.makePath(path, query);
-  }
-
-  render() {
-    var element = React.Children.only(this.props.children);
-
-    return React.cloneElement(element, {
-      location: this.state.location,
-      historyContext: this
-    });
-  }
-
-}
-
-export default History;
+module.exports = History;

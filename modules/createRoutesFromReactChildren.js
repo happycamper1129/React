@@ -1,7 +1,11 @@
+/* jshint -W084 */
 var React = require('react');
-var warning = require('warning');
-var invariant = require('invariant');
-var assign = require('object-assign');
+var assign = require('react/lib/Object.assign');
+var warning = require('react/lib/warning');
+var DefaultRoute = require('./components/DefaultRoute');
+var NotFoundRoute = require('./components/NotFoundRoute');
+var Redirect = require('./components/Redirect');
+var Route = require('./Route');
 
 function checkPropTypes(componentName, propTypes, props) {
   componentName = componentName || 'UnknownComponent';
@@ -16,66 +20,65 @@ function checkPropTypes(componentName, propTypes, props) {
   }
 }
 
+function createRouteOptions(props) {
+  var options = assign({}, props);
+  var handler = options.handler;
+
+  if (handler) {
+    options.onEnter = handler.willTransitionTo;
+    options.onLeave = handler.willTransitionFrom;
+  }
+
+  return options;
+}
+
 function createRouteFromReactElement(element) {
+  if (!React.isValidElement(element))
+    return;
+
   var type = element.type;
-  var componentName = type.displayName || type.name;
-  var route = assign({}, type.defaultProps, element.props);
+  var props = assign({}, type.defaultProps, element.props);
 
   if (type.propTypes)
-    checkPropTypes(componentName, type.propTypes, route);
+    checkPropTypes(type.displayName, type.propTypes, props);
 
-  if (route.handler) {
-    warning(
-      false,
-      '<%s handler> is deprecated, use <%s component> instead',
-      componentName, componentName
-    );
+  if (type === DefaultRoute)
+    return Route.createDefaultRoute(createRouteOptions(props));
 
-    route.component = route.handler;
-    delete route.handler;
-  }
+  if (type === NotFoundRoute)
+    return Route.createNotFoundRoute(createRouteOptions(props));
 
-  // Unless otherwise specified, a route's path defaults to its name.
-  if (route.name && route.path == null)
-    route.path = route.name;
+  if (type === Redirect)
+    return Route.createRedirect(createRouteOptions(props));
 
-  if (route.children) {
-    route.childRoutes = createRoutesFromReactChildren(route.children);
-    delete route.children;
-  }
-
-  return route;
+  return Route.createRoute(createRouteOptions(props), function () {
+    if (props.children)
+      createRoutesFromReactChildren(props.children);
+  });
 }
 
 /**
- * Creates and returns a routes object from the given ReactChildren. JSX
- * provides a convenient way to visualize how routes in the hierarchy are
- * nested.
+ * Creates and returns an array of routes created from the given
+ * ReactChildren, all of which should be one of <Route>, <DefaultRoute>,
+ * <NotFoundRoute>, or <Redirect>, e.g.:
  *
- *   var { Route } = require('react-router');
- *   
+ *   var { createRoutesFromReactChildren, Route, Redirect } = require('react-router');
+ *
  *   var routes = createRoutesFromReactChildren(
- *     <Route component={App}>
- *       <Route name="home" component={Dashboard}/>
- *       <Route name="news" component={NewsFeed}/>
+ *     <Route path="/" handler={App}>
+ *       <Route name="user" path="/user/:userId" handler={User}>
+ *         <Route name="task" path="tasks/:taskId" handler={Task}/>
+ *         <Redirect from="todos/:taskId" to="task"/>
+ *       </Route>
  *     </Route>
  *   );
- *
- * This method is automatically used when you provide a ReactChildren
- * object to createRouter.
- *
- *   var Router = createRouter(
- *     <Route .../>
- *   );
- *
- *   React.render(<Router/>, ...);
  */
 function createRoutesFromReactChildren(children) {
   var routes = [];
 
-  React.Children.forEach(children, function (element) {
-    if (React.isValidElement(element))
-      routes.push(createRouteFromReactElement(element));
+  React.Children.forEach(children, function (child) {
+    if (child = createRouteFromReactElement(child))
+      routes.push(child);
   });
 
   return routes;

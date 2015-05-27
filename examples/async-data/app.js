@@ -1,13 +1,10 @@
-var React = require('react/addons');
-var { createRouter, Route, Link } = require('react-router');
-var HashHistory = require('react-router/HashHistory');
+var React = require('react');
+var Router = require('react-router');
 var EventEmitter = require('events').EventEmitter;
-var assign = require('object-assign');
+var { Route, DefaultRoute, RouteHandler, Link } = Router;
 
 var API = 'http://addressbook-api.herokuapp.com';
 var loadingEvents = new EventEmitter();
-localStorage.token = localStorage.token || (Date.now()*Math.random());
-
 
 function getJSON(url) {
   if (getJSON._cache[url])
@@ -28,7 +25,6 @@ function getJSON(url) {
       }
     };
     req.open('GET', url);
-    req.setRequestHeader('authorization', localStorage.token);
     req.send();
   });
 }
@@ -37,12 +33,8 @@ getJSON._cache = {};
 var App = React.createClass({
 
   statics: {
-    loadAsyncProps (params) {
-      return getJSON(`${API}/contacts`).then(function (res) {
-        return {
-          contacts: res.contacts
-        };
-      });
+    fetchData (params) {
+      return getJSON(`${API}/contacts`).then((res) => res.contacts);
     }
   },
 
@@ -69,7 +61,7 @@ var App = React.createClass({
   },
 
   renderContacts () {
-    return this.props.contacts.map((contact, i) => {
+    return this.props.data.contacts.map((contact, i) => {
       return (
         <li key={i}>
           <Link to="contact" params={contact}>{contact.first} {contact.last}</Link>
@@ -84,7 +76,7 @@ var App = React.createClass({
         <ul>
           {this.renderContacts()}
         </ul>
-        {this.props.children || <Index/>}
+        <RouteHandler {...this.props}/>
       </div>
     );
   }
@@ -92,15 +84,13 @@ var App = React.createClass({
 
 var Contact = React.createClass({
   statics: {
-    loadAsyncProps (params) {
-      return getJSON(`${API}/contacts/${params.id}`).then(function (res) {
-        return { contact: res.contact };
-      });
+    fetchData (params) {
+      return getJSON(`${API}/contacts/${params.id}`).then((res) => res.contact);
     }
   },
 
   render () {
-    var contact = this.props.contact;
+    var { contact } = this.props.data;
     return (
       <div>
         <p><Link to="/">Back</Link></p>
@@ -121,44 +111,28 @@ var Index = React.createClass({
   }
 });
 
-var Router = createRouter((
-  <Route name="contacts" path="/" component={App}>
-    <Route name="contact" path="contact/:id" component={Contact}/>
+var routes = (
+  <Route name="contacts" path="/" handler={App}>
+    <DefaultRoute name="index" handler={Index}/>
+    <Route name="contact" path="contact/:id" handler={Contact}/>
   </Route>
-));
+);
 
-function loadAsyncProps(components, params) {
-  var promises = components.map(function (Component) {
-    if (Component.loadAsyncProps) {
-      return Component.loadAsyncProps(params).then(function (asyncProps) {
-        // create a Higher Order Component and pass the async props in
-        Component.Wrapper = Component.Wrapper || React.createClass({
-          render () {
-            return <Component {...this.props} {...this.constructor._asyncProps}/>
-          }
-        });
-        // would probably make more sense to put this stuff in a store, not mutate
-        // the component classes.
-        Component.Wrapper._asyncProps = asyncProps;
-        return Component.Wrapper;
-      });
-    } else {
-      return Component;
-    }
-  });
-  return Promise.all(promises);
+function fetchData(routes, params) {
+  var data = {};
+  return Promise.all(routes
+    .filter(route => route.handler.fetchData)
+    .map(route => {
+      return route.handler.fetchData(params).then(d => {data[route.name] = d;});
+    })
+  ).then(() => data);
 }
 
-HashHistory.listen(function (location) {
-  Router.match(location, function (err, routerProps) {
-    loadingEvents.emit('loadStart');
+Router.run(routes, function (Handler, state) {
+  loadingEvents.emit('loadStart');
 
-    loadAsyncProps(routerProps.components, routerProps.params).then((components) => {
-      loadingEvents.emit('loadEnd');
-
-      // put the higher order components into the props before rendering
-      var props = assign({}, routerProps, { components: components });
-      React.render(<Router {...props}/>, document.getElementById('example'));
-    });
+  fetchData(state.routes, state.params).then((data) => {
+    loadingEvents.emit('loadEnd');
+    React.render(<Handler data={data}/>, document.getElementById('example'));
   });
 });
