@@ -65,8 +65,6 @@ var ContactStore = module.exports = {
 
 };
 
-localStorage.token = localStorage.token || (Date.now()*Math.random());
-
 function getJSON(url, cb) {
   var req = new XMLHttpRequest();
   req.onload = function () {
@@ -77,7 +75,6 @@ function getJSON(url, cb) {
     }
   };
   req.open('GET', url);
-  req.setRequestHeader('authorization', localStorage.token);
   req.send();
 }
 
@@ -88,7 +85,6 @@ function postJSON(url, obj, cb) {
   };
   req.open('POST', url);
   req.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-  req.setRequestHeader('authorization', localStorage.token);
   req.send(JSON.stringify(obj));
 }
 
@@ -96,7 +92,6 @@ function deleteJSON(url, cb) {
   var req = new XMLHttpRequest();
   req.onload = cb;
   req.open('DELETE', url);
-  req.setRequestHeader('authorization', localStorage.token);
   req.send();
 }
 

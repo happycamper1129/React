@@ -1,6 +1,6 @@
 var React = require('react');
-var HashHistory = require('react-router/HashHistory');
-var { createRouter, Route, Link } = require('react-router');
+var Router = require('react-router');
+var { Route, RouteHandler, Link } = Router;
 
 class App extends React.Component {
   constructor (props) {
@@ -35,18 +35,26 @@ class App extends React.Component {
           <li><Link to="about">About</Link></li>
           <li><Link to="dashboard">Dashboard</Link> (authenticated)</li>
         </ul>
-        {this.props.children}
+        <RouteHandler/>
       </div>
     );
   }
 }
 
-function requireAuth (router, state) {
-  if (!auth.loggedIn())
-    router.replaceWith('/login', {}, {'nextPath' : state.location.path});
-}
+var requireAuth = (Component) => {
+  return class Authenticated extends React.Component {
+    static willTransitionTo(transition) {
+      if (!auth.loggedIn()) {
+        transition.redirect('/login', {}, {'nextPath' : transition.path});
+      }  
+    }
+    render () {
+      return <Component {...this.props}/>
+    }
+  }
+};
 
-class Dashboard extends React.Component {
+var Dashboard = requireAuth(class extends React.Component {
   render () {
     var token = auth.getToken();
     return (
@@ -57,7 +65,7 @@ class Dashboard extends React.Component {
       </div>
     );
   }
-}
+});
 
 class Login extends React.Component {
 
@@ -174,14 +182,14 @@ function pretendRequest(email, pass, cb) {
 }
 
 var routes = (
-  <Route component={App}>
-    <Route name="login" component={Login}/>
-    <Route name="logout" component={Logout}/>
-    <Route name="about" component={About}/>
-    <Route name="dashboard" component={Dashboard} onEnter={requireAuth}/>
+  <Route handler={App}>
+    <Route name="login" handler={Login}/>
+    <Route name="logout" handler={Logout}/>
+    <Route name="about" handler={About}/>
+    <Route name="dashboard" handler={Dashboard}/>
   </Route>
 );
 
-var Router = createRouter(routes);
-
-React.render(<Router history={HashHistory}/>, document.getElementById('example'));
+Router.run(routes, function (Handler) {
+  React.render(<Handler/>, document.getElementById('example'));
+});
