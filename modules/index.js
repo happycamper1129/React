@@ -1,33 +1,25 @@
-exports.DefaultRoute = require('./components/DefaultRoute');
-exports.Link = require('./components/Link');
-exports.NotFoundRoute = require('./components/NotFoundRoute');
-exports.Redirect = require('./components/Redirect');
-exports.Route = require('./components/Route');
-exports.ActiveHandler = require('./components/RouteHandler');
-exports.RouteHandler = exports.ActiveHandler;
+export Router from './Router';
 
-exports.HashLocation = require('./locations/HashLocation');
-exports.HistoryLocation = require('./locations/HistoryLocation');
-exports.RefreshLocation = require('./locations/RefreshLocation');
-exports.StaticLocation = require('./locations/StaticLocation');
-exports.TestLocation = require('./locations/TestLocation');
+export Route from './Route';
 
-exports.ImitateBrowserBehavior = require('./behaviors/ImitateBrowserBehavior');
-exports.ScrollToTopBehavior = require('./behaviors/ScrollToTopBehavior');
+export History from './History';
+export DOMHistory from './DOMHistory';
+export HashHistory from './HashHistory';
+export BrowserHistory from './BrowserHistory';
+export MemoryHistory from './HashHistory';
 
-exports.History = require('./History');
-exports.Navigation = require('./Navigation');
-exports.State = require('./State');
+export Link from './Link';
+export Navigation from './Navigation';
+export TransitionHook from './TransitionHook';
+export Env from './Env';
 
-exports.createRoute = require('./Route').createRoute;
-exports.createDefaultRoute = require('./Route').createDefaultRoute;
-exports.createNotFoundRoute = require('./Route').createNotFoundRoute;
-exports.createRedirect = require('./Route').createRedirect;
-exports.createRoutesFromReactChildren = require('./createRoutesFromReactChildren');
+export AsyncRouting from './AsyncRouting';
+export TransitionManager from './TransitionManager';
+export AsyncProps from './AsyncProps';
+export RouteRenderer from './RouteRenderer';
+export ScrollManager from './ScrollManager';
+export Renderer from './Renderer';
 
-exports.create = require('./createRouter');
-exports.run = require('./runRouter');
+export PropTypes from './PropTypes';
 
-//added by giles!
-exports.PropTypes = require('./PropTypes');
-
+export createRoutesFromReactChildren from './createRoutesFromReactChildren';
