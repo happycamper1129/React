@@ -1,31 +1,54 @@
-var invariant = require('react/lib/invariant');
-var canUseDOM = require('react/lib/ExecutionEnvironment').canUseDOM;
+import invariant from 'invariant';
 
-var History = {
+var RequiredSubclassMethods = [ 'push', 'replace', 'go' ];
 
-  /**
-   * The current number of entries in the history.
-   *
-   * Note: This property is read-only.
-   */
-  length: 1,
+/**
+ * A history interface that normalizes the differences across
+ * various environments and implementations. Requires concrete
+ * subclasses to implement the following methods:
+ *
+ * - push(path)
+ * - replace(path)
+ * - go(n)
+ */
+export class History {
 
-  /**
-   * Sends the browser back one entry in the history.
-   */
-  back: function () {
-    invariant(
-      canUseDOM,
-      'Cannot use History.back without a DOM'
-    );
+  constructor() {
+    RequiredSubclassMethods.forEach(function (method) {
+      invariant(
+        typeof this[method] === 'function',
+        '%s needs a "%s" method',
+        this.constructor.name, method
+      );
+    }, this);
 
-    // Do this first so that History.length will
-    // be accurate in location change listeners.
-    History.length -= 1;
-
-    window.history.back();
+    this.changeListeners = [];
+    this.location = null;
   }
 
-};
+  _notifyChange() {
+    for (var i = 0, len = this.changeListeners.length; i < len; ++i)
+      this.changeListeners[i].call(this);
+  }
 
-module.exports = History;
+  addChangeListener(listener) {
+    this.changeListeners.push(listener);
+  }
+
+  removeChangeListener(listener) {
+    this.changeListeners = this.changeListeners.filter(function (li) {
+      return li !== listener;
+    });
+  }
+
+  back() {
+    this.go(-1);
+  }
+
+  forward() {
+    this.go(1);
+  }
+
+}
+
+export default History;
