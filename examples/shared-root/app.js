@@ -1,41 +1,35 @@
-import React from 'react';
-import HashHistory from 'react-router/lib/HashHistory';
-import { Router, Route, Link } from 'react-router';
+var React = require('react');
+var Router = require('react-router');
+var { Route, RouteHandler, Link } = Router;
 
 var App = React.createClass({
-  render() {
+  render: function () {
     return (
       <div>
-        <p>
-          This illustrates how routes can share UI w/o sharing the url,
-          when routes have no path, they never match themselves but their
-          children can, allowing "/signin" and "/forgot-password" to both
-          be render in the <code>SignedOut</code> component.
-        </p>
         <ol>
-          <li><Link to="/home">Home</Link></li>
-          <li><Link to="/signin">Sign in</Link></li>
-          <li><Link to="/forgot-password">Forgot Password</Link></li>
+          <li><Link to="home">Home</Link></li>
+          <li><Link to="signin">Sign in</Link></li>
+          <li><Link to="forgot-password">Forgot Password</Link></li>
         </ol>
-        {this.props.children}
+        <RouteHandler/>
       </div>
     );
   }
 });
 
 var SignedIn = React.createClass({
-  render() {
+  render: function () {
     return (
       <div>
         <h2>Signed In</h2>
-        {this.props.children}
+        <RouteHandler/>
       </div>
     );
   }
 });
 
 var Home = React.createClass({
-  render() {
+  render: function () {
     return (
       <h3>Welcome home!</h3>
     );
@@ -43,18 +37,18 @@ var Home = React.createClass({
 });
 
 var SignedOut = React.createClass({
-  render() {
+  render: function () {
     return (
       <div>
         <h2>Signed Out</h2>
-        {this.props.children}
+        <RouteHandler/>
       </div>
     );
   }
 });
 
 var SignIn = React.createClass({
-  render() {
+  render: function () {
     return (
       <h3>Please sign in.</h3>
     );
@@ -62,23 +56,25 @@ var SignIn = React.createClass({
 });
 
 var ForgotPassword = React.createClass({
-  render() {
+  render: function () {
     return (
       <h3>Forgot your password?</h3>
     );
   }
 });
 
-React.render((
-  <Router history={HashHistory}>
-    <Route path="/" component={App}>
-      <Route component={SignedOut}>
-        <Route path="signin" component={SignIn}/>
-        <Route path="forgot-password" component={ForgotPassword}/>
-      </Route>
-      <Route component={SignedIn}>
-        <Route path="home" component={Home}/>
-      </Route>
+var routes = (
+  <Route handler={App}>
+    <Route handler={SignedOut}>
+      <Route name="signin" handler={SignIn}/>
+      <Route name="forgot-password" handler={ForgotPassword}/>
     </Route>
-  </Router>
-), document.getElementById('example'));
+    <Route handler={SignedIn}>
+      <Route name="home" handler={Home}/>
+    </Route>
+  </Route>
+);
+
+Router.run(routes, function (Handler) {
+  React.render(<Handler/>, document.getElementById('example'));
+});

@@ -1,12 +1,32 @@
-import React from 'react';
-import HashHistory from 'react-router/lib/HashHistory';
-import { Router, Route, Link } from 'react-router';
+var React = require('react');
+var Router = require('react-router');
+var { Route, RouteHandler, Link } = Router;
+
+var App = React.createClass({
+  render: function () {
+    return (
+      <div>
+        <ul>
+          <li><Link to="user" params={{userID: "123"}}>Bob</Link></li>
+          <li><Link to="user" params={{userID: "123"}} query={{showAge: true}}>Bob With Query Params</Link></li>
+          <li><Link to="user" params={{userID: "abc"}}>Sally</Link></li>
+        </ul>
+        <RouteHandler/>
+      </div>
+    );
+  }
+});
 
 var User = React.createClass({
-  render() {
-    var { query } = this.props;
-    var age = query && query.showAge ? '33' : '';
-    var { userID } = this.props.params;
+
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+
+  render: function () {
+    var { router } = this.context;
+    var age = router.getCurrentQuery().showAge ? '33' : '';
+    var userID = router.getCurrentParams().userID;
     return (
       <div className="User">
         <h1>User id: {userID}</h1>
@@ -16,25 +36,12 @@ var User = React.createClass({
   }
 });
 
-var App = React.createClass({
-  render() {
-    return (
-      <div>
-        <ul>
-          <li><Link to={`/user/bob`}>Bob</Link></li>
-          <li><Link to={`/user/bob`} query={{showAge: true}}>Bob With Query Params</Link></li>
-          <li><Link to={`/user/sally`}>Sally</Link></li>
-        </ul>
-        {this.props.children}
-      </div>
-    );
-  }
-});
+var routes = (
+  <Route handler={App}>
+    <Route name="user" path="user/:userID" handler={User}/>
+  </Route>
+);
 
-React.render((
-  <Router history={HashHistory}>
-    <Route path="/" component={App}>
-      <Route path="user/:userID" component={User}/>
-    </Route>
-  </Router>
-), document.getElementById('example'));
+Router.run(routes, function (Handler) {
+  React.render(<Handler/>, document.getElementById('example'));
+});

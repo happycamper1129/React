@@ -1,58 +1,69 @@
-import React from 'react';
-import HashHistory from 'react-router/lib/HashHistory';
-import { Router, Route, Link, Redirect } from 'react-router';
+var React = require('react');
+var Router = require('react-router');
+var { Route, Redirect, RouteHandler, Link } = Router;
 
 var App = React.createClass({
-  render() {
+  render () {
     return (
       <div>
         <ul>
-          <li><Link to="/user/123">Bob</Link></li>
-          <li><Link to="/user/abc">Sally</Link></li>
+          <li><Link to="user" params={{userId: "123"}}>Bob</Link></li>
+          <li><Link to="user" params={{userId: "abc"}}>Sally</Link></li>
         </ul>
-        {this.props.children}
+        <RouteHandler/>
       </div>
     );
   }
 });
 
 var User = React.createClass({
-  render() {
-    var { userID } = this.props.params;
 
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+
+  render () {
+    var { userId } = this.context.router.getCurrentParams();
     return (
       <div className="User">
-        <h1>User id: {userID}</h1>
+        <h1>User id: {userId}</h1>
         <ul>
-          <li><Link to={`/user/${userID}/tasks/foo`}>foo task</Link></li>
-          <li><Link to={`/user/${userID}/tasks/bar`}>bar task</Link></li>
+          <li><Link to="task" params={{userId: userId, taskId: "foo"}}>foo task</Link></li>
+          <li><Link to="task" params={{userId: userId, taskId: "bar"}}>bar task</Link></li>
         </ul>
-        {this.props.children}
+        <RouteHandler/>
       </div>
     );
   }
 });
+
 
 var Task = React.createClass({
-  render() {
-    var { userID, taskID } = this.props.params;
 
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+
+  render () {
+    var { userId, taskId } = this.context.router.getCurrentParams();
     return (
       <div className="Task">
-        <h2>User ID: {userID}</h2>
-        <h3>Task ID: {taskID}</h3>
+        <h2>User id: {userId}</h2>
+        <h3>Task id: {taskId}</h3>
       </div>
     );
   }
 });
 
-React.render((
-  <Router history={HashHistory}>
-    <Route path="/" component={App}>
-      <Route path="user/:userID" component={User}>
-        <Route path="tasks/:taskID" component={Task}/>
-        <Redirect from="todos/:taskID" to="task"/>
-      </Route>
+var routes = (
+  <Route path="/" handler={App}>
+    <Route name="user" path="/user/:userId" handler={User}>
+      <Route name="task" path="tasks/:taskId" handler={Task}/>
+      <Redirect from="todos/:taskId" to="task"/>
     </Route>
-  </Router>
-), document.getElementById('example'));
+  </Route>
+);
+
+Router.run(routes, function (Handler) {
+  React.render(<Handler/>, document.getElementById('example'));
+});
