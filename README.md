@@ -34,10 +34,10 @@ This library is written with CommonJS modules. If you are using
 browserify, webpack, or similar, you can consume it like anything else
 installed from npm.
 
-There is also a global build available on bower, find the library on
+There is also a global build available on bower. Find the library on
 `window.ReactRouter`.
 
-The library is also available on the popular CDN [cdnjs](https://cdnjs.com/libraries/react-router).
+The library is also available on [cdnjs](https://cdnjs.com/libraries/react-router).
 
 Features
 --------
@@ -62,28 +62,36 @@ What's it look like?
 --------------------
 
 ```js
-var routes = (
-  <Route handler={App} path="/">
-    <DefaultRoute handler={Home} />
-    <Route name="about" handler={About} />
-    <Route name="users" handler={Users}>
-      <Route name="recent-users" path="recent" handler={RecentUsers} />
-      <Route name="user" path="/user/:userId" handler={User} />
-      <NotFoundRoute handler={UserRouteNotFound}/>
+var createRouter = require('react-router').createRouter;
+
+var Router = createRouter(
+  <Route path="/" component={App}>
+    <Route name="about" component={About}/>
+    <Route name="users" component={Users}>
+      <Route name="recent-users" path="recent" component={RecentUsers}/>
+      <Route name="user" path="/user/:userId" component={User}/>
+      <Route path="*" component={UserRouteNotFound}/>
     </Route>
-    <NotFoundRoute handler={NotFound}/>
-    <Redirect from="company" to="about" />
+    <Route path="*" component={NotFound}/>
   </Route>
 );
 
-Router.run(routes, function (Handler) {
-  React.render(<Handler/>, document.body);
-});
+var BrowserHistory = require('react-router/BrowserHistory');
+React.render(<Router history={BrowserHistory}/>, document.body);
 
-// Or, if you'd like to use the HTML5 history API for cleaner URLs:
+// Or, for browsers that don't support the HTML5 history API:
 
-Router.run(routes, Router.HistoryLocation, function (Handler) {
-  React.render(<Handler/>, document.body);
+var HashHistory = require('react-router/HashHistory');
+React.render(<Router history={HashHistory}/>, document.body);
+
+// Or, if you want to render on the server (using e.g. Express):
+
+app.get('*', function (req, res) {
+  Router.match(req.url, function (error, props) {
+    res.send(
+      React.renderToString(React.createElement(Router, props))
+    );
+  });
 });
 ```
 
@@ -119,7 +127,7 @@ Related Modules
 
 - [rnr-constrained-route](https://github.com/bjyoungblood/rnr-constrained-route) - validate paths
   and parameters on route handlers.
-- [react-router-bootstrap](https://github.com/react-bootstrap/react-router-bootstrap) - Integration with [react-bootstrap](https://github.com/react-bootstrap/react-bootstrap) components.
+- [react-router-bootstrap](https://github.com/mtscout6/react-router-bootstrap) - Integration with [react-bootstrap](https://github.com/react-bootstrap/react-bootstrap) components.
 - [react-router-proxy-loader](https://github.com/odysseyscience/react-router-proxy-loader) - A Webpack loader to dynamically load react-router components on-demand
 
 Contributing

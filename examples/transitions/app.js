@@ -1,56 +1,52 @@
-var React = require('react');
-var Router = require('react-router');
-var { Route, DefaultRoute, RouteHandler, Link } = Router;
+import React from 'react';
+import HashHistory from 'react-router/lib/HashHistory';
+import { Router, Route, Link, TransitionHook } from 'react-router';
 
 var App = React.createClass({
-  render: function () {
+  render() {
     return (
       <div>
         <ul>
-          <li><Link to="dashboard">Dashboard</Link></li>
-          <li><Link to="form">Form</Link></li>
+          <li><Link to="/dashboard">Dashboard</Link></li>
+          <li><Link to="/form">Form</Link></li>
         </ul>
-        <RouteHandler/>
+        {this.props.children}
       </div>
     );
   }
 });
 
 var Home = React.createClass({
-  render: function () {
+  render() {
     return <h1>Home</h1>;
   }
 });
 
 var Dashboard = React.createClass({
-  render: function () {
+  render() {
     return <h1>Dashboard</h1>;
   }
 });
 
 var Form = React.createClass({
+  mixins: [ TransitionHook ],
 
-  contextTypes: {
-    router: React.PropTypes.func
-  },
-
-  statics: {
-    willTransitionFrom: function (transition, element) {
-      if (element.refs.userInput.getDOMNode().value !== '') {
-        if (!confirm('You have unsaved information, are you sure you want to leave this page?')) {
-          transition.abort();
-        }
+  routerWillLeave(router) {
+    if (this.refs.userInput.getDOMNode().value !== '') {
+      if (!confirm('You have unsaved information, are you sure you want to leave this page?')) {
+        router.cancelTransition();
       }
     }
   },
 
-  handleSubmit: function (event) {
+  handleSubmit(event) {
     event.preventDefault();
     this.refs.userInput.getDOMNode().value = '';
     this.context.router.transitionTo('/');
   },
 
-  render: function () {
+  render() {
+    console.log('form render');
     return (
       <div>
         <form onSubmit={this.handleSubmit}>
@@ -63,14 +59,11 @@ var Form = React.createClass({
   }
 });
 
-var routes = (
-  <Route handler={App}>
-    <DefaultRoute handler={Home}/>
-    <Route name="dashboard" handler={Dashboard}/>
-    <Route name="form" handler={Form}/>
-  </Route>
-);
-
-Router.run(routes, function (Handler) {
-  React.render(<Handler/>, document.getElementById('example'));
-});
+React.render((
+  <Router history={HashHistory}>
+    <Route path="/" component={App}>
+      <Route path="dashboard" component={Dashboard}/>
+      <Route path="form" component={Form}/>
+    </Route>
+  </Router>
+), document.getElementById('example'));

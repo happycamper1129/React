@@ -1,82 +1,46 @@
-var React = require('react');
-var Router = require('react-router');
-var EventEmitter = require('events').EventEmitter;
-var { Route, DefaultRoute, RouteHandler, Link } = Router;
-
-var API = 'http://addressbook-api.herokuapp.com';
-var loadingEvents = new EventEmitter();
-
-function getJSON(url) {
-  if (getJSON._cache[url])
-    return Promise.resolve(getJSON._cache[url]);
-
-  return new Promise((resolve, reject) => {
-    var req = new XMLHttpRequest();
-    req.onload = function () {
-      if (req.status === 404) {
-        reject(new Error('not found'));
-      } else {
-        // fake a slow response every now and then
-        setTimeout(function () {
-          var data = JSON.parse(req.response);
-          resolve(data);
-          getJSON._cache[url] = data;
-        }, Math.random() > 0.5 ? 0 : 1000);
-      }
-    };
-    req.open('GET', url);
-    req.send();
-  });
-}
-getJSON._cache = {};
+import React from 'react';
+import HashHistory from 'react-router/lib/HashHistory';
+import { Router, Route, Link } from 'react-router';
+import { loadContacts, loadContact, createContact, shallowEqual } from './utils';
 
 var App = React.createClass({
-
   statics: {
-    fetchData (params) {
-      return getJSON(`${API}/contacts`).then((res) => res.contacts);
+    loadProps(params, cb) {
+      console.log('loading App props');
+      loadContacts(cb);
     }
   },
 
-  getInitialState () {
-    return { loading: false };
+  getInitialState() {
+    return {
+      longLoad: false
+    };
   },
 
-  componentDidMount () {
-    var timer;
-    loadingEvents.on('loadStart', () => {
-      clearTimeout(timer);
-      // for slow responses, indicate the app is thinking
-      // otherwise its fast enough to just wait for the
-      // data to load
-      timer = setTimeout(() => {
-        this.setState({ loading: true });
-      }, 300);
-    });
+  handleSubmit(event) {
+    var [ first, last ] = event.target.elements;
 
-    loadingEvents.on('loadEnd', () => {
-      clearTimeout(timer);
-      this.setState({ loading: false });
-    });
+    createContact({
+      first: first.value,
+      last: last.value
+    }, this.props.onPropsDidChange);
   },
 
-  renderContacts () {
-    return this.props.data.contacts.map((contact, i) => {
-      return (
-        <li key={i}>
-          <Link to="contact" params={contact}>{contact.first} {contact.last}</Link>
-        </li>
-      );
-    });
-  },
-
-  render () {
+  render() {
     return (
-      <div className={this.state.loading ? 'loading' : ''}>
+      <div className={this.props.propsAreLoading ? 'loading' : ''}>
+        <form onSubmit={this.handleSubmit}>
+          <input placeholder="First name"/> <input placeholder="Last name"/>{' '}
+          <button type="submit">submit</button>
+        </form>
         <ul>
-          {this.renderContacts()}
+          {this.props.contacts.map((contact, i) => (
+            <li key={contact.id}>
+              <Link to={`/contact/${contact.id}`}>{contact.first} {contact.last}</Link>
+            </li>
+          ))}
         </ul>
-        <RouteHandler {...this.props}/>
+        {this.props.children}
       </div>
     );
   }
@@ -84,13 +48,15 @@ var App = React.createClass({
 
 var Contact = React.createClass({
   statics: {
-    fetchData (params) {
-      return getJSON(`${API}/contacts/${params.id}`).then((res) => res.contact);
+    loadProps(params, cb) {
+      console.log('loading Contact props');
+      loadContact(params.id, cb);
     }
   },
 
-  render () {
-    var { contact } = this.props.data;
+  render() {
+    var { contact } = this.props;
+
     return (
       <div>
         <p><Link to="/">Back</Link></p>
@@ -102,7 +68,7 @@ var Contact = React.createClass({
 });
 
 var Index = React.createClass({
-  render () {
+  render() {
     return (
       <div>
         <h1>Welcome!</h1>
@@ -111,28 +77,83 @@ var Index = React.createClass({
   }
 });
 
-var routes = (
-  <Route name="contacts" path="/" handler={App}>
-    <DefaultRoute name="index" handler={Index}/>
-    <Route name="contact" path="contact/:id" handler={Contact}/>
-  </Route>
-);
+var Spinner = React.createClass({
+  render() {
+    return (
+      <div style={{textAlign: 'center', padding: 50}}>
+        <img src="spinner.gif" width="64" height="64"/>
+      </div>
+    );
+  }
+});
 
-function fetchData(routes, params) {
-  var data = {};
-  return Promise.all(routes
-    .filter(route => route.handler.fetchData)
-    .map(route => {
-      return route.handler.fetchData(params).then(d => {data[route.name] = d;});
-    })
-  ).then(() => data);
+var AsyncProps = React.createClass({
+  getInitialState() {
+    return {
+      propsAreLoading: false,
+      asyncProps: null,
+      previousRoutingState: null
+    };
+  },
+
+  componentDidMount() {
+    this.load();
+  },
+
+  componentWillReceiveProps(nextProps) {
+    //var nextParams = nextProps.routingState.params;
+    //var currentParams = this.props.routingState.params;
+    //var needToLoad = !shallowEqual(nextParams, currentParams);
+    //// params are the only data loading depency, so we don't
+    //// re-load unless they change
+    //if (needToLoad) {
+      //this.setState({
+        //previousRoutingState: this.props.routingState
+      //});
+      //this.load();
+    //}
+  },
+
+  load() {
+    var { params } = this.props.routingState;
+    var { Component } = this.props;
+
+    this.setState({ propsAreLoading: true }, () => {
+      Component.loadProps(params, (err, asyncProps) => {
+        this.setState({
+          propsAreLoading: false,
+          asyncProps: asyncProps,
+          previousRoutingState: null
+        });
+      });
+    });
+  },
+
+  render() {
+    if (this.state.asyncProps === null)
+      return <Spinner/>;
+
+    var { Component } = this.props;
+    var { asyncProps, propsAreLoading } = this.state;
+    var routingState = this.state.previousRoutingState || this.props.routingState;
+
+    return <Component
+      onPropsDidChange={this.load}
+      propsAreLoading={propsAreLoading}
+      {...routingState}
+      {...asyncProps}
+    />
+  }
+});
+
+function createAsyncPropsElement(Component, state) {
+  return <AsyncProps Component={Component} routingState={state}/>
 }
 
-Router.run(routes, function (Handler, state) {
-  loadingEvents.emit('loadStart');
-
-  fetchData(state.routes, state.params).then((data) => {
-    loadingEvents.emit('loadEnd');
-    React.render(<Handler data={data}/>, document.getElementById('example'));
-  });
-});
+React.render((
+  <Router history={HashHistory} createElement={createAsyncPropsElement}>
+    <Route path="/" component={App} indexComponent={Index}>
+      <Route path="contact/:id" component={Contact}/>
+    </Route>
+  </Router>
+), document.getElementById('example'));
