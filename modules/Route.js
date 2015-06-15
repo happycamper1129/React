@@ -2,7 +2,6 @@ import React from 'react';
 import invariant from 'invariant';
 import { createRouteFromReactElement } from './RouteUtils';
 import { component, components } from './PropTypes';
-import warning from 'warning';
 
 var { string, bool, func } = React.PropTypes;
 
