@@ -21,12 +21,12 @@ function isModifiedEvent(event) {
  *
  * You could use the following component to link to that route:
  *
- *   <Link to={`/posts/${post.id}`} />
+ *   <Link to="showPost" params={{ postID: "123" }} />
  *
- * Links may pass along query string parameters
+ * In addition to params, links may pass along query string parameters
  * using the `query` prop.
  *
- *   <Link to="/posts/123" query={{ show:true }}/>
+ *   <Link to="showPost" params={{ postID: "123" }} query={{ show:true }}/>
  */
 export var Link = React.createClass({
 
