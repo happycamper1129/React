@@ -72,7 +72,7 @@ var Taco = React.createClass({
 });
 
 React.render((
-  <Router history={new HashHistory}>
+  <Router history={HashHistory}>
     <Route path="/" component={App}>
       <Route path="taco/:name" component={Taco}/>
     </Route>
