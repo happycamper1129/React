@@ -61,7 +61,9 @@ var ScrollManagementMixin = {
 
     if (locationState && this.props.shouldUpdateScrollPosition(this.state, prevState)) {
       var { scrollX, scrollY } = locationState;
-      this.props.updateScrollPosition(location.navigationType, scrollX || 0, scrollY || 0);
+
+      if (scrollX != null && scrollY != null)
+        this.props.updateScrollPosition(location.navigationType, scrollX, scrollY);
     }
   }
 

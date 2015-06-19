@@ -24,7 +24,7 @@ describe('Scroll management', function () {
 
     Inbox = React.createClass({
       render() {
-        return <p style={{padding: '100px 3000px 3000px 100px'}}>This is the inbox.</p>;
+        return <p>This is the inbox.</p>;
       }
     });
 
@@ -60,11 +60,15 @@ describe('Scroll management', function () {
     ];
 
     function execNextStep() {
-      try {
-        steps.shift().apply(this, arguments);
-      } catch (error) {
-        done(error);
+      if (steps.length < 1){
+        done();
+        return;
       }
+
+      // Give the DOM a little time to reflect the hashchange.
+      setTimeout(() => {
+        steps.shift().call(this);
+      }, 10);
     }
 
     var history = new HashHistory({ queryKey: true });
