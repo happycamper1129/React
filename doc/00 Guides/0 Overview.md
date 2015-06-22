@@ -26,7 +26,7 @@ var App = React.createClass({
 
   render () {
     var Child;
-    switch (this.state.route) {
+    switch (this.props.route) {
       case '/about': Child = About; break;
       case '/inbox': Child = Inbox; break;
       default:      Child = Home;
