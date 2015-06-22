@@ -2,7 +2,7 @@ import React from 'react';
 import HashHistory from 'react-router/lib/HashHistory';
 import { Router } from 'react-router';
 import AsyncProps from 'react-router/lib/experimental/AsyncProps';
-import stubbedCourses from './stubs/COURSES';
+import stubbedCourses from './stubs/courses';
 
 var rootRoute = {
   path: '/',
@@ -25,3 +25,4 @@ React.render((
     createElement={AsyncProps.createElement}
   />
 ), document.getElementById('example'));
+
