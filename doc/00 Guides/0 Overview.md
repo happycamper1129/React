@@ -138,13 +138,10 @@ var App = React.createClass({
   }
 });
 
-// Declare the history outside of the `render` function.
-var history = new HashHistory();
-
 // Finally we render a `Router` component with some `Route`s, it'll do all
 // the fancy routing stuff for us.
 React.render((
-  <Router history={history}>
+  <Router history={new HashHistory}>
     <Route path="/" component={App}>
       <Route path="about" component={About}/>
       <Route path="inbox" component={Inbox}/>
@@ -156,7 +153,6 @@ React.render((
 If you're not digging the JSX route config you can use plain objects:
 
 ```js
-var history = new HashHistory();
 var routes = {
   path: '/',
   component: App,
@@ -166,7 +162,7 @@ var routes = {
   ]
 };
 
-React.render(<Router history={history} children={routes}/>, document.body);
+React.render(<Router history={new HashHistory} children={routes}/>, document.body);
 ```
 
 Adding more UI
@@ -194,9 +190,8 @@ var Inbox = React.createClass({
   }
 });
 
-var history = new HashHistory();
 React.render((
-  <Router history={history}>
+  <Router history={new HashHistory}>
     <Route component={App}>
       <Route path="about" component={About}/>
       <Route path="inbox" component={Inbox}>

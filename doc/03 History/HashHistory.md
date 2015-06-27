@@ -34,10 +34,9 @@ Normal usage
 ```js
 import { Router } from 'react-router';
 import HashHistory from 'react-router/lib/HashHistory';
-var history = new HashHistory();
 
 React.render((
-  <Router history={ history }>
+  <Router history={new HashHistory}>
     {/* ... */}
   </Router>
 ), document.body);

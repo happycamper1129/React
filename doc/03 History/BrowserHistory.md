@@ -44,10 +44,9 @@ Example
 ```js
 import { Router } from 'react-router';
 import BrowserHistory from 'react-router/lib/BrowserHistory';
-var history = new BrowserHistory();
 
 React.render((
-  <Router history={ history }>
+  <Router history={new BrowserHistory}>
     {/* ... */}
   </Router>
 ), document.body);
