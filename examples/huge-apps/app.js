@@ -1,5 +1,5 @@
 import React from 'react';
-import { history } from 'react-router/lib/HashHistory';
+import HashHistory from 'react-router/lib/HashHistory';
 import { Router } from 'react-router';
 import AsyncProps from 'react-router/lib/experimental/AsyncProps';
 import stubbedCourses from './stubs/COURSES';
@@ -28,7 +28,7 @@ var rootRoute = {
 React.render((
   <Router
     routes={rootRoute}
-    history={history}
+    history={new HashHistory}
     createElement={AsyncProps.createElement}
   />
 ), document.getElementById('example'));

@@ -1,5 +1,5 @@
 import React from 'react';
-import { history } from 'react-router/lib/HashHistory';
+import HashHistory from 'react-router/lib/HashHistory';
 import { Router, Route, Link } from 'react-router';
 
 var App = React.createClass({
@@ -70,7 +70,7 @@ var ForgotPassword = React.createClass({
 });
 
 React.render((
-  <Router history={history}>
+  <Router history={new HashHistory}>
     <Route path="/" component={App}>
       <Route component={SignedOut}>
         <Route path="signin" component={SignIn}/>

@@ -5,6 +5,7 @@ import { getWindowScrollPosition } from './DOMUtils';
  * A history interface that assumes a DOM environment.
  */
 class DOMHistory extends History {
+
   constructor(options={}) {
     super(options);
     this.getScrollPosition = options.getScrollPosition || getWindowScrollPosition;

@@ -2,8 +2,6 @@ import DOMHistory from './DOMHistory';
 import { getWindowPath, supportsHistory } from './DOMUtils';
 import NavigationTypes from './NavigationTypes';
 
-var instance = null;
-
 function updateCurrentState(extraState) {
   var state = window.history.state;
 
@@ -108,10 +106,6 @@ class BrowserHistory extends DOMHistory {
     }
   }
 
-  static get history() {
-    instance = instance || new BrowserHistory();
-    return instance;
-  }
 }
 
 export default BrowserHistory;

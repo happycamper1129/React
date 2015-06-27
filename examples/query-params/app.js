@@ -1,5 +1,5 @@
 import React from 'react';
-import { history } from 'react-router/lib/HashHistory';
+import HashHistory from 'react-router/lib/HashHistory';
 import { Router, Route, Link } from 'react-router';
 
 var User = React.createClass({
@@ -32,7 +32,7 @@ var App = React.createClass({
 });
 
 React.render((
-  <Router history={history}>
+  <Router history={new HashHistory}>
     <Route path="/" component={App}>
       <Route path="user/:userID" component={User}/>
     </Route>
