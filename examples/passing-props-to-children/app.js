@@ -1,5 +1,5 @@
 var React = require('react');
-import { history } from 'react-router/lib/HashHistory';
+import HashHistory from 'react-router/lib/HashHistory';
 var { Router, Route, Link, Navigation } = require('react-router');
 
 var App = React.createClass({
@@ -72,7 +72,7 @@ var Taco = React.createClass({
 });
 
 React.render((
-  <Router history={history}>
+  <Router history={new HashHistory}>
     <Route path="/" component={App}>
       <Route path="taco/:name" component={Taco}/>
     </Route>

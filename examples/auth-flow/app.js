@@ -2,7 +2,6 @@ import React, { findDOMNode } from 'react';
 import { Router, Route, Link, Navigation } from 'react-router';
 import HashHistory from 'react-router/lib/HashHistory';
 import auth from './auth';
-var history = new HashHistory({ queryKey: true });
 
 var App = React.createClass({
   getInitialState() {
@@ -121,7 +120,7 @@ function requireAuth(nextState, transition) {
 }
 
 React.render((
-  <Router history={history}>
+  <Router history={new HashHistory({ queryKey: true })}>
     <Route path="/" component={App}>
       <Route path="login" component={Login}/>
       <Route path="logout" component={Logout}/>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Router, Link } from 'react-router';
 import HashHistory from 'react-router/lib/HashHistory';
-var history = new HashHistory({ queryKey: 'k' });
 
 var pictures = [
   {id: 0, src: 'http://placekitten.com/601/601'},
@@ -128,7 +127,7 @@ var RootRoute = {
 };
 
 React.render(
-  <Router history={history} children={RootRoute}/>,
+  <Router history={new HashHistory({ queryKey: 'k' })} children={RootRoute}/>,
   document.getElementById('example')
 );
 
@@ -161,3 +160,4 @@ React.render(
 //
 // 10. I am very glad there aren't ten steps to explain this ...
 //
+
