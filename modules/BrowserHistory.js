@@ -1,5 +1,13 @@
 import DOMHistory from './DOMHistory';
-import { addEventListener, removeEventListener, getWindowPath, supportsHistory } from './DOMUtils';
+import { getWindowPath, supportsHistory } from './DOMUtils';
+import NavigationTypes from './NavigationTypes';
+
+function updateCurrentState(extraState) {
+  var state = window.history.state;
+
+  if (state)
+    window.history.replaceState(Object.assign(state, extraState), '');
+}
 
 /**
  * A history implementation for DOM environments that support the
@@ -19,53 +27,83 @@ class BrowserHistory extends DOMHistory {
     this.isSupported = supportsHistory();
   }
 
-  setup() {
-    if (this.location != null)
-      return;
+  _updateLocation(navigationType) {
+    var state = null;
 
-    var path = getWindowPath();
-    var key = null;
-    if (this.isSupported && window.history.state)
-      key = window.history.state.key;
+    if (this.isSupported) {
+      var historyState = window.history.state;
+      state = this._createState(historyState);
 
-    super.setup(path, { key });
+      if (!historyState || !historyState.key)
+        window.history.replaceState(state, '');
+    }
 
-    addEventListener(window, 'popstate', this.handlePopState);
+    this.location = this.createLocation(getWindowPath(), state, navigationType);
   }
 
-  teardown() {
-    removeEventListener(window, 'popstate', this.handlePopState);
-    super.teardown();
+  setup() {
+    if (this.location == null)
+      this._updateLocation();
   }
 
   handlePopState(event) {
     if (event.state === undefined)
       return; // Ignore extraneous popstate events in WebKit.
 
-    var path = getWindowPath();
-    var key = event.state && event.state.key;
-    this.handlePop(path, { key });
+    this._updateLocation(NavigationTypes.POP);
+    this._notifyChange();
+  }
+
+  addChangeListener(listener) {
+    super.addChangeListener(listener);
+
+    if (this.changeListeners.length === 1) {
+      if (window.addEventListener) {
+        window.addEventListener('popstate', this.handlePopState, false);
+      } else {
+        window.attachEvent('onpopstate', this.handlePopState);
+      }
+    }
+  }
+
+  removeChangeListener(listener) {
+    super.removeChangeListener(listener);
+
+    if (this.changeListeners.length === 0) {
+      if (window.removeEventListener) {
+        window.removeEventListener('popstate', this.handlePopState, false);
+      } else {
+        window.detachEvent('onpopstate', this.handlePopState);
+      }
+    }
   }
 
   // http://www.w3.org/TR/2011/WD-html5-20110113/history.html#dom-history-pushstate
-  push(path, key) {
+  pushState(state, path) {
     if (this.isSupported) {
-      var state = { key };
-      window.history.pushState(state, '', path);
-      return state;
-    }
+      updateCurrentState(this.getScrollPosition());
 
-    window.location = path;
+      state = this._createState(state);
+
+      window.history.pushState(state, '', path);
+      this.location = this.createLocation(path, state, NavigationTypes.PUSH);
+      this._notifyChange();
+    } else {
+      window.location = path;
+    }
   }
 
   // http://www.w3.org/TR/2011/WD-html5-20110113/history.html#dom-history-replacestate
-  replace(path, key) {
+  replaceState(state, path) {
     if (this.isSupported) {
-      var state = { key };
+      state = this._createState(state);
+
       window.history.replaceState(state, '', path);
-      return state;
+      this.location = this.createLocation(path, state, NavigationTypes.REPLACE);
+      this._notifyChange();
+    } else {
+      window.location.replace(path);
     }
-    window.location.replace(path);
   }
 }
 
