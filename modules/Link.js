@@ -1,7 +1,6 @@
-import React from 'react';
-import warning from 'warning';
+import { createClass, createElement, PropTypes } from 'react';
 
-var { object, string, func } = React.PropTypes;
+var { object, string, func } = PropTypes;
 
 function isLeftClickEvent(event) {
   return event.button === 0;
@@ -12,27 +11,27 @@ function isModifiedEvent(event) {
 }
 
 /**
- * A <Link> is used to create an <a> element that links to a route.
- * When that route is active, the link gets an "active" class name
- * (or the value of its `activeClassName` prop).
+ * <Link> components are used to create an <a> element that links to a route.
+ * When that route is active, the link gets an "active" class name (or the
+ * value of its `activeClassName` prop).
  *
  * For example, assuming you have the following route:
  *
- *   <Route path="/posts/:postID" component={Post} />
+ *   <Route name="showPost" path="/posts/:postID" handler={Post}/>
  *
  * You could use the following component to link to that route:
  *
  *   <Link to={`/posts/${post.id}`} />
  *
- * Links may pass along location state and/or query string parameters
- * in the state/query props, respectively.
+ * Links may pass along query string parameters
+ * using the `query` prop.
  *
- *   <Link ... query={{ show: true }} state={{ the: 'state' }} />
+ *   <Link to="/posts/123" query={{ show: true }}/>
  */
-var Link = React.createClass({
+var Link = createClass({
 
   contextTypes: {
-    history: object
+    router: object
   },
 
   propTypes: {
@@ -68,43 +67,33 @@ var Link = React.createClass({
     event.preventDefault();
 
     if (allowTransition)
-      this.context.history.pushState(this.props.state, this.props.to, this.props.query);
-  },
-
-  componentWillMount() {
-    warning(
-      this.context.history,
-      'A <Link> should not be rendered outside the context of history; ' +
-      'some features including real hrefs, active styling, and navigation ' +
-      'will not function correctly'
-    );
+      this.context.router.transitionTo(this.props.to, this.props.query, this.props.state);
   },
 
   render() {
-    var { to, query } = this.props;
+    var { router } = this.context;
 
-    var props = {
-      ...this.props,
+    var props = Object.assign({}, this.props, {
       onClick: this.handleClick
-    };
+    });
 
-    var { history } = this.context;
+    // Ignore if rendered outside of the context of a
+    // router, simplifies unit testing.
+    if (router) {
+      var { to, query } = this.props;
 
-    // Ignore if rendered outside the context
-    // of history, simplifies unit testing.
-    if (history) {
-      props.href = history.createHref(to, query);
+      props.href = router.createHref(to, query);
 
-      if (history.isActive(to, query)) {
+      if (router.isActive(to, query)) {
         if (props.activeClassName)
           props.className += props.className !== '' ? ` ${props.activeClassName}` : props.activeClassName;
 
         if (props.activeStyle)
-          props.style = { ...props.style, ...props.activeStyle };
+          props.style = Object.assign({}, props.style, props.activeStyle);
       }
     }
 
-    return React.createElement('a', props);
+    return createElement('a', props);
   }
 
 });

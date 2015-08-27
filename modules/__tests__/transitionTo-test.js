@@ -6,7 +6,7 @@ import execSteps from './execSteps';
 import Router from '../Router';
 import Route from '../Route';
 
-describe('pushState', function () {
+describe('transitionTo', function () {
   beforeEach(resetHash);
 
   var node;
@@ -35,7 +35,7 @@ describe('pushState', function () {
       var steps = [
         function () {
           expect(this.state.location.pathname).toEqual('/');
-          this.history.pushState(null, '/home/hi:there');
+          this.transitionTo('/home/hi:there');
         },
         function () {
           expect(this.state.location.pathname).toEqual('/home/hi:there');

@@ -3,8 +3,8 @@ import React from 'react';
 var { object } = React.PropTypes;
 
 /**
- * The State mixin provides components with an isActive(pathname, query)
- * method they can use to check if a given pathname/query are active.
+ * A mixin for components that need to know the path, routes, URL
+ * params and query that are currently active.
  *
  * Example:
  *
@@ -25,13 +25,20 @@ var { object } = React.PropTypes;
 var State = {
 
   contextTypes: {
-    history: object.isRequired
-  },
-
-  isActive(pathname, query) {
-    return this.context.history.isActive(pathname, query);
+    router: object.isRequired
   }
 
 };
+
+var RouterStateMethods = [
+  'isActive'
+];
+
+RouterStateMethods.forEach(function (method) {
+  State[method] = function () {
+    var router = this.context.router;
+    return router[method].apply(router, arguments);
+  };
+});
 
 export default State;

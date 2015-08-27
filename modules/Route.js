@@ -1,10 +1,10 @@
-import React from 'react';
 import warning from 'warning';
 import invariant from 'invariant';
+import { createClass, PropTypes } from 'react';
 import { createRouteFromReactElement } from './RouteUtils';
 import { component, components } from './PropTypes';
 
-var { string, bool, func } = React.PropTypes;
+var { string, bool, func } = PropTypes;
 
 /**
  * A <Route> is used to declare which components are rendered to the page when
@@ -16,7 +16,7 @@ var { string, bool, func } = React.PropTypes;
  * "active" and their components are rendered into the DOM, nested in the same
  * order as they are in the tree.
  */
-var Route = React.createClass({
+var Route = createClass({
 
   statics: {
 
@@ -24,11 +24,7 @@ var Route = React.createClass({
       var route = createRouteFromReactElement(element);
 
       if (route.handler) {
-        warning(
-          false,
-          '<Route handler> is deprecated, use <Route component> instead'
-        );
-
+        warning(false, '<Route handler> is deprecated, use <Route component> instead');
         route.component = route.handler;
         delete route.handler;
       }
@@ -41,7 +37,7 @@ var Route = React.createClass({
   propTypes: {
     path: string,
     ignoreScrollBehavior: bool,
-    handler: component, // deprecated
+    handler: component,
     component,
     components,
     getComponents: func

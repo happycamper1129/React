@@ -49,16 +49,22 @@ function queryIsActive(query, activeQuery) {
   return true;
 }
 
-/**
- * Returns true if a <Link> to the given pathname/query combination is
- * currently active.
- */
-function isActive(pathname, query, location, routes, params) {
-  if (location == null)
-    return false;
+var ActiveMixin = {
 
-  return pathnameIsActive(pathname, location.pathname, routes, params) &&
-    queryIsActive(query, location.query);
-}
+  /**
+   * Returns true if a <Link> to the given pathname/query combination is
+   * currently active.
+   */
+  isActive(pathname, query) {
+    var { location, routes, params } = this.state;
 
-export default isActive;
+    if (location == null)
+      return false;
+
+    return pathnameIsActive(pathname, location.pathname, routes, params) &&
+      queryIsActive(query, location.query);
+  }
+
+};
+
+export default ActiveMixin;

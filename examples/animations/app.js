@@ -1,4 +1,5 @@
 import React from 'react/addons';
+import createHistory from 'history/lib/createHashHistory';
 import { Router, Route, Link } from 'react-router';
 
 var { CSSTransitionGroup } = React.addons;
@@ -43,8 +44,10 @@ var Page2 = React.createClass({
   }
 });
 
+var history = createHistory();
+
 React.render((
-  <Router>
+  <Router history={history}>
     <Route path="/" component={App}>
       <Route path="page1" component={Page1} />
       <Route path="page2" component={Page2} />

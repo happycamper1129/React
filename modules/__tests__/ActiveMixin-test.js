@@ -1,10 +1,11 @@
 import expect from 'expect';
 import React from 'react';
+import createLocation from 'history/lib/createLocation';
 import createHistory from 'history/lib/createMemoryHistory';
 import Router from '../Router';
 import Route from '../Route';
 
-describe('isActive', function () {
+describe('ActiveMixin', function () {
 
   var node;
   beforeEach(function () {
@@ -19,11 +20,11 @@ describe('isActive', function () {
     describe('with no query', function () {
       it('is active', function (done) {
         React.render((
-          <Router history={createHistory('/home')}>
+          <Router location={createLocation('/home')}>
             <Route path="/home" />
           </Router>
         ), node, function () {
-          expect(this.history.isActive('/home')).toBe(true);
+          expect(this.isActive('/home')).toBe(true);
           done();
         });
       });
@@ -32,11 +33,11 @@ describe('isActive', function () {
     describe('with a query that also matches', function () {
       it('is active', function (done) {
         React.render((
-          <Router history={createHistory('/home?the=query')}>
+          <Router location={createLocation('/home?the=query')}>
             <Route path="/home" />
           </Router>
         ), node, function () {
-          expect(this.history.isActive('/home', { the: 'query' })).toBe(true);
+          expect(this.isActive('/home', { the: 'query' })).toBe(true);
           done();
         });
       });
@@ -45,11 +46,11 @@ describe('isActive', function () {
     describe('with a query that does not match', function () {
       it('is not active', function (done) {
         React.render((
-          <Router history={createHistory('/home?the=query')}>
+          <Router location={createLocation('/home?the=query')}>
             <Route path="/home" />
           </Router>
         ), node, function () {
-          expect(this.history.isActive('/home', { something: 'else' })).toBe(false);
+          expect(this.isActive('/home', { something: 'else' })).toBe(false);
           done();
         });
       });
@@ -60,13 +61,13 @@ describe('isActive', function () {
     describe('with no query', function () {
       it('is active', function (done) {
         React.render((
-          <Router history={createHistory('/absolute')}>
+          <Router location={createLocation('/absolute')}>
             <Route path="/home">
               <Route path="/absolute" />
             </Route>
           </Router>
         ), node, function () {
-          expect(this.history.isActive('/home')).toBe(true);
+          expect(this.isActive('/home')).toBe(true);
           done();
         });
       });
@@ -75,13 +76,13 @@ describe('isActive', function () {
     describe('with a query that also matches', function () {
       it('is active', function (done) {
         React.render((
-          <Router history={createHistory('/absolute?the=query')}>
+          <Router location={createLocation('/absolute?the=query')}>
             <Route path="/home">
               <Route path="/absolute" />
             </Route>
           </Router>
         ), node, function () {
-          expect(this.history.isActive('/home', { the: 'query' })).toBe(true);
+          expect(this.isActive('/home', { the: 'query' })).toBe(true);
           done();
         });
       });
@@ -90,13 +91,13 @@ describe('isActive', function () {
     describe('with a query that does not match', function () {
       it('is active', function (done) {
         React.render((
-          <Router history={createHistory('/absolute?the=query')}>
+          <Router location={createLocation('/absolute?the=query')}>
             <Route path="/home">
               <Route path="/absolute" />
             </Route>
           </Router>
         ), node, function () {
-          expect(this.history.isActive('/home', { something: 'else' })).toBe(false);
+          expect(this.isActive('/home', { something: 'else' })).toBe(false);
           done();
         });
       });
@@ -106,11 +107,11 @@ describe('isActive', function () {
   describe('a pathname that matches only the beginning of the URL', function () {
     it('is not active', function (done) {
       React.render((
-        <Router history={createHistory('/home')}>
+        <Router location={createLocation('/home')}>
           <Route path="/home" />
         </Router>
       ), node, function () {
-        expect(this.history.isActive('/h')).toBe(false);
+        expect(this.isActive('/h')).toBe(false);
         done();
       });
     });

@@ -1,4 +1,5 @@
 import React from 'react';
+import createHistory from 'history/lib/createHashHistory';
 import { Router, Route, Link } from 'react-router';
 import data from './data';
 
@@ -94,8 +95,10 @@ var App = React.createClass({
   }
 });
 
+var history = createHistory();
+
 React.render((
-  <Router>
+  <Router history={history}>
     <Route path="/" component={App}>
       <Route path="category/:category" components={{content: Category, sidebar: CategorySidebar}}>
         <Route path=":item" component={Item} />

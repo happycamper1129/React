@@ -1,4 +1,5 @@
 import React from 'react';
+import createHistory from 'history/lib/createHashHistory';
 import { Router, Link } from 'react-router';
 
 var pictures = [
@@ -111,19 +112,21 @@ var RootRoute = {
   component: App,
   indexRoute: FeedRoute,
 
-  getChildRoutes (location, callback) {
+  getChildRoutes (location, cb) {
     var { state } = location;
 
     if (state && state.fromFeed) {
-      callback(null, [ FeedRoute ]);
+      cb(null, [ FeedRoute ]);
     } else {
-      callback(null, [ PictureRoute ]);
+      cb(null, [ PictureRoute ]);
     }
   }
 };
 
+var history = createHistory();
+
 React.render(
-  <Router children={RootRoute} />,
+  <Router history={history} children={RootRoute} />,
   document.getElementById('example')
 );
 

@@ -1,10 +1,11 @@
 import React from 'react';
+import createHistory from 'history/lib/createHashHistory';
 import { Router, Route, Link, Navigation } from 'react-router';
 
 var App = React.createClass({
   mixins: [ Navigation ],
 
-  getInitialState() {
+  getInitialState: function () {
     return {
       tacos: [
         { name: 'duck confit' },
@@ -14,15 +15,14 @@ var App = React.createClass({
     };
   },
 
-  addTaco() {
+  addTaco: function () {
     var name = prompt('taco name?');
-
     this.setState({
       tacos: this.state.tacos.concat({name: name})
     });
   },
 
-  handleRemoveTaco(removedTaco) {
+  handleRemoveTaco: function (removedTaco) {
     var tacos = this.state.tacos.filter(function (taco) {
       return taco.name != removedTaco;
     });
@@ -30,7 +30,7 @@ var App = React.createClass({
     this.transitionTo('/');
   },
 
-  render() {
+  render: function () {
     var links = this.state.tacos.map(function (taco, i) {
       return (
         <li key={i}>
@@ -55,11 +55,11 @@ var App = React.createClass({
 });
 
 var Taco = React.createClass({
-  remove() {
+  remove: function () {
     this.props.onRemoveTaco(this.props.params.name);
   },
 
-  render() {
+  render: function () {
     return (
       <div className="Taco">
         <h1>{this.props.params.name}</h1>
@@ -69,8 +69,10 @@ var Taco = React.createClass({
   }
 });
 
+var history = createHistory();
+
 React.render((
-  <Router>
+  <Router history={history}>
     <Route path="/" component={App}>
       <Route path="taco/:name" component={Taco} />
     </Route>

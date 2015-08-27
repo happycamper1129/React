@@ -1,4 +1,5 @@
 import React, { findDOMNode } from 'react';
+import createHistory from 'history/lib/createHashHistory';
 import { Router, Navigation, Route, Link } from 'react-router';
 import ContactStore from './ContactStore';
 
@@ -148,8 +149,10 @@ var NotFound = React.createClass({
   }
 });
 
+var history = createHistory();
+
 React.render((
-  <Router>
+  <Router history={history}>
     <Route component={App}>
       <Route path="/" component={Index} />
       <Route path="contact/new" component={NewContact} />
