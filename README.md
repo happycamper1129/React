@@ -60,6 +60,7 @@ If you just want to drop a `<script>` tag in your page and be done with it, you 
 
 ```js
 import { Router, Route } from 'react-router';
+import { history } from 'react-router/lib/BrowserHistory';
 
 var App = React.createClass({/*...*/});
 var About = React.createClass({/*...*/});
@@ -108,7 +109,7 @@ var User = React.createClass({
 // instead, all you really need is a single root route, you don't need to
 // colocate the entire config).
 React.render((
-  <Router>
+  <Router history={history}>
     <Route path="/" component={App}>
       <Route path="about" component={About}/>
       <Route path="users" component={Users}>
