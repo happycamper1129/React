@@ -103,12 +103,12 @@ describe('server rendering', function () {
     });
   });
 
-  it('sends an error when no routes match', function (done) {
+  it('sends null values when no routes match', function (done) {
     var location = createLocation('/no-match');
-    match({ routes, location }, function (error, redirect, state) {
-      expect(error).toExist();
-      expect(error.name).toEqual('NoMatchError');
-      expect(error.message).toMatch(/\/no-match/);
+    match({ routes, location }, function (error, redirectLocation, state) {
+      expect(error).toBe(null);
+      expect(redirectLocation).toBe(null);
+      expect(state).toBe(null);
       done();
     });
   });

@@ -18,7 +18,8 @@ export default function match({
   });
 
   staticHistory.match(location, function (error, nextLocation, nextState) {
-    cb(error, nextLocation, {...nextState, history: staticHistory})
+    let renderProps = nextState ? {...nextState, history: staticHistory} : null;
+    cb(error, nextLocation, renderProps);
   });
 }
 

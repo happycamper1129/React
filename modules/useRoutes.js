@@ -62,8 +62,7 @@ function useRoutes(createHistory) {
               callback(err, nextLocation, nextState);
             });
           } else {
-            console.log(4)
-            callback(new NoMatchError(location));
+            callback(null, null, null);
           }
         });
       }
