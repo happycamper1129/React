@@ -1,4 +1,5 @@
 import React from 'react';
+import warning from 'warning';
 import createHashHistory from 'history/lib/createHashHistory';
 import { createRoutes } from './RouteUtils';
 import RoutingContext from './RoutingContext';
@@ -60,6 +61,13 @@ const Router = React.createClass({
         this.setState(state, this.props.onUpdate);
       }
     });
+  },
+
+  componentWillReceiveProps(nextProps) {
+    warning(
+      nextProps.history === this.props.history,
+      "The `history` provided to <Router/> has changed, it will be ignored."
+    );
   },
 
   componentWillUnmount() {
