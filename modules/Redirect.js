@@ -29,14 +29,14 @@ var Redirect = React.createClass({
         '<Redirect to> must be an absolute path. This should be fixed in the future'
       );
 
-      route.onEnter = function (nextState, replaceState) {
+      route.onEnter = function (nextState, redirectTo) {
         var { location, params } = nextState;
         var pathname = route.to ? formatPattern(route.to, params) : location.pathname;
 
-        replaceState(
-          route.state || location.state,
+        redirectTo(
           pathname,
-          route.query || location.query
+          route.query || location.query,
+          route.state || location.state
         );
       };
 

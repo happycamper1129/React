@@ -22,21 +22,21 @@ import createBrowserHistory from 'history/lib/createBrowserHistory'
 var createBrowserHistory = require('history/lib/createBrowserHistory')
 ```
 
-## `createHashHistory`
+### `createHashHistory`
 
 This is the default history you'll get if you don't specify a history at
 all (i.e. `<Router>{/* your routes */}</Router>`). It uses the hash
 (`#`) portion of the url creating routes that look like
 `example.com/#/some/path`.
 
-### Should I use `createHashHistory`?
+#### Should I use `createHashHistory`?
 
 Hash history is the default because it works without any setup on your
 server, and works in all evergreen browsers and IE8+. But, we don't
 recommend using it in production, every web app should aspire
 to use `createBrowserHistory`.
 
-### What is that `?_k=ckuvup` junk in the URL?
+#### What is that `?_k=ckuvup` junk in the URL?
 
 When a history transitions around your app with `pushState` or
 `replaceState`, it can store "location state" on the new location that
@@ -50,14 +50,14 @@ it by creating a unique key for each location and then store that state
 in session storage. When the visitor clicks "back" and "forward" we now
 have a mechanism to restore the location state.
 
-## `createBrowserHistory`
+### `createBrowserHistory`
 
 Browser history is the recommended history for browser application with
 React Router. It uses the [History](https://developer.mozilla.org/en-US/docs/Web/API/History)
 API built into the browser to manipulate the url, creating real urls that
 look like `example.com/some/path`.
 
-### Configuring Your Server
+#### Configuring Your Server
 
 Your server must be ready to handle real urls. When the app first loads
 at `/` it will probably work, but as the user navigates around and then
@@ -86,7 +86,7 @@ app.listen(port)
 console.log("server started on port " + port)
 ```
 
-### IE8, IE9 Support
+#### IE8, IE9 Support
 
 We feature detect to see if we can use the browser's native `History`
 api, if not, any call to transition around the app will result in _a
@@ -99,9 +99,8 @@ a url with a visitor on browser history, and then they share that back,
 we end up with a terrible cartesian product of infinite potential
 urls.
 
-## `createMemoryHistory`
+### `createMemoryHistory`
 
 Memory history doesn't manipulate or read from the address bar. This is
 how we implement server rendering, its also useful for testing and other
 rendering environments (like React Native).
-

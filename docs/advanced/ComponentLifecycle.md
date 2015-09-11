@@ -1,6 +1,6 @@
-# Component Lifecycle when Routing
+# Component Lifecycle
 
-Its important to understand which lifecycle hooks are going to be called
+It's important to understand which lifecycle hooks are going to be called
 on your route components to implement lots of different functionality in
 your app. The most common thing is fetching data.
 
@@ -18,7 +18,7 @@ Consider this route config:
 </Route>
 ```
 
-## Lifecycle hooks when routing
+### Lifecycle hooks when routing
 
 1. Lets say the user enters the app at `/`.
 
@@ -66,7 +66,7 @@ Consider this route config:
     | Invoice | componentWillUnmount |
     | Account | componentDidMount |
 
-## Fetching Data
+### Fetching Data
 
 While there are other ways to fetch data with the router, the simplest
 way is to simply use the lifecycle hooks of your components and keep
@@ -115,4 +115,3 @@ let Invoice = React.createClass({
 
 })
 ```
-
