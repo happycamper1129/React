@@ -8,7 +8,7 @@
   - [Route Matching](RouteMatching.md)
   - [Dynamic Routing](DynamicRouting.md)
   - [Confirming Navigation](ConfirmingNavigation.md)
-  - [Server Rendering](ServerRendering.md)
+  - [Server Rendering](Server Rendering.md)
   - [Component Lifecycle When Routing](ComponentLifecycleWhenRouting.md)
   - [Histories](Histories.md)
 
