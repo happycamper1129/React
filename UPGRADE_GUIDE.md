@@ -96,6 +96,21 @@ since its simple with a `*` path.
 <Link to={`/users/${user.id}`}>Mateusz</Link>
 ```
 
+### RouteHandler
+
+`RouteHandler` is gone. `Router` now automatically populates
+`this.props.children` of your components based on the active route.
+
+```js
+// v0.13.x
+<RouteHandler/>
+<RouteHandler someExtraProp={something}/>
+
+// v1.0
+{this.props.children}
+{React.cloneElement(this.props.children, {someExtraProp: something })}
+```
+
 #### "active" class
 
 In 0.13.x links added the "active" class by default which you could
