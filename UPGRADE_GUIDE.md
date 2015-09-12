@@ -96,19 +96,6 @@ since its simple with a `*` path.
 <Link to={`/users/${user.id}`}>Mateusz</Link>
 ```
 
-### RouteHandler
-
-`RouteHandler` has been deprecated. `Router` now automatically populates
-`this.props.children` of your components based on the active route.
-
-```
-// v0.13.x
-<RouteHandler {...this.props} />
-
-// v1.0
-{this.props.children}
-```
-
 #### "active" class
 
 In 0.13.x links added the "active" class by default which you could
@@ -146,8 +133,8 @@ active when the index route is active.
 
 // v1.0
 <Route path="/" component={App}>
-  <IndexRoute handler={Home}/>
-  <Route path="about" handler={About}/>
+  <IndexRoute component={Home}/>
+  <Route path="about" component={About}/>
 </Route>
 
 // will be active only when home is active, not when about is active
