@@ -1,12 +1,12 @@
-import React from 'react';
-import Link from './Link';
+import React from 'react'
+import Link from './Link'
 
-var IndexLink = React.createClass({
+const IndexLink = React.createClass({
 
   render() {
     return <Link {...this.props} onlyActiveOnIndex={true} />
   }
 
-});
+})
 
-export default IndexLink;
+export default IndexLink

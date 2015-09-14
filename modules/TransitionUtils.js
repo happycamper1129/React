@@ -1,24 +1,24 @@
-import { loopAsync } from './AsyncUtils';
+import { loopAsync } from './AsyncUtils'
 
 function createEnterHook(hook, route) {
   return function (a, b, callback) {
-    hook.apply(route, arguments);
+    hook.apply(route, arguments)
 
     if (hook.length < 3) {
       // Assume hook executes synchronously and
       // automatically call the callback.
-      callback();
+      callback()
     }
-  };
+  }
 }
 
 function getEnterHooks(routes) {
   return routes.reduce(function (hooks, route) {
     if (route.onEnter)
-      hooks.push(createEnterHook(route.onEnter, route));
+      hooks.push(createEnterHook(route.onEnter, route))
 
-    return hooks;
-  }, []);
+    return hooks
+  }, [])
 }
 
 /**
@@ -32,34 +32,34 @@ function getEnterHooks(routes) {
  * which could lead to a non-responsive UI if the hook is slow.
  */
 export function runEnterHooks(routes, nextState, callback) {
-  var hooks = getEnterHooks(routes);
+  const hooks = getEnterHooks(routes)
 
   if (!hooks.length) {
-    callback();
-    return;
+    callback()
+    return
   }
 
-  var redirectInfo;
+  let redirectInfo
   function replaceState(state, pathname, query) {
-    redirectInfo = { pathname, query, state };
+    redirectInfo = { pathname, query, state }
   }
 
   loopAsync(hooks.length, function (index, next, done) {
     hooks[index](nextState, replaceState, function (error) {
       if (error || redirectInfo) {
-        done(error, redirectInfo); // No need to continue.
+        done(error, redirectInfo) // No need to continue.
       } else {
-        next();
+        next()
       }
-    });
-  }, callback);
+    })
+  }, callback)
 }
 
 /**
  * Runs all onLeave hooks in the given array of routes in order.
  */
 export function runLeaveHooks(routes) {
-  for (var i = 0, len = routes.length; i < len; ++i)
+  for (let i = 0, len = routes.length; i < len; ++i)
     if (routes[i].onLeave)
-      routes[i].onLeave.call(routes[i]);
+      routes[i].onLeave.call(routes[i])
 }

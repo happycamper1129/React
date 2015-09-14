@@ -22,23 +22,23 @@ A single component to be rendered when the route matches the url. It can
 be rendered by the parent route component with `this.props.children`.
 
 ```js
-var routes = (
+const routes = (
   <Route component={App}>
     <Route path="groups" component={Groups}/>
     <Route path="users" component={Users}/>
   </Route>
-);
+)
 
-var App = React.createClass({
+const App = React.createClass({
   render () {
     return (
       <div>
         {/* this will be either <Users> or <Groups> */}
         {this.props.children}
       </div>
-    );
+    )
   }
-});
+})
 ```
 
 #### `components`
@@ -55,18 +55,18 @@ by the parent route component with `this.props.children[name]`.
 <App children={{main: <Users/>, sidebar: <UsersSidebar/>}}/>
 
 // So with the router it looks like this:
-var routes = (
+const routes = (
   <Route component={App}>
     <Route path="groups" components={{main: Groups, sidebar: GroupsSidebar}}/>
     <Route path="users" components={{main: Users, sidebar: UsersSidebar}}>
       <Route path="users/:userId" components={Profile}/>
     </Route>
   </Route>
-);
+)
 
-var App = React.createClass({
+const App = React.createClass({
   render () {
-    var { main, sidebar } = this.props.children;
+    const { main, sidebar } = this.props.children
     return (
       <div>
         <div className="Main">
@@ -76,11 +76,11 @@ var App = React.createClass({
           {sidebar}
         </div>
       </div>
-    );
+    )
   }
-});
+})
 
-var Users = React.createClass({
+const Users = React.createClass({
   render () {
     return (
       <div>
@@ -90,12 +90,12 @@ var Users = React.createClass({
             to continue with the nesting */}
         {this.props.children}
       </div>
-    );
+    )
   }
-});
+})
 ```
 
-#### `getComponent(callback)`
+#### `getComponent(location, callback)`
 
 Same as `component` but asynchronous, useful for
 code-splitting.
@@ -107,13 +107,13 @@ code-splitting.
 ##### Example
 
 ```js
-<Route path="courses/:courseId" getComponent={(cb) => {
+<Route path="courses/:courseId" getComponent={(location, cb) => {
   // do asynchronous stuff to find the components
-  cb(null, Course);
+  cb(null, Course)
 }}/>
 ```
 
-#### `getComponents(callback)`
+#### `getComponents(location, callback)`
 
 Same as `components` but asynchronous, useful for
 code-splitting.
@@ -125,9 +125,9 @@ code-splitting.
 ##### Example
 
 ```js
-<Route path="courses/:courseId" getComponent={(cb) => {
+<Route path="courses/:courseId" getComponent={(location, cb) => {
   // do asynchronous stuff to find the components
-  cb(null, {sidebar: CourseSidebar, content: Course});
+  cb(null, {sidebar: CourseSidebar, content: Course})
 }}/>
 ```
 
