@@ -15,7 +15,7 @@ Routes may define [`getChildRoutes`](/docs/api/PlainRoute.md#getchildrouteslocat
 Coupled with a smart code splitting tool like [webpack](http://webpack.github.io/), a once tireless architecture is now simple and declarative.
 
 ```js
-const CourseRoute = {
+var CourseRoute = {
   path: 'course/:courseId',
 
   getChildRoutes(location, callback) {
@@ -33,7 +33,7 @@ const CourseRoute = {
       callback(null, require('./components/Course'))
     })
   }
-}
+};
 ```
 
 Now go look at what hacks you have in place to do this. Just kidding, I don't want to make you sad right now.

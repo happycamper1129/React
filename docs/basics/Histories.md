@@ -19,7 +19,7 @@ Get them from the history package:
 // JavaScript module import
 import createBrowserHistory from 'history/lib/createBrowserHistory'
 // or commonjs
-const createBrowserHistory = require('history/lib/createBrowserHistory')
+var createBrowserHistory = require('history/lib/createBrowserHistory')
 ```
 
 ### `createHashHistory`
@@ -68,10 +68,10 @@ JavaScript application in the response.
 A quick example with express:
 
 ```js
-const express = require('express')
-const path = require('path')
-const port = process.env.PORT || 8080
-const app = express()
+var express = require('express')
+var path = require('path')
+var port = process.env.PORT || 8080
+var app = express()
 
 // serve static assets normally
 app.use(express.static(__dirname + '/public'))
@@ -104,26 +104,3 @@ urls.
 Memory history doesn't manipulate or read from the address bar. This is
 how we implement server rendering, its also useful for testing and other
 rendering environments (like React Native).
-
-## Example implementation
-
-```js
-import React from 'react';
-import createBrowserHistory from 'history/lib/createBrowserHistory';
-import {Router, Route, IndexRoute} from 'react-router';
-import App from '../components/App';
-import Home from '../components/Home';
-import About from '../components/About';
-import Features from '../components/Features';
-
-React.render(
-  <Router history={createBrowserHistory()}>
-    <Route path='/' component={App}>
-      <IndexRoute component={Home} />
-      <Route path='about' component={About} />
-      <Route path='features' component={Features} />
-    </Route>
-  </Router>,
-  document.getElementById('app')
-);
-```

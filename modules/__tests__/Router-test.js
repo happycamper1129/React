@@ -1,33 +1,33 @@
 /*eslint-env mocha */
 /*eslint react/prop-types: 0*/
-import expect from 'expect'
-import React from 'react'
-import createHistory from 'history/lib/createMemoryHistory'
-import Router from '../Router'
-import Route from '../Route'
+import expect from 'expect';
+import React from 'react';
+import createHistory from 'history/lib/createMemoryHistory';
+import Router from '../Router';
+import Route from '../Route';
 
 describe('Router', function () {
 
-  let node
+  var node;
   beforeEach(function () {
-    node = document.createElement('div')
-  })
+    node = document.createElement('div');
+  });
 
   afterEach(function () {
-    React.unmountComponentAtNode(node)
-  })
+    React.unmountComponentAtNode(node);
+  });
 
-  const Parent = React.createClass({
+  var Parent = React.createClass({
     render() {
-      return <div>parent{this.props.children}</div>
+      return <div>parent{this.props.children}</div>;
     }
-  })
+  });
 
-  const Child = React.createClass({
+  var Child = React.createClass({
     render() {
-      return <div>child</div>
+      return <div>child</div>;
     }
-  })
+  });
 
   it('renders routes', function (done) {
     React.render((
@@ -35,10 +35,10 @@ describe('Router', function () {
         <Route path="/" component={Parent} />
       </Router>
     ), node, function () {
-      expect(node.textContent.trim()).toEqual('parent')
-      done()
-    })
-  })
+      expect(node.textContent.trim()).toEqual('parent');
+      done();
+    });
+  });
 
   it('renders child routes when the parent does not have a path', function (done) {
     React.render((
@@ -50,10 +50,10 @@ describe('Router', function () {
         </Route>
       </Router>
     ), node, function () {
-      expect(node.textContent.trim()).toEqual('parentparentchild')
-      done()
-    })
-  })
+      expect(node.textContent.trim()).toEqual('parentparentchild');
+      done();
+    });
+  });
 
   it('renders nested children correctly', function (done) {
     React.render((
@@ -63,11 +63,11 @@ describe('Router', function () {
         </Route>
       </Router>
     ), node, function () {
-      expect(node.textContent.trim()).toMatch(/parent/)
-      expect(node.textContent.trim()).toMatch(/child/)
-      done()
-    })
-  })
+      expect(node.textContent.trim()).toMatch(/parent/);
+      expect(node.textContent.trim()).toMatch(/child/);
+      done();
+    });
+  });
 
   it('renders the child\'s component when it has no component', function (done) {
     React.render((
@@ -77,58 +77,58 @@ describe('Router', function () {
         </Route>
       </Router>
     ), node, function () {
-      expect(node.textContent.trim()).toMatch(/child/)
-      done()
-    })
-  })
+      expect(node.textContent.trim()).toMatch(/child/);
+      done();
+    });
+  });
 
   it('renders with a custom `createElement` prop', function(done) {
-    const Wrapper = React.createClass({
+    var Wrapper = React.createClass({
       render() {
-        const { Component } = this.props
+        var { Component } = this.props;
         return <Component fromWrapper="wrapped" />
       }
-    })
+    });
 
-    const Component = React.createClass({
+    var Component = React.createClass({
       render() {
-        return <div>{this.props.fromWrapper}</div>
+        return <div>{this.props.fromWrapper}</div>;
       }
-    })
+    });
 
     React.render((
       <Router history={createHistory('/')} createElement={Component => <Wrapper Component={Component} />}>
         <Route path="/" component={Component}/>
       </Router>
     ), node, function () {
-      expect(node.textContent.trim()).toEqual('wrapped')
-      done()
-    })
-  })
+      expect(node.textContent.trim()).toEqual('wrapped');
+      done();
+    });
+  });
 
   describe('with named components', function() {
     it('renders the named components', function(done) {
-      const Parent = React.createClass({
+      var Parent = React.createClass({
         render() {
           return (
             <div>
               {this.props.children.sidebar}-{this.props.children.content}
             </div>
-          )
+          );
         }
-      })
+      });
 
-      const Sidebar = React.createClass({
+      var Sidebar = React.createClass({
         render() {
-          return <div>sidebar</div>
+          return <div>sidebar</div>;
         }
-      })
+      });
 
-      const Content = React.createClass({
+      var Content = React.createClass({
         render() {
-          return <div>content</div>
+          return <div>content</div>;
         }
-      })
+      });
 
       React.render((
         <Router history={createHistory('/')}>
@@ -137,11 +137,11 @@ describe('Router', function () {
           </Route>
         </Router>
       ), node, function () {
-        expect(node.textContent.trim()).toEqual('sidebar-content')
-        done()
-      })
-    })
-  })
+        expect(node.textContent.trim()).toEqual('sidebar-content');
+        done();
+      });
+    });
+  });
 
   describe('at a route with special characters', function () {
     it('does not double escape', function(done) {
@@ -155,19 +155,19 @@ describe('Router', function () {
           <Route path="point/:some_token" component={MyComponent} />
         </Router>
       ), node, function () {
-        expect(node.textContent.trim()).toEqual('aaa+bbb')
-        done()
-      })
-    })
+        expect(node.textContent.trim()).toEqual('aaa+bbb');
+        done();
+      });
+    });
 
     it('does not double escape when nested', function(done) {
       // https://github.com/rackt/react-router/issues/1574
       let MyWrapperComponent = React.createClass({
-        render () { return this.props.children }
-      })
+        render () { return this.props.children; }
+      });
       let MyComponent = React.createClass({
         render () { return <div>{this.props.params.some_token}</div> }
-      })
+      });
 
       React.render((
         <Router history={createHistory('/point/aaa%2Bbbb')}>
@@ -176,10 +176,10 @@ describe('Router', function () {
           </Route>
         </Router>
       ), node, function () {
-        expect(node.textContent.trim()).toEqual('aaa+bbb')
-        done()
-      })
-    })
+        expect(node.textContent.trim()).toEqual('aaa+bbb');
+        done();
+      });
+    });
 
     it('is happy to have colons in parameter values', function(done) {
       // https://github.com/rackt/react-router/issues/1759
@@ -192,10 +192,10 @@ describe('Router', function () {
           <Route path="ns/:foo/bar" component={MyComponent} />
         </Router>
       ), node, function () {
-        expect(node.textContent.trim()).toEqual('aaa:bbb')
-        done()
-      })
-    })
+        expect(node.textContent.trim()).toEqual('aaa:bbb');
+        done();
+      });
+    });
 
     it('handles % in parameters', function(done) {
       // https://github.com/rackt/react-router/issues/1766
@@ -208,10 +208,10 @@ describe('Router', function () {
           <Route path="/company/:name" component={MyComponent} />
         </Router>
       ), node, function () {
-        expect(node.textContent.trim()).toEqual('CADENCE DESIGN SYSTEM INC NOTE 2.625% 60')
-        done()
-      })
-    })
+        expect(node.textContent.trim()).toEqual('CADENCE DESIGN SYSTEM INC NOTE 2.625% 60');
+        done();
+      });
+    });
 
     it('handles forward slashes', function(done) {
       // https://github.com/rackt/react-router/issues/1865
@@ -235,11 +235,11 @@ describe('Router', function () {
           </Route>
         </Router>
       ), node, function () {
-        expect(node.textContent.trim()).toEqual('apple/banana')
-        done()
-      })
-    })
+        expect(node.textContent.trim()).toEqual('apple/banana');
+        done();
+      });
+    });
 
-  })
+  });
 
-})
+});

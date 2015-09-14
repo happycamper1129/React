@@ -38,23 +38,6 @@ React.render((
 React.render(<Router routes={routes}/>, el)
 ```
 
-### Locations
-
-Locations are now called histories (that emit locations). You import
-them from the `history` package, not react router.
-
-```js
-// v0.13.x
-Router.run(routes, Router.BrowserHistory, (Handler) => {
-  React.render(<Handler/>, el);
-})
-
-// v1.0
-import createBrowserHistory from 'history/lib/createBrowserHistory'
-let history = createBrowserHistory()
-React.render(<Router history={history}>{routes}</Router>, el)
-```
-
 ### Route Config
 
 You can still nest your routes as before, paths are inherited from
@@ -121,7 +104,7 @@ don't need this and the check is (currently) expensive.
 
 Links no longer add the "active" class by default, you opt-in by
 providing one; if no `activeClassName` or `activeStyles` are provided,
-the link will not check if it's active.
+the link will not check if its active.
 
 ```js
 // v0.13.x
@@ -150,32 +133,17 @@ active when the index route is active.
 
 // v1.0
 <Route path="/" component={App}>
-  <IndexRoute component={Home}/>
-  <Route path="about" component={About}/>
+  <IndexRoute handler={Home}/>
+  <Route path="about" handler={About}/>
 </Route>
 
 // will be active only when home is active, not when about is active
-<IndexLink to="/">Home</IndexLink>
-```
-
-### RouteHandler
-
-`RouteHandler` is gone. `Router` now automatically populates
-`this.props.children` of your components based on the active route.
-
-```js
-// v0.13.x
-<RouteHandler/>
-<RouteHandler someExtraProp={something}/>
-
-// v1.0
-{this.props.children}
-{React.cloneElement(this.props.children, {someExtraProp: something })}
+<IndexLink to="/">Home</Link>
 ```
 
 ### Navigation Mixin
 
-If you were using the `Navigation` mixin, use the `History` mixin instead.
+If you were using the navigation, instead use the `History` mixin.
 
 ```js
 // v0.13.x
@@ -226,7 +194,7 @@ var Assignment = React.createClass({
 
 // v1.0
 // if you are a route component...
-<Route component={Assignment} />
+<Route component={Assignment/>
 
 var Assignment = React.createClass({
   foo () {
@@ -237,8 +205,8 @@ var Assignment = React.createClass({
 })
 
 // if you're not a route component, you need to pass location down the
-// tree or get the location from context. We will probably provide a
-// higher order component that will do this for you but haven't yet.
+// tree or get the location from context, we will probably provide a
+// higher order component that will do this for you but haven't yet
 var Assignment = React.createClass({
   contextTypes: {
     location: React.PropTypes.object
@@ -258,47 +226,13 @@ and where you get it now if you're a route component (`this.props`)
 | `getPath()`     | `location.pathname+location.query` |
 | `getPathname()` | `location.pathname`                |
 | `getParams()`   | `params`                           |
-| `getQuery()`    | `location.query`                            |
+| `getQuery()`    | `query`                            |
 | `getRoutes()`   | `routes`                           |
-| `isActive(to, params, query)` | `history.isActive(pathname, query, onlyActiveOnIndex)` |
-
-### Scrolling
-
-In 0.13.x we had a couple of implementations to restore scroll position,
-we've realized that we can build a better implementation on top of the
-router and will be doing that very soon, before the 1.0 final release,
-but it doesn't need to be baked into routing like it was before.
-
-### `willTransitionTo` and `willTransitionFrom`
-
-Routes now define this behavior:
-
-```js
-// v0.13.x
-var Home = React.createClass({
-  statics: {
-    willTransitionTo (transition, params, query, callback) {
-    }
-    willTransitionFrom (component, transition, params, query, callback) {
-    }
-  }
-})
-
-// v1.0
-<Route
-  component={Home}
-  onEnter={(location, replaceWith) => {}}
-  onLeave={() => {}}
-/>
-```
-
-To cancel a "transition from", please refer to the
-[Confirming Navigation](docs/advanced/ConfirmingNavigation.md) guide.
 
 ### We'll keep updating this
 
 There's a lot of the old API we've missed, please give the [new
-docs](/docs) a read and help us fill this guide in. Thanks!
+docs](/docs) a read and help us fill this guide in. Thansk!
 
 
 0.13.2 -> 0.13.3
@@ -893,7 +827,7 @@ handlers) so we've removed it.
 Please don't upgrade to `0.8.0`, just skip to `0.9.x`.
 
 `0.8.0` had some transient mixins we didn't intend to document, but had
-some miscommunication :(. If you were one of three people who used some
+some miscommunication :( If you were one of three people who used some
 of these mixins and need help upgrading from `0.8.0 -> 0.9.x` find us on
 freenode in `#rackt` or open a ticket. Thanks!
 
@@ -935,7 +869,7 @@ Simply add `/` in front of all your paths to keep things working.
 </Route>
 ```
 
-Though you may want to embrace this new feature:
+Though, you may want to embrace this new feature:
 
 ```xml
 <!-- 0.5.x -->

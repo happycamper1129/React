@@ -1,6 +1,6 @@
-import React from 'react'
+import React from 'react';
 
-const { object } = React.PropTypes
+var { object } = React.PropTypes;
 
 /**
  * The RouteContext mixin provides a convenient way for route
@@ -8,7 +8,7 @@ const { object } = React.PropTypes
  * routes that render elements that want to use the Lifecycle
  * mixin to prevent transitions.
  */
-const RouteContext = {
+var RouteContext = {
 
   propTypes: {
     route: object.isRequired
@@ -21,9 +21,9 @@ const RouteContext = {
   getChildContext() {
     return {
       route: this.props.route
-    }
+    };
   }
 
-}
+};
 
-export default RouteContext
+export default RouteContext;
