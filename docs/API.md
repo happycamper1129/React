@@ -32,7 +32,10 @@ Primary component of React Router. It keeps your UI and the URL in sync.
 
 #### Props
 ##### `children` (required)
-One or many [`Routes`](#route) or [`PlainRoutes`](#plainroute). When the history changes, `<Router>` will match a branch of its [`Routes`](#route), and render their configured [components](#routecomponent), with child route components nested inside the parents.
+One or many [`Routes`](#route) or [`PlainRoutes`](#plainroute). When the
+history changes, `Router` will match a branch of its [`Routes`](#route),
+and render their configured [components](#routecomponent), with child
+route components nested inside the parents.
 
 ##### `routes`
 Alias for `children`.
@@ -41,10 +44,12 @@ Alias for `children`.
 The history the router should listen to from the `history` package.
 
 ##### `createElement(Component, props)`
-When the router is ready to render a branch of route components, it will use this function to create the elements. You may want to take control of creating the elements when you're using some sort of data abstraction, like setting up subscriptions to stores, or passing in some sort of application module to each component via props.  
+When the router is ready to render a branch of route components, it will
+use this function to create the elements. You may want to take control
+of creating the elements when you're using some sort of data abstraction, like setting up subscriptions to stores, or passing in some sort of application module to each component via props.
 
 ```js
-<Router createElement={createElement} />
+<Router createElement={createElement}/>
 
 // default behavior
 function createElement(Component, props) {
@@ -78,9 +83,11 @@ Please see the [`examples/`](/examples) directory of the repository for extensiv
 
 
 ### Link
-The primary way to allow users to navigate around your application. `<Link>` will render a fully accessible anchor tag with the proper href.
+The primary way to allow users to navigate around your application.
+`Link` will render a fully accessible anchor tag with the proper href.
 
-A `<Link>` also knows when the route it links to is active and automatically applies its `activeClassName` and/or `activeStyle` when it is.
+A `Link` also knows when the route it links to is active and automatically
+applies its `activeClassName` and/or `activeStyle` when it is.
 
 #### Props
 ##### `to`
@@ -93,19 +100,22 @@ An object of key:value pairs to be stringified.
 State to persist to the `location`.
 
 ##### `activeClassName`
-The className a `<Link>` receives when its route is active. No active class by default.
+The className a `Link` receives when its route is active. No active class by default.
 
 ##### `activeStyle`
 The styles to apply to the link element when its route is active.
 
-##### `onClick(e)`
-A custom handler for the click event. Works just like a handler on an `<a>` tag - calling `e.preventDefault()` or returning `false` will prevent the transition from firing, while `e.stopPropagation()` will prevent the event from bubbling.
+##### `onClick`
+A custom handler for the click event. Works just like a handler on an `<a>`
+tag - calling `e.preventDefault()` or returning `false` will prevent the
+transition from firing, while `e.stopPropagation()` will prevent the event
+from bubbling.
 
 ##### *others*
-You can also pass props you'd like to be on the `<a>` such as a `title`, `id`, `className`, etc.
+You can also pass props you'd like to be on the `<a>` such as a title, id, className, etc.
 
 #### Example
-Given a route like `<Route path="/users/:userId" />`:
+Given a route like `<Route path="/users/:userId"/>`:
 
 ```js
 <Link to={`/users/${user.id}`} activeClassName="active">{user.name}</Link>
@@ -125,7 +135,7 @@ Given a route like `<Route path="/users/:userId" />`:
 Docs coming so soon!
 
 ### RoutingContext
-A `<RoutingContext>` renders the component tree for a given router state and sets the history object and the current location in context.
+A `RoutingContext` renders the component tree for a given router state and sets the history object and the current location in context.
 
 
 
@@ -158,7 +168,7 @@ const routes = (
   </Route>
 )
 
-class App extends React.Component {
+const App = React.createClass({
   render () {
     return (
       <div>
@@ -167,7 +177,7 @@ class App extends React.Component {
       </div>
     )
   }
-}
+})
 ```
 
 ##### `components`
@@ -190,7 +200,7 @@ const routes = (
   </Route>
 )
 
-class App extends React.Component {
+const App = React.createClass({
   render () {
     const { main, sidebar } = this.props.children
     return (
@@ -204,9 +214,9 @@ class App extends React.Component {
       </div>
     )
   }
-}
+})
 
-class Users extends React.Component {
+const Users = React.createClass({
   render () {
     return (
       <div>
@@ -218,7 +228,7 @@ class Users extends React.Component {
       </div>
     )
   }
-}
+})
 ```
 ##### `getComponent(location, callback)`
 Same as `component` but asynchronous, useful for
@@ -260,14 +270,19 @@ Called when a route is about to be exited.
 
 
 ## PlainRoute
-A plain JavaScript object route definition. `Router` turns JSX `<Route>`s into these objects, but you can use them directly if you prefer. All of the props are the same as `<Route>` props, except those listed here.
+A plain JavaScript object route definition. `Router` turns JSX
+`<Route/>`s into these objects, but you can use them directly if you
+prefer. All of the props are the same as `<Route/>` props, except
+those listed here.
 
 #### Props
 ##### `childRoutes`
 An array of child routes, same as `children` in JSX route configs.
 
 ##### `getChildRoutes(location, callback)`
-Same as `childRoutes` but asynchronous and receives the `location`. Useful for code-splitting and dynamic route matching (given some state or session data to return a different set of child routes).
+Same as `childRoutes` but asynchronous and receives the `location`.
+Useful for code-splitting and dynamic route matching (given some state
+or session data to return a different set of child routes).
 
 ###### `callback` signature
 `cb(err, routesArray)`
@@ -285,26 +300,24 @@ let myRoute = {
 // async child routes
 let myRoute = {
   path: 'course/:courseId',
-  getChildRoutes(location, cb) {
+  getChildRoutes (location, cb) {
     // do asynchronous stuff to find the child routes
-    cb(null, [ announcementsRoute, gradesRoute, assignmentsRoute ])
+    cb(null, [announcementsRoute, gradesRoute, assignmentsRoute])
   }
 }
 
 // navigation dependent child routes
 // can link with some state
-<Link to="/picture/123" state={{ fromDashboard: true }}/>
+<Link to="/picture/123" state={{fromDashboard: true}}/>
 
 let myRoute = {
   path: 'picture/:id',
-  getChildRoutes(location, cb) {
+  getChildRoutes (location, cb) {
     let { state } = location
-
-    if (state && state.fromDashboard) {
+    if (state && state.fromDashboard)
       cb(null, [dashboardPictureRoute])
-    } else {
+    else
       cb(null, [pictureRoute])
-    }
   }
 }
 ```
@@ -312,7 +325,8 @@ let myRoute = {
 
 
 ## Redirect
-A `<Redirect>` sets up a redirect to another route in your application to maintain old URLs.
+A `Redirect` sets up a redirect to another route in your application to
+maintain old URLs.
 
 #### Props
 ##### `from`
@@ -322,32 +336,35 @@ The path you want to redirect from, including dynamic segments.
 The path you want to redirect to.
 
 ##### `query`
-By default, the query parameters will just pass through but you can specify them if you need to.
+By default, the query parameters will just pass through but you can
+specify them if you need to.
 
 ```js
-// Say we want to change from `/profile/123` to `/about/123`
+// lets say we want to change from `/profile/123` to `/about/123`
 // and redirect `/get-in-touch` to `/contact`
 <Route component={App}>
   <Route path="about/:userId" component={UserProfile}/>
-  {/* /profile/123 -> /about/123 */}
-  <Redirect from="profile/:userId" to="about/:userId" />
+
+  {/* `/profile/123` -> `/about/123` */}
+  <Redirect from="/profile/:userId" to="/about/:userId" />
 </Route>
 ```
 
-Note that the `<Redirect>` can be placed anywhere in the route hierarchy, though [normal precedence](/docs/guides/basics/RouteMatching.md#precedence) rules apply. If you'd prefer the redirects to be next to their respective routes, the `from` path will match the same as a regular route `path`.
+Note that the `<Redirect/>` can be placed anywhere in the route hierarchy, though [normal precedence](/docs/guides/basics/RouteMatching.md#precedence) rules apply. If you'd prefer the redirects to be next to their respective routes, the `from` path will match the same as a regular route `path`.  Currently, the `to` property of `<Redirect/>` needs to be an absolute path. Pull requests welcome to make them handle relative paths too!
 
 ```js
 <Route path="course/:courseId">
-  <Route path="dashboard" />
+  <Route path="dashboard"/>
   {/* /course/123/home -> /course/123/dashboard */}
-  <Redirect from="home" to="dashboard" />
+  <Redirect from="home" to="/course/:courseId/dashboard" />
 </Route>
 ```
+
 
 ## IndexRoute
 Index Routes allow you to provide a default "child" to a parent
 route when visitor is at the url of the parent, they provide convention
-for `<IndexLink>` to work.
+for `<IndexLink/>` to work.
 
 Please see the [Index Routes guide](/docs/guides/basics/IndexRoutes.md)
 
@@ -388,7 +405,7 @@ React.render((
   </Router>
 ), node)
 
-class App extends React.Component {
+const App = React.createClass({
   render() {
     return (
       <div>
@@ -397,7 +414,7 @@ class App extends React.Component {
       </div>
     )
   }
-}
+})
 ```
 
 ### Named Components
@@ -416,7 +433,7 @@ React.render((
   </Router>
 ), node)
 
-class App extends React.Component {
+const App = React.createClass({
   render() {
     // the matched child route components become props in the parent
     return (
@@ -432,9 +449,9 @@ class App extends React.Component {
       </div>
     )
   }
-}
+})
 
-class Users extends React.Component {
+const Users = React.createClass({
   render() {
     return (
       <div>
@@ -445,7 +462,7 @@ class Users extends React.Component {
       </div>
     )
   }
-}
+})
 ```
 
 
@@ -453,7 +470,10 @@ class Users extends React.Component {
 ## Mixins
 
 ## Lifecycle Mixin
-Adds a hook to your component instance that is called when the router is about to navigate away from the route the component is configured on, with the opportunity to cancel the transition. Mostly useful for forms that are partially filled out.
+Adds a hook to your component instance that is called when the router is
+about to navigate away from the route the component is configured on,
+with the opportunity to cancel the transition. Mostly useful for forms
+that are partially filled out.
 
 On standard transitions, `routerWillLeave` receives a single argument: the `location` we're transitioning to. To cancel the transition, return false.
 
@@ -461,7 +481,8 @@ To prompt the user for confirmation, return a prompt message (string). `routerWi
 
 #### Lifecycle Methods
 ##### `routerWillLeave(nextLocation)`
-Called when the router is attempting to transition away from the route that rendered this component.
+Called when the router is attempting to transition away from the route
+that rendered this component.
 
 ##### arguments
 - `nextLocation` - the next location
@@ -471,7 +492,9 @@ Called when the router is attempting to transition away from the route that rend
 ## History Mixin
 Adds the router's `history` object to your component instance.
 
-**Note**: You do not need this mixin for route components, it's already available as `this.props.history`. This is for components deeper in the render tree that need access to the router's `history` object.
+**Note**: You do not need this mixin for route components, its already
+available as `this.props.history`. This is for components deeper in the
+render tree that need access to the router's history object.
 
 #### Methods
 ##### `pushState(state, pathname, query)`
@@ -483,7 +506,8 @@ Transitions to a new URL.
 - `query` - an object that will be stringified by the router.
 
 ##### `replaceState(state, pathname, query)`
-Replaces the current URL with a new one, without affecting the length of the history (like a redirect).
+Replaces the current URL with a new one, without affecting the length of
+the history (like a redirect).
 
 ###### arguments
 - `state` - the location state.
@@ -503,10 +527,13 @@ Go forward one entry in the history.
 Stringifies the query into the pathname, using the router's config.
 
 ##### `createHref(pathname, query)`
-Creates a URL, using the router's config. For example, it will add `#/` in front of the `pathname` for hash history.
+Creates a URL, using the router's config. For example, it will add `#/` in
+front of the `pathname` for hash history.
 
 ##### `isActive(pathname, query)`
-Returns `true` or `false` depending on if the current path is active. Will be true for every route in the route branch matched by the `pathname` (child route is active, therefore parent is too).
+Returns `true` or `false` depending on if the current path is active.
+Will be true for every route in the route branch matched by the
+`pathname` (child route is active, therefore parent is too).
 
 ###### arguments
 - `pathname` - the full url with or without the query.
@@ -517,7 +544,9 @@ Returns `true` or `false` depending on if the current path is active. Will be tr
 import { History } from 'react-router'
 
 React.createClass({
+
   mixins: [ History ],
+
   render() {
     return (
       <div>
@@ -530,18 +559,22 @@ React.createClass({
 })
 ```
 
-Let's say you are using bootstrap and want to get `active` on those `li` tags for the Tabs:
+Let's say you are using bootstrap and want to get `active` on those `li`
+tags for the Tabs:
 
 ```js
 import { Link, History } from 'react-router'
 
-const Tab = React.createClass({
+let Tab = React.createClass({
+
   mixins: [ History ],
+
   render() {
     let isActive = this.history.isActive(this.props.to, this.props.query)
     let className = isActive ? 'active' : ''
     return <li className={className}><Link {...this.props}/></li>
   }
+
 })
 
 // use it just like <Link/>, and you'll get an anchor wrapped in an `li`
@@ -554,31 +587,35 @@ const Tab = React.createClass({
 
 https://twitter.com/soprano/status/610867662797807617
 
-If you aren't happy using `createClass` for a handful of components in your app for the sake of the `History` mixin, have a couple of options:
+If you aren't happy using `createClass` for a handful of components in
+your app for the sake of the `History` mixin, have a couple of options:
 
-- Pass `this.props.history` from your route components down to the components that need it.
+- Pass `this.props.history` from your route components down to the
+  components that need it.
+
 - Use context
 
 ```js
-import { PropTypes } from 'react-router'
-
+import PropTypes from 'react-router'
 class MyComponent extends React.Component {
-  doStuff() {
+  doStuff () {
     this.context.history.pushState(null, '/some/path')
   }
 }
-
 MyComponent.contextTypes = { history: PropTypes.history }
 ```
 
 - [Make your history a module](/docs/guides/advanced/NavigatingOutsideOfComponents.md)
-- Create a higher order component, we might end up shipping with this and deprecating history, just haven't had the time to think it through all the way.
+
+- Create a higher order component, we might end up shipping with this
+  and deprecating history, just haven't had the time to think it through
+  all the way.
 
 ```js
-function connectHistory(Component) {
+function connectHistory (Component) {
   return React.createClass({
     mixins: [ History ],
-    render() {
+    render () {
       return <Component {...this.props} history={this.history} />
     }
   })
@@ -588,7 +625,7 @@ function connectHistory(Component) {
 import connectHistory from './connectHistory'
 
 class MyComponent extends React.Component {
-  doStuff() {
+  doStuff () {
     this.props.history.pushState(null, '/some/where')
   }
 }
@@ -608,12 +645,13 @@ It simply adds `this.context.route` to your component.
 ## Utilities
 
 ## `useRoutes(createHistory)`
-Returns a new `createHistory` function that may be used to create history objects that know about routing.
+Returns a new createHistory function that may be used to create history objects that know about routing.
 
+- isActive(pathname, query)
+- registerRouteHook(route, (location) => {})
+- unregisterRouteHook(route, (location) => {})
+- match(location, (error, nextState, nextLocation) => {})
 - listen((error, nextState) => {})
-- listenBeforeLeavingRoute(route, (nextLocation) => {})
-- match(location, (error, redirectLocation, nextState) => {})
-- isActive(pathname, query, indexOnly=false)
 
 
 

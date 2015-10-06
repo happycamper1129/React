@@ -1,6 +1,7 @@
 import warning from 'warning'
 import { REPLACE } from 'history/lib/Actions'
 import useQueries from 'history/lib/useQueries'
+import createLocation from 'history/lib/createLocation'
 import computeChangedRoutes from './computeChangedRoutes'
 import { runEnterHooks, runLeaveHooks } from './TransitionUtils'
 import { default as _isActive } from './isActive'
@@ -19,12 +20,10 @@ function hasAnyProperties(object) {
  * Returns a new createHistory function that may be used to create
  * history objects that know about routing.
  *
- * Enhances history objects with the following methods:
- *
+ * - isActive(pathname, query)
+ * - match(location, (error, nextState, nextLocation) => {})
+ * - listenBeforeLeavingRoute(route, (?nextLocation) => {})
  * - listen((error, nextState) => {})
- * - listenBeforeLeavingRoute(route, (nextLocation) => {})
- * - match(location, (error, redirectLocation, nextState) => {})
- * - isActive(pathname, query, indexOnly=false)
  */
 function useRoutes(createHistory) {
   return function (options={}) {
@@ -34,12 +33,6 @@ function useRoutes(createHistory) {
 
     function isActive(pathname, query, indexOnly=false) {
       return _isActive(pathname, query, indexOnly, state.location, state.routes, state.params)
-    }
-
-    function createLocationFromRedirectInfo({ pathname, query, state }) {
-      return history.createLocation(
-        history.createPath(pathname, query), state, REPLACE
-      )
     }
 
     let partialNextState
@@ -61,6 +54,12 @@ function useRoutes(createHistory) {
       }
     }
 
+    function createLocationFromRedirectInfo({ pathname, query, state }) {
+      return createLocation(
+        history.createPath(pathname, query), state, REPLACE, history.createKey()
+      )
+    }
+
     function finishMatch(nextState, callback) {
       let { leaveRoutes, enterRoutes } = computeChangedRoutes(state, nextState)
 
@@ -77,9 +76,7 @@ function useRoutes(createHistory) {
             if (error) {
               callback(error)
             } else {
-              // TODO: Make match a pure function and have some other API
-              // for "match and update state".
-              callback(null, null, (state = { ...nextState, components }))
+              callback(null, null, { ...nextState, components })
             }
           })
         }
@@ -184,7 +181,7 @@ function useRoutes(createHistory) {
       } else if (hooks.indexOf(hook) === -1) {
         hooks.push(hook)
       }
-
+      
       return function () {
         let hooks = RouteHooks[routeID]
 
@@ -225,18 +222,18 @@ function useRoutes(createHistory) {
         if (state.location === location) {
           listener(null, state)
         } else {
-          match(location, function (error, redirectLocation, nextState) {
+          match(location, function (error, nextLocation, nextState) {
             if (error) {
               listener(error)
-            } else if (redirectLocation) {
-              history.transitionTo(redirectLocation)
+            } else if (nextLocation) {
+              history.transitionTo(nextLocation)
             } else if (nextState) {
-              listener(null, nextState)
+              listener(null, (state = nextState))
             } else {
               warning(
                 false,
                 'Location "%s" did not match any routes',
-                location.pathname + location.search + location.hash
+                location.pathname + location.search
               )
             }
           })

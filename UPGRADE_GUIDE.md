@@ -55,9 +55,9 @@ let history = createBrowserHistory()
 React.render(<Router history={history}>{routes}</Router>, el)
 ```
 
-After updating to 1.0.0 you will notice that a magic querystring entry starts appearing in your URLs called "_k". An example of how it looks is this: `?_k=umhx1s`.  
+If you do not specify a history type (as in the example above) then you will notice some unusual behaviour after updating to 1.0.0. With the default hash based routing a querystring entry not defined by yourself will start appearing in your URLs called "_k". An example of how it looks is this: `?_k=umhx1s`.  
 
-This is not a bug - this is intended. You can read more about the feature [here](https://github.com/rackt/react-router/blob/master/docs/guides/basics/Histories.md#what-is-that-_kckuvup-junk-in-the-url) and how to opt out [here](https://rackt.github.io/history/stable/HashHistoryCaveats.html).
+This is intended and part of [createHashHistory](https://github.com/rackt/react-router/blob/master/docs/guides/basics/Histories.md#createhashhistory) (which is the default history approach used if one is not specified). You can read more about the feature [here](https://github.com/rackt/react-router/blob/master/docs/guides/basics/Histories.md#what-is-that-_kckuvup-junk-in-the-url) and how to opt out [here](https://rackt.github.io/history/stable/HashHistoryCaveats.html).
 
 ### Route Config
 
@@ -120,11 +120,11 @@ since it's simple with a `*` path.
 #### "active" class
 
 In 0.13.x links added the "active" class by default which you could
-override with `activeClassName`, or provide `activeStyle`s. Most links
+override with `activeClassName`, or provide `activeStyles`. Most links
 don't need this and the check is (currently) expensive.
 
 Links no longer add the "active" class by default, you opt-in by
-providing one; if no `activeClassName` or `activeStyle`s are provided,
+providing one; if no `activeClassName` or `activeStyles` are provided,
 the link will not check if it's active.
 
 ```js

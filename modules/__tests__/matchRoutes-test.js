@@ -4,14 +4,13 @@ import Route from '../Route'
 
 import assert from 'assert'
 import expect from 'expect'
-import { createMemoryHistory } from 'history'
+import { createLocation } from 'history'
 import { createRoutes } from '../RouteUtils'
 import matchRoutes from '../matchRoutes'
 
 describe('matchRoutes', function () {
 
   let routes, RootRoute, UsersRoute, UsersIndexRoute, UserRoute, PostRoute, FilesRoute, AboutRoute, TeamRoute, ProfileRoute, CatchAllRoute
-  let createLocation = createMemoryHistory().createLocation
   beforeEach(function () {
     /*
     <Route>

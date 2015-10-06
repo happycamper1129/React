@@ -2,8 +2,9 @@
 /*eslint react/prop-types: 0*/
 import expect from 'expect'
 import React from 'react'
-import match from '../match'
+import createLocation from 'history/lib/createLocation'
 import RoutingContext from '../RoutingContext'
+import match from '../match'
 import Link from '../Link'
 
 describe('server rendering', function () {
@@ -70,7 +71,8 @@ describe('server rendering', function () {
   })
 
   it('works', function (done) {
-    match({ routes, location: '/dashboard' }, function (error, redirectLocation, renderProps) {
+    const location = createLocation('/dashboard')
+    match({ routes, location }, function (error, redirectLocation, renderProps) {
       const string = React.renderToString(
         <RoutingContext {...renderProps} />
       )
@@ -80,7 +82,8 @@ describe('server rendering', function () {
   })
 
   it('renders active Links as active', function (done) {
-    match({ routes, location: '/about' }, function (error, redirectLocation, renderProps) {
+    const location = createLocation('/about')
+    match({ routes, location }, function (error, redirectLocation, renderProps) {
       const string = React.renderToString(
         <RoutingContext {...renderProps} />
       )
@@ -91,7 +94,8 @@ describe('server rendering', function () {
   })
 
   it('sends the redirect location', function (done) {
-    match({ routes, location: '/company' }, function (error, redirectLocation) {
+    const location = createLocation('/company')
+    match({ routes, location }, function (error, redirectLocation) {
       expect(redirectLocation).toExist()
       expect(redirectLocation.pathname).toEqual('/about')
       expect(redirectLocation.search).toEqual('')
@@ -102,10 +106,11 @@ describe('server rendering', function () {
   })
 
   it('sends null values when no routes match', function (done) {
-    match({ routes, location: '/no-match' }, function (error, redirectLocation, state) {
-      expect(error).toNotExist()
-      expect(redirectLocation).toNotExist()
-      expect(state).toNotExist()
+    const location = createLocation('/no-match')
+    match({ routes, location }, function (error, redirectLocation, state) {
+      expect(error).toBe(null)
+      expect(redirectLocation).toBe(null)
+      expect(state).toBe(null)
       done()
     })
   })
