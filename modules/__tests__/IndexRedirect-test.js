@@ -1,7 +1,6 @@
 /*eslint-env mocha */
 import expect from 'expect'
 import React from 'react'
-import { render, unmountComponentAtNode } from 'react-dom'
 import createHistory from 'history/lib/createMemoryHistory'
 import IndexRedirect from '../IndexRedirect'
 import Router from '../Router'
@@ -15,11 +14,11 @@ describe('An <IndexRedirect>', function () {
   })
 
   afterEach(function () {
-    unmountComponentAtNode(node)
+    React.unmountComponentAtNode(node)
   })
 
   it('works', function (done) {
-    render((
+    React.render((
       <Router history={createHistory('/')}>
         <Route path="/">
           <IndexRedirect to="/messages" />

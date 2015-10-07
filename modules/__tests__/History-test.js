@@ -1,7 +1,6 @@
 /*eslint-env mocha */
 import expect from 'expect'
 import React from 'react'
-import { render, unmountComponentAtNode } from 'react-dom'
 import History from '../History'
 import Router from '../Router'
 import Route from '../Route'
@@ -15,7 +14,7 @@ describe('History Mixin', function () {
   })
 
   afterEach(function () {
-    unmountComponentAtNode(node)
+    React.unmountComponentAtNode(node)
   })
 
   it('assigns the history to the component instance', function (done) {
@@ -31,7 +30,7 @@ describe('History Mixin', function () {
       render() { return null }
     })
 
-    render((
+    React.render((
       <Router history={history}>
         <Route path="/" component={Component} />
       </Router>

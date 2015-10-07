@@ -2,7 +2,6 @@
 /*eslint react/prop-types: 0*/
 import expect from 'expect'
 import React from 'react'
-import { render, unmountComponentAtNode } from 'react-dom'
 import createHistory from 'history/lib/createMemoryHistory'
 import IndexRoute from '../IndexRoute'
 import IndexLink from '../IndexLink'
@@ -74,7 +73,7 @@ describe('An <IndexLink>', function () {
         <Route path="contact" component={WebsiteContact} />
         <IndexRoute component={WebsiteOverview} />
       </Route>
-    </Route>
+    </Route>    
   )
 
   let node
@@ -83,12 +82,12 @@ describe('An <IndexLink>', function () {
   })
 
   afterEach(function () {
-    unmountComponentAtNode(node)
+    React.unmountComponentAtNode(node)
   })
 
   describe('when linking to the overview', function () {
     it('is active and other routes are not', function (done) {
-      render((
+      React.render((
         <Router history={createHistory('/website')} routes={routes} />
       ), node, function () {
         expect(node.querySelector('#overviewLink').className).toEqual('active')
@@ -102,7 +101,7 @@ describe('An <IndexLink>', function () {
 
   describe('when linking to the contact', function () {
     it('is active and other routes are not', function (done) {
-      render((
+      React.render((
         <Router history={createHistory('/website/contact')} routes={routes} />
       ), node, function () {
         expect(node.querySelector('#overviewLink').className).toEqual('')
@@ -116,7 +115,7 @@ describe('An <IndexLink>', function () {
 
   describe('when linking to the products', function () {
     it('is active and other routes are not', function (done) {
-      render((
+      React.render((
         <Router history={createHistory('/website/products')} routes={routes} />
       ), node, function () {
         expect(node.querySelector('#overviewLink').className).toEqual('')
@@ -130,7 +129,7 @@ describe('An <IndexLink>', function () {
 
   describe('when linking to a specific product', function () {
     it("is active and it's parent is also active", function (done) {
-      render((
+      React.render((
         <Router history={createHistory('/website/products/15')} routes={routes} />
       ), node, function () {
         expect(node.querySelector('#overviewLink').className).toEqual('')
