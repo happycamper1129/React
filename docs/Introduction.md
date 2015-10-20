@@ -7,28 +7,27 @@ To illustrate the problems React Router is going to solve for you, let's build a
 ### Without React Router
 
 ```js
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react'
 
 const About = React.createClass({/*...*/})
 const Inbox = React.createClass({/*...*/})
 const Home = React.createClass({/*...*/})
 
-class App extends Component {
-  constructor() {
-    this.state = {
+const App = React.createClass({
+  getInitialState() {
+    return {
       route: window.location.hash.substr(1)
     }
-  }
-  
+  },
+
   componentDidMount() {
     window.addEventListener('hashchange', () => {
       this.setState({
         route: window.location.hash.substr(1)
       })
     })
-  }
-  
+  },
+
   render() {
     let Child
     switch (this.state.route) {
@@ -48,9 +47,9 @@ class App extends Component {
       </div>
     )
   }
-}
+})
 
-ReactDOM.render(<App />, document.body)
+React.render(<App />, document.body)
 ```
 
 As the hash portion of the URL changes, `<App>` will render a different `<Child>` by branching on `this.state.route`. Pretty straightforward stuff. But it gets complicated fast.
@@ -102,15 +101,14 @@ We'd have to make our URL parsing a lot smarter, and we would end up with a lot 
 Let's refactor our app to use React Router.
 
 ```js
-import ReactDOM from 'react-dom'
-import React, { Component } from 'react'
+import React from 'react'
 
 // First we import some components...
 import { Router, Route, Link } from 'react-router'
 
 // Then we delete a bunch of code from App and
 // add some <Link> elements...
-class App extends Component {
+const App = React.createClass({
   render() {
     return (
       <div>
@@ -129,11 +127,11 @@ class App extends Component {
       </div>
     )
   }
-}
+})
 
 // Finally, we render a <Router> with some <Route>s.
 // It does all the fancy routing stuff for us.
-ReactDOM.render((
+React.render((
   <Router>
     <Route path="/" component={App}>
       <Route path="about" component={About} />
@@ -143,7 +141,9 @@ ReactDOM.render((
 ), document.body)
 ```
 
-React Router knows how to build nested UI for us, so we don't have to manually figure out which `<Child>` component to render. Internally, the router converts your `<Route>` element hierarchy to a [route config](/docs/Glossary.md#routeconfig). But if you're not digging the JSX you can use plain objects instead:
+React Router knows how to build nested UI for us, so we don't have to manually figure out which `<Child>` component to render. For example, for a full path `/about` it would build `<App><About /></App>`.
+
+Internally, the router converts your `<Route>` element hierarchy to a [route config](/docs/Glossary.md#routeconfig). But if you're not digging the JSX you can use plain objects instead:
 
 ```js
 const routes = {
@@ -155,7 +155,7 @@ const routes = {
   ]
 }
 
-ReactDOM.render(<Router routes={routes} />, document.body)
+React.render(<Router routes={routes} />, document.body)
 ```
 
 ## Adding More UI
@@ -164,13 +164,13 @@ Alright, now we're ready to nest the inbox messages inside the inbox UI.
 
 ```js
 // Make a new component to render inside of Inbox
-class Message extends Component {
+const Message = React.createClass({
   render() {
     return <h3>Message</h3>
   }
-}
+})
 
-class Inbox extends Component {
+const Inbox = React.createClass({
   render() {
     return (
       <div>
@@ -180,9 +180,9 @@ class Inbox extends Component {
       </div>
     )
   }
-}
+})
 
-ReactDOM.render((
+React.render((
   <Router>
     <Route path="/" component={App}>
       <Route path="about" component={About} />
@@ -195,14 +195,22 @@ ReactDOM.render((
 ), document.body)
 ```
 
-Now visits to URLs like `inbox/messages/Jkei3c32` will match the new route and nest the UI branch of `App -> Inbox -> Message`.
+Now visits to URLs like `inbox/messages/Jkei3c32` will match the new route and build this:
+
+```
+<App>
+  <Inbox>
+    <Message params={ {id: 'Jkei3c32'} } />
+  </Inbox>
+</App>
+```
 
 ### Getting URL Parameters
 
 We're going to need to know something about the message in order to fetch it from the server. Route components get some useful properties injected into them when you render, particularly the parameters from the dynamic segment of your path. In our case, `:id`.
 
 ```js
-class Message extends Component
+const Message = React.createClass({
 
   componentDidMount() {
     // from the path `/inbox/messages/:id`
