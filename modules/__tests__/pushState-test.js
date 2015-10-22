@@ -1,3 +1,4 @@
+/*eslint-env mocha */
 import expect from 'expect'
 import React, { Component } from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'

@@ -1,3 +1,5 @@
+/*eslint-env mocha */
+/*eslint react/prop-types: 0*/
 import expect, { spyOn } from 'expect'
 import React, { Component } from 'react'
 import { Simulate } from 'react-addons-test-utils'

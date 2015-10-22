@@ -1,3 +1,5 @@
+/*eslint-env mocha */
+/*eslint react/prop-types: 0*/
 import expect from 'expect'
 import React, { Component } from 'react'
 import { renderToString } from 'react-dom/server'
