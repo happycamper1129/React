@@ -47,11 +47,13 @@ describe('a Route Component', function () {
     class RouteComponent extends Component {
       static contextTypes = {
         history: object.isRequired,
-        location: object.isRequired
+        location: object.isRequired,
+        params: object.isRequired
       }
       componentDidMount() {
         expect(this.context.history).toEqual(this.props.history)
         expect(this.context.location).toEqual(this.props.location)
+        expect(this.context.params).toEqual(this.props.params)
       }
       render() {
         return null
