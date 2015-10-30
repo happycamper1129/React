@@ -66,12 +66,16 @@ function getMatchingRoute(pathname, activeRoutes, activeParams) {
  * Returns true if the given pathname matches the active routes
  * and params.
  */
-function routeIsActive(pathname, location, routes, params, indexOnly) {
-  if (indexOnly) {
-    return location.pathname.replace(/\/*$/) === pathname.replace(/\/*$/)
-  }
+function routeIsActive(pathname, activeRoutes, activeParams, indexOnly) {
+  let route = getMatchingRoute(pathname, activeRoutes, activeParams)
 
-  return getMatchingRoute(pathname, routes, params) != null
+  if (route == null)
+    return false
+
+  if (indexOnly)
+    return activeRoutes.length > 1 && activeRoutes[activeRoutes.length - 1] === route.indexRoute
+
+  return true
 }
 
 /**
@@ -96,7 +100,7 @@ function isActive(pathname, query, indexOnly, location, routes, params) {
   if (location == null)
     return false
 
-  if (!routeIsActive(pathname, location, routes, params, indexOnly))
+  if (!routeIsActive(pathname, routes, params, indexOnly))
     return false
 
   return queryIsActive(query, location.query)
