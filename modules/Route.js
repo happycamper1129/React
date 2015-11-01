@@ -1,3 +1,4 @@
+import warning from 'warning'
 import invariant from 'invariant'
 import React, { Component } from 'react'
 import { createRouteFromReactElement } from './RouteUtils'
@@ -17,11 +18,27 @@ const { string, bool, func } = React.PropTypes
  */
 class Route extends Component {
 
-  static createRouteFromReactElement = createRouteFromReactElement
+  static createRouteFromReactElement(element) {
+    const route = createRouteFromReactElement(element)
+
+    /* istanbul ignore if: deprecation */
+    if (route.handler) {
+      warning(
+        false,
+        '<Route handler> is deprecated, use <Route component> instead'
+      )
+
+      route.component = route.handler
+      delete route.handler
+    }
+
+    return route
+  }
 
   static propTypes = {
     path: string,
     ignoreScrollBehavior: bool,
+    handler: component, // deprecated
     component,
     components,
     getComponents: func
