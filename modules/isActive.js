@@ -43,12 +43,13 @@ function paramsAreActive(paramNames, paramValues, activeParams) {
   })
 }
 
-function getMatchingRouteIndex(pathname, activeRoutes, activeParams) {
+function getMatchingRoute(pathname, activeRoutes, activeParams) {
+  let route, pattern
   let remainingPathname = pathname, paramNames = [], paramValues = []
 
   for (let i = 0, len = activeRoutes.length; i < len; ++i) {
-    const route = activeRoutes[i]
-    const pattern = route.path || ''
+    route = activeRoutes[i]
+    pattern = route.path || ''
 
     if (pattern.charAt(0) === '/') {
       remainingPathname = pathname
@@ -68,7 +69,7 @@ function getMatchingRouteIndex(pathname, activeRoutes, activeParams) {
       route.path &&
       paramsAreActive(paramNames, paramValues, activeParams)
     )
-      return i
+      return route
   }
 
   return null
@@ -78,20 +79,12 @@ function getMatchingRouteIndex(pathname, activeRoutes, activeParams) {
  * Returns true if the given pathname matches the active routes
  * and params.
  */
-function routeIsActive(pathname, routes, params, indexOnly) {
-  const i = getMatchingRouteIndex(pathname, routes, params)
-
-  if (i === null) {
-    // No match.
-    return false
-  } else if (!indexOnly) {
-    // Any match is good enough.
-    return true
+function routeIsActive(pathname, location, routes, params, indexOnly) {
+  if (indexOnly) {
+    return location.pathname.replace(/\/*$/) === pathname.replace(/\/*$/)
   }
 
-  // If any remaining routes past the match index have paths, then we can't
-  // be on the index route.
-  return routes.slice(i + 1).every(route => !route.path)
+  return getMatchingRoute(pathname, routes, params) != null
 }
 
 /**
@@ -116,7 +109,7 @@ function isActive(pathname, query, indexOnly, location, routes, params) {
   if (location == null)
     return false
 
-  if (!routeIsActive(pathname, routes, params, indexOnly))
+  if (!routeIsActive(pathname, location, routes, params, indexOnly))
     return false
 
   return queryIsActive(query, location.query)
