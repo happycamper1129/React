@@ -1,20 +1,6 @@
 ## [HEAD]
 
-## [v1.1.0]
 
-### Router `onUpdate` prop
-
-Functions passed as the `onUpdate` prop to a `<Router />` component will be invoked with the new router state as the first argument. For example:
-
-```js
-function handleUpdate (state) {
-  console.log(state) // { components, location, params, routes }
-}
-
-ReactDOM.render(<Router onUpdate={ handleUpdate }>...</Router>, el)
-```
-
-As before this change, `onUpdate` is called within the scope of the router. So it is still possible to access router state using `this.state`.
 
 ## [v1.0.0]
 
@@ -213,7 +199,12 @@ handler no longer prevents the transition. To prevent the transition, call
 {React.cloneElement(this.props.children, {someExtraProp: something})}
 ```
 
-**Note:** React does not validate `propTypes` that are specified via `cloneElement` (see: [facebook/react#4494](https://github.com/facebook/react/issues/4494#issuecomment-125068868)). It is recommended to make such `propTypes` optional.
+There's a small semantic change with this approach. React validates `propTypes`
+on elements when those elements are created, rather than when they're about to
+render. This means that any props with `isRequired` will fail validation when
+those props are supplied via this approach. In these cases, you should not
+specify `isRequired` for those props. For more details, see
+[facebook/react#4494](https://github.com/facebook/react/issues/4494#issuecomment-125068868).
 
 ### Navigation Mixin
 
@@ -327,7 +318,7 @@ For example, `params` is not available via context.
 We're developing scroll behaviors separately in the
 [`scroll-behavior`](https://github.com/rackt/scroll-behavior)
 library until we have a stable, robust implementation that we're happy with.
-Currently, scroll behaviors are exposed there as history enhancers:
+Currently, scroll behaviors are exposed there as history enhancers: 
 
 ```js
 import createHistory from 'history/lib/createBrowserHistory'
@@ -364,3 +355,5 @@ To cancel a "transition from", please refer to the
 
 There's a lot of the old API we've missed, please give the [new
 docs](/docs) a read and help us fill this guide in. Thanks!
+
+
