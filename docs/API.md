@@ -13,7 +13,7 @@
   - [IndexRoute](#indexroute)
   - [IndexRedirect](#indexredirect)
 
-* [Handler Components](#handler-components)
+* [Route Components](#route-components)
   - [Named Components](#named-components)
 
 * [Mixins](#mixins)
@@ -71,8 +71,8 @@ A function used to convert a query string into an object that gets passed to rou
 ##### `onError(error)`
 While the router is matching, errors may bubble up, here is your opportunity to catch and deal with them. Typically these will come from async features like [`route.getComponents`](#getcomponentscallback), [`route.getIndexRoute`](#getindexroutecallback), and [`route.getChildRoutes`](#getchildrouteslocation-callback).
 
-##### `onUpdate(routerState)`
-Called whenever the router updates its state in response to URL changes. This new state is passed as the first argument.
+##### `onUpdate()`
+Called whenever the router updates its state in response to URL changes.
 
 #### Examples
 Please see the [`examples/`](/examples) directory of the repository for extensive examples of using `Router`.
@@ -389,11 +389,13 @@ All the same props as [Redirect](#redirect) except for `from`.
 
 
 
-## Handler Components
-A route's handler component is rendered when that route matches the URL. The router will inject the following properties into your component when it's rendered:
+## Route Components
+A route's component is rendered when that route matches the URL. The router will inject the following properties into your component when it's rendered:
 
-#### `isTransitioning`
-A boolean value that is `true` when the router is transitioning, `false` otherwise.
+#### `history`
+The Router's history [history](https://github.com/rackt/history/blob/master/docs).
+
+Useful mostly for transitioning around with `this.props.history.pushState(state, path, query)`
 
 #### `location`
 The current [location](https://github.com/rackt/history/blob/master/docs/Location.md).
@@ -413,7 +415,7 @@ The matched child route element to be rendered. If the route has [named componen
 ##### Example
 ```js
 render((
-  <Router history={history}>
+  <Router>
     <Route path="/" component={App}>
       <Route path="groups" component={Groups} />
       <Route path="users" component={Users} />

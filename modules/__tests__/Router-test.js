@@ -255,11 +255,11 @@ describe('Router', function () {
       const Child = () => <span>child</span>
 
       class LabelWrapper extends Component {
-        constructor() {
-          this.createElement = this.createElement.bind(this)
+        static defaultProps = {
+          createElement: React.createElement
         }
 
-        createElement(component, props) {
+        createElement = (component, props) => {
           const { label, createElement } = this.props
 
           return (
@@ -281,10 +281,6 @@ describe('Router', function () {
             </span>
           )
         }
-      }
-
-      LabelWrapper.defaultProps = {
-        createElement: React.createElement
       }
 
       const CustomRoutingContext = props => (
@@ -428,22 +424,5 @@ describe('Router', function () {
         ), node)
       }).toThrow('error fixture')
     })
-  })
-
-  describe('onUpdate', function () {
-    it('should pass the router state as the first argument', function (done) {
-
-      function onUpdate(state) {
-        expect(state).toEqual(this.state)
-        done()
-      }
-
-      render((
-        <Router history={createHistory('/')} onUpdate={onUpdate}>
-          <Route path="/" component={Child} />
-        </Router>
-      ), node)
-    })
-
   })
 })

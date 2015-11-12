@@ -15,6 +15,22 @@ const { func, object } = React.PropTypes
  */
 class Router extends Component {
 
+  static propTypes = {
+    history: object,
+    children: routes,
+    routes, // alias for children
+    RoutingContext: func.isRequired,
+    createElement: func,
+    onError: func,
+    onUpdate: func,
+    parseQueryString: func,
+    stringifyQuery: func
+  }
+
+  static defaultProps = {
+    RoutingContext
+  }
+
   constructor(props, context) {
     super(props, context)
 
@@ -36,7 +52,7 @@ class Router extends Component {
   }
 
   componentWillMount() {
-    let { history, children, routes, onUpdate, parseQueryString, stringifyQuery } = this.props
+    let { history, children, routes, parseQueryString, stringifyQuery } = this.props
     let createHistory = history ? () => history : createHashHistory
 
     this.history = useRoutes(createHistory)({
@@ -49,7 +65,7 @@ class Router extends Component {
       if (error) {
         this.handleError(error)
       } else {
-        this.setState(state, () => onUpdate && onUpdate.call(this, state))
+        this.setState(state, this.props.onUpdate)
       }
     })
   }
@@ -89,22 +105,6 @@ class Router extends Component {
     })
   }
 
-}
-
-Router.propTypes = {
-  history: object,
-  children: routes,
-  routes, // alias for children
-  RoutingContext: func.isRequired,
-  createElement: func,
-  onError: func,
-  onUpdate: func,
-  parseQueryString: func,
-  stringifyQuery: func
-}
-
-Router.defaultProps = {
-  RoutingContext
 }
 
 export default Router

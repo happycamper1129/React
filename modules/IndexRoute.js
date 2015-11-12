@@ -12,6 +12,26 @@ const { func } = React.PropTypes
  */
 class IndexRoute extends Component {
 
+  static createRouteFromReactElement(element, parentRoute) {
+    /* istanbul ignore else: sanity check */
+    if (parentRoute) {
+      parentRoute.indexRoute = createRouteFromReactElement(element)
+    } else {
+      warning(
+        false,
+        'An <IndexRoute> does not make sense at the root of your route config'
+      )
+    }
+  }
+
+  static propTypes = {
+    path: falsy,
+    component,
+    components,
+    getComponent: func,
+    getComponents: func
+  }
+
   /* istanbul ignore next: sanity check */
   render() {
     invariant(
@@ -19,27 +39,7 @@ class IndexRoute extends Component {
       '<IndexRoute> elements are for router configuration only and should not be rendered'
     )
   }
-  
-}
 
-IndexRoute.propTypes = {
-  path: falsy,
-  component,
-  components,
-  getComponent: func,
-  getComponents: func
-}
-
-IndexRoute.createRouteFromReactElement = function (element, parentRoute) {
-  /* istanbul ignore else: sanity check */
-  if (parentRoute) {
-    parentRoute.indexRoute = createRouteFromReactElement(element)
-  } else {
-    warning(
-      false,
-      'An <IndexRoute> does not make sense at the root of your route config'
-    )
-  }
 }
 
 export default IndexRoute
