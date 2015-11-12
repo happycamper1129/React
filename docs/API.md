@@ -13,7 +13,7 @@
   - [IndexRoute](#indexroute)
   - [IndexRedirect](#indexredirect)
 
-* [Route Components](#route-components)
+* [Handler Components](#handler-components)
   - [Named Components](#named-components)
 
 * [Mixins](#mixins)
@@ -389,13 +389,11 @@ All the same props as [Redirect](#redirect) except for `from`.
 
 
 
-## Route Components
-A route's component is rendered when that route matches the URL. The router will inject the following properties into your component when it's rendered:
+## Handler Components
+A route's handler component is rendered when that route matches the URL. The router will inject the following properties into your component when it's rendered:
 
-#### `history`
-The Router's history [history](https://github.com/rackt/history/blob/master/docs).
-
-Useful mostly for transitioning around with `this.props.history.pushState(state, path, query)`
+#### `isTransitioning`
+A boolean value that is `true` when the router is transitioning, `false` otherwise.
 
 #### `location`
 The current [location](https://github.com/rackt/history/blob/master/docs/Location.md).
@@ -415,7 +413,7 @@ The matched child route element to be rendered. If the route has [named componen
 ##### Example
 ```js
 render((
-  <Router>
+  <Router history={history}>
     <Route path="/" component={App}>
       <Route path="groups" component={Groups} />
       <Route path="users" component={Users} />
