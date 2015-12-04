@@ -312,7 +312,8 @@ where you can get it now if you are **not** a route component
 |-------------------|------------------------------------|
 | `getPath()`       | `location.pathname+location.search`|
 | `getPathname()`   | `location.pathname`                |
-| `getQuery()`      | `location.query`                   |
+| `getQuery()`      | `location.search`                  |
+| `getQueryParams()`| `location.query`                   |
 | `isActive(to, params, query)` | `history.isActive(pathname, query, indexOnly)` |
 
 Note not all `State` functionality can be accessed via context in v1.0.
