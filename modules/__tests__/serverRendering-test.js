@@ -2,7 +2,7 @@ import expect from 'expect'
 import React, { Component } from 'react'
 import { renderToString } from 'react-dom/server'
 import match from '../match'
-import RouterContext from '../RouterContext'
+import RouterContext from '../RoutingContext'
 import Link from '../Link'
 
 describe('server rendering', function () {
