@@ -24,7 +24,7 @@
 
 * [Utilities](#utilities)
   * [useRoutes](#useroutescreatehistory)
-  * [match](#matchlocation-cb)
+  * [match](#match-routes-location-options--cb)
   * [createRoutes](#createroutesroutes)
   * [PropTypes](#proptypes)
 
@@ -594,19 +594,22 @@ React.createClass({
 Let's say you are using bootstrap and want to get `active` on those `li` tags for the Tabs:
 
 ```js
-import { Link, History } from 'react-router'
+import { Link, IndexLink, History } from 'react-router'
 
 const Tab = React.createClass({
   mixins: [ History ],
   render() {
-    let isActive = this.history.isActive(this.props.to, this.props.query)
-    let className = isActive ? 'active' : ''
-    return <li className={className}><Link {...this.props}/></li>
+    const isActive = this.history.isActive(this.props.to, this.props.query, this.props.indexLink)
+    const className = isActive ? 'active' : ''
+    const LinkElement = this.props.indexLink ? IndexLink : Link;
+    return <li className={className}><LinkElement {...this.props}/></li>
   }
 })
 
-// use it just like <Link/>, and you'll get an anchor wrapped in an `li`
+// use it just like <Link/> or <IndexLink/>, and you'll get an anchor wrapped in an `li`
 // with an automatic `active` class on both.
+<Tab to="/" indexLink>Home</Tab>
+<Tab to="about">About</Tab>
 <Tab href="foo">Foo</Tab>
 ```
 
@@ -677,14 +680,16 @@ Returns a new `createHistory` function that may be used to create history object
 - isActive(pathname, query, indexOnly=false)
 
 
-## `match(location, cb)`
+## `match({ routes, location, ...options }, cb)`
 
 This function is to be used for server-side rendering. It matches a set of routes to a location, without rendering, and calls a `callback(error, redirectLocation, renderProps)` when it's done.
 
+The additional `options` are used to create the history. You can specify `basename` to control the base name for URLs, as well as the pair of `parseQueryString` and `stringifyQuery` to control query string parsing and serializing.
+
 The three arguments to the callback function you pass to `match` are:
-* `error`: A Javascript `Error` object if an error occurred, `undefined` otherwise.
-* `redirectLocation`: A [Location](/docs/Glossary.md#location) object if the route is a redirect, `undefined` otherwise.
-* `renderProps`: The props you should pass to the routing context if the route matched, `undefined` otherwise.
+- `error`: A Javascript `Error` object if an error occurred, `undefined` otherwise.
+- `redirectLocation`: A [Location](/docs/Glossary.md#location) object if the route is a redirect, `undefined` otherwise.
+- `renderProps`: The props you should pass to the routing context if the route matched, `undefined` otherwise.
 
 If all three parameters are `undefined`, this means that there was no route found matching the given location.
 
