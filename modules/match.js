@@ -18,7 +18,9 @@ const createHistory = useRoutes(useBasename(createMemoryHistory))
 function match({
   routes,
   location,
-  ...options
+  parseQueryString,
+  stringifyQuery,
+  basename
 }, callback) {
   invariant(
     location,
@@ -27,7 +29,9 @@ function match({
 
   const history = createHistory({
     routes: createRoutes(routes),
-    ...options
+    parseQueryString,
+    stringifyQuery,
+    basename
   })
 
   // Allow match({ location: '/the/path', ... })
