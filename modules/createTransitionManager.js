@@ -75,9 +75,6 @@ export default function createTransitionManager(history, routes) {
 
     runLeaveHooks(leaveRoutes)
 
-    // Tear down confirmation hooks for left routes
-    leaveRoutes.forEach(removeListenBeforeHooksForRoute)
-
     runEnterHooks(enterRoutes, nextState, function (error, redirectInfo) {
       if (error) {
         callback(error)
@@ -102,8 +99,8 @@ export default function createTransitionManager(history, routes) {
 
   let RouteGuid = 1
 
-  function getRouteID(route, create = true) {
-    return route.__id__ || create && (route.__id__ = RouteGuid++)
+  function getRouteID(route) {
+    return route.__id__ || (route.__id__ = RouteGuid++)
   }
 
   const RouteHooks = {}
@@ -144,7 +141,6 @@ export default function createTransitionManager(history, routes) {
     })
   }
 
-  /* istanbul ignore next: untestable with Karma */
   function beforeUnloadHook() {
     // Synchronously check to see if any route hooks want
     // to prevent the current window/tab from closing.
@@ -163,28 +159,6 @@ export default function createTransitionManager(history, routes) {
   }
 
   let unlistenBefore, unlistenBeforeUnload
-
-  function removeListenBeforeHooksForRoute(route) {
-    const routeID = getRouteID(route, false)
-    if (!routeID) {
-      return
-    }
-
-    delete RouteHooks[routeID]
-
-    if (!hasAnyProperties(RouteHooks)) {
-      // teardown transition & beforeunload hooks
-      if (unlistenBefore) {
-        unlistenBefore()
-        unlistenBefore = null
-      }
-
-      if (unlistenBeforeUnload) {
-        unlistenBeforeUnload()
-        unlistenBeforeUnload = null
-      }
-    }
-  }
 
   /**
    * Registers the given hook function to run before leaving the given route.
@@ -206,10 +180,10 @@ export default function createTransitionManager(history, routes) {
     const routeID = getRouteID(route)
     let hooks = RouteHooks[routeID]
 
-    if (!hooks) {
+    if (hooks == null) {
       let thereWereNoRouteHooks = !hasAnyProperties(RouteHooks)
 
-      RouteHooks[routeID] = [ hook ]
+      hooks = RouteHooks[routeID] = [ hook ]
 
       if (thereWereNoRouteHooks) {
         // setup transition & beforeunload hooks
@@ -225,11 +199,24 @@ export default function createTransitionManager(history, routes) {
     return function () {
       const hooks = RouteHooks[routeID]
 
-      if (hooks) {
+      if (hooks != null) {
         const newHooks = hooks.filter(item => item !== hook)
 
         if (newHooks.length === 0) {
-          removeListenBeforeHooksForRoute(route)
+          delete RouteHooks[routeID]
+
+          if (!hasAnyProperties(RouteHooks)) {
+            // teardown transition & beforeunload hooks
+            if (unlistenBefore) {
+              unlistenBefore()
+              unlistenBefore = null
+            }
+
+            if (unlistenBeforeUnload) {
+              unlistenBeforeUnload()
+              unlistenBeforeUnload = null
+            }
+          }
         } else {
           RouteHooks[routeID] = newHooks
         }
