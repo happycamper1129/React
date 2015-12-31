@@ -24,7 +24,6 @@ export RouterContext from './RouterContext'
 export PropTypes from './PropTypes'
 export match from './match'
 export useRouterHistory from './useRouterHistory'
-export { formatPattern } from './PatternUtils'
 
 /* histories */
 export browserHistory from './browserHistory'
