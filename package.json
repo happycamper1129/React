@@ -7,7 +7,6 @@
     "docs",
     "es6",
     "lib",
-    "modules/*.js",
     "npm-scripts",
     "umd"
   ],
