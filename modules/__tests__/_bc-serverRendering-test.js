@@ -1,10 +1,9 @@
 import expect from 'expect'
 import React, { Component } from 'react'
 import { renderToString } from 'react-dom/server'
-
-import Link from '../Link'
 import match from '../match'
-import RoutingContext from '../RoutingContext'
+import RouterContext from '../RouterContext'
+import Link from '../Link'
 
 describe('v1 server rendering', function () {
 
@@ -69,7 +68,7 @@ describe('v1 server rendering', function () {
   it('works', function (done) {
     match({ routes, location: '/dashboard' }, function (error, redirectLocation, renderProps) {
       const string = renderToString(
-        <RoutingContext {...renderProps} />
+        <RouterContext {...renderProps} />
       )
       expect(string).toMatch(/The Dashboard/)
       done()
@@ -79,7 +78,7 @@ describe('v1 server rendering', function () {
   it('renders active Links as active', function (done) {
     match({ routes, location: '/about' }, function (error, redirectLocation, renderProps) {
       const string = renderToString(
-        <RoutingContext {...renderProps} />
+        <RouterContext {...renderProps} />
       )
       expect(string).toMatch(/about-is-active/)
       expect(string).toNotMatch(/dashboard-is-active/)

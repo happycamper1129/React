@@ -41,10 +41,12 @@ const Router = React.createClass({
   },
 
   getInitialState() {
-    // Use initial state from renderProps when available, to allow using match
-    // on client side when doing server-side rendering.
-    const { location, routes, params, components } = this.props
-    return { location, routes, params, components }
+    return {
+      location: null,
+      routes: null,
+      params: null,
+      components: null
+    }
   },
 
   handleError(error) {
