@@ -8,13 +8,15 @@ import Router from '../Router'
 
 describe('When a router enters a branch', function () {
   let
-    node, leaveHookSpy, removeLeaveHook,
-    DashboardRoute, NewsFeedRoute, InboxRoute, RedirectToInboxRoute, MessageRoute,
+    node,
+    newsLeaveHookSpy, removeNewsLeaveHook, userLeaveHookSpy,
+    DashboardRoute, NewsFeedRoute, InboxRoute, RedirectToInboxRoute, MessageRoute, UserRoute,
     routes
 
   beforeEach(function () {
     node = document.createElement('div')
-    leaveHookSpy = expect.createSpy()
+    newsLeaveHookSpy = expect.createSpy()
+    userLeaveHookSpy = expect.createSpy()
 
     class Dashboard extends Component {
       render() {
@@ -29,9 +31,9 @@ describe('When a router enters a branch', function () {
 
     class NewsFeed extends Component {
       componentWillMount() {
-        removeLeaveHook = this.context.router.setRouteLeaveHook(
+        removeNewsLeaveHook = this.context.router.setRouteLeaveHook(
           this.props.route,
-          () => leaveHookSpy() // Break reference equality.
+          () => newsLeaveHookSpy() // Break reference equality.
         )
       }
 
@@ -50,18 +52,28 @@ describe('When a router enters a branch', function () {
       }
     }
 
+    class User extends Component {
+      componentWillMount() {
+        this.context.router.setRouteLeaveHook(
+          this.props.route,
+          userLeaveHookSpy
+        )
+      }
+
+      render() {
+        return <div>User</div>
+      }
+    }
+
+    User.contextTypes = {
+      router: React.PropTypes.object.isRequired
+    }
+
     NewsFeedRoute = {
       path: 'news',
       component: NewsFeed,
       onEnter(nextState, replace) {
         expect(this).toBe(NewsFeedRoute)
-        expect(nextState.routes).toContain(NewsFeedRoute)
-        expect(replace).toBeA('function')
-      },
-      onChange(prevState, nextState, replace) {
-        expect(this).toBe(NewsFeedRoute)
-        expect(prevState).toNotEqual(nextState)
-        expect(prevState.routes).toContain(NewsFeedRoute)
         expect(nextState.routes).toContain(NewsFeedRoute)
         expect(replace).toBeA('function')
       },
@@ -104,15 +116,14 @@ describe('When a router enters a branch', function () {
         expect(nextState.routes).toContain(MessageRoute)
         expect(replace).toBeA('function')
       },
-      onChange(prevState, nextState, replace) {
-        expect(this).toBe(MessageRoute)
-        expect(prevState.routes).toContain(MessageRoute)
-        expect(nextState.routes).toContain(MessageRoute)
-        expect(replace).toBeA('function')
-      },
       onLeave() {
         expect(this).toBe(MessageRoute)
       }
+    }
+
+    UserRoute = {
+      path: 'users/:userId',
+      component: User
     }
 
     DashboardRoute = {
@@ -123,17 +134,10 @@ describe('When a router enters a branch', function () {
         expect(nextState.routes).toContain(DashboardRoute)
         expect(replace).toBeA('function')
       },
-      onChange(prevState, nextState, replace) {
-        expect(this).toBe(DashboardRoute)
-        expect(prevState).toNotEqual(nextState)
-        expect(prevState.routes).toContain(DashboardRoute)
-        expect(nextState.routes).toContain(DashboardRoute)
-        expect(replace).toBeA('function')
-      },
       onLeave() {
         expect(this).toBe(DashboardRoute)
       },
-      childRoutes: [ NewsFeedRoute, InboxRoute, RedirectToInboxRoute, MessageRoute ]
+      childRoutes: [ NewsFeedRoute, InboxRoute, RedirectToInboxRoute, MessageRoute, UserRoute ]
     }
 
     routes = [
@@ -159,17 +163,14 @@ describe('When a router enters a branch', function () {
   it('calls the route leave hooks when leaving the route', function (done) {
     const history = createHistory('/news')
 
-    // Stub this function to exercise the code path.
-    history.listenBeforeUnload = () => (() => {})
-
     render(<Router history={history} routes={routes}/>, node, function () {
-      expect(leaveHookSpy.calls.length).toEqual(0)
+      expect(newsLeaveHookSpy.calls.length).toEqual(0)
       history.push('/inbox')
-      expect(leaveHookSpy.calls.length).toEqual(1)
+      expect(newsLeaveHookSpy.calls.length).toEqual(1)
       history.push('/news')
-      expect(leaveHookSpy.calls.length).toEqual(1)
+      expect(newsLeaveHookSpy.calls.length).toEqual(1)
       history.push('/inbox')
-      expect(leaveHookSpy.calls.length).toEqual(2)
+      expect(newsLeaveHookSpy.calls.length).toEqual(2)
       done()
     })
   })
@@ -178,9 +179,25 @@ describe('When a router enters a branch', function () {
     const history = createHistory('/news')
 
     render(<Router history={history} routes={routes}/>, node, function () {
-      removeLeaveHook()
+      removeNewsLeaveHook()
       history.push('/inbox')
-      expect(leaveHookSpy).toNotHaveBeenCalled()
+      expect(newsLeaveHookSpy).toNotHaveBeenCalled()
+      done()
+    })
+  })
+
+  it('does not remove route leave hooks when changing params', function (done) {
+    const history = createHistory('/users/foo')
+
+    // Stub this function to exercise the code path.
+    history.listenBeforeUnload = () => (() => {})
+
+    render(<Router history={history} routes={routes}/>, node, function () {
+      expect(userLeaveHookSpy.calls.length).toEqual(0)
+      history.push('/users/bar')
+      expect(userLeaveHookSpy.calls.length).toEqual(1)
+      history.push('/users/baz')
+      expect(userLeaveHookSpy.calls.length).toEqual(2)
       done()
     })
   })
@@ -232,11 +249,8 @@ describe('When a router enters a branch', function () {
   describe('and then navigates to the same branch, but with different params', function () {
     it('calls the onLeave and onEnter hooks of all routes whose params have changed', function (done) {
       const dashboardRouteLeaveSpy = spyOn(DashboardRoute, 'onLeave').andCallThrough()
-      const dashboardRouteChangeSpy = spyOn(DashboardRoute, 'onChange').andCallThrough()
       const dashboardRouteEnterSpy = spyOn(DashboardRoute, 'onEnter').andCallThrough()
-
       const messageRouteLeaveSpy = spyOn(MessageRoute, 'onLeave').andCallThrough()
-      const messageRouteChangeSpy = spyOn(MessageRoute, 'onChange').andCallThrough()
       const messageRouteEnterSpy = spyOn(MessageRoute, 'onEnter').andCallThrough()
       const history = createHistory('/messages/123')
 
@@ -249,9 +263,6 @@ describe('When a router enters a branch', function () {
         function () {
           expect(messageRouteLeaveSpy).toHaveBeenCalled('MessageRoute.onLeave was not called')
           expect(messageRouteEnterSpy).toHaveBeenCalled('MessageRoute.onEnter was not called')
-          expect(messageRouteChangeSpy.calls.length).toEqual(0, 'DashboardRoute.onChange was called')
-
-          expect(dashboardRouteChangeSpy).toHaveBeenCalled('DashboardRoute.onChange was not called')
           expect(dashboardRouteLeaveSpy.calls.length).toEqual(0, 'DashboardRoute.onLeave was called')
         }
       ]
@@ -269,16 +280,12 @@ describe('When a router enters a branch', function () {
   describe('and then the query changes', function () {
     it('calls the onEnter hooks of all routes in that branch', function (done) {
       const newsFeedRouteEnterSpy = spyOn(NewsFeedRoute, 'onEnter').andCallThrough()
-      const newsFeedRouteChangeSpy = spyOn(NewsFeedRoute, 'onChange').andCallThrough()
       const history = useQueries(createHistory)('/inbox')
 
       render(<Router history={history} routes={routes}/>, node, function () {
         history.push({ pathname: '/news', query: { q: 1 } })
-        expect(newsFeedRouteChangeSpy.calls.length).toEqual(0, 'NewsFeedRoute.onChange was called')
         expect(newsFeedRouteEnterSpy.calls.length).toEqual(1)
-
         history.push({ pathname: '/news', query: { q: 2 } })
-        expect(newsFeedRouteChangeSpy).toHaveBeenCalled('NewsFeedRoute.onChange was not called')
         expect(newsFeedRouteEnterSpy.calls.length).toEqual(1)
         done()
       })
