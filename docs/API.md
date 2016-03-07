@@ -199,6 +199,10 @@ Creates a URL, using the router's config. For example, it will add `#/` in front
 ##### `isActive(pathOrLoc, indexOnly)`
 Returns `true` or `false` depending on if the `pathOrLoc` is active. Will be true for every route in the route branch matched (child route is active, therefore parent is too), unless `indexOnly` is specified, in which case it will only match the exact path.
 
+A route is only considered active if all the URL parameters match, including optional parameters and their presence or absence.
+
+However, only explicitly specified query parameters will be checked. That means that `isActive({ pathname: '/foo', query: { a: 'b' } })` will return `true` when the location is `/foo?a=b&c=d`. To require that a query parameter be absent, specify its value as an explicit `undefined`, e.g. `isActive({ pathname: '/foo', query: { a: 'b', c: undefined } })`, which would be `false` in this example.
+
 
 ## Configuration Components
 
@@ -460,7 +464,18 @@ All the same props as [Route](#route) except for `path`.
 ### `<IndexRedirect>`
 An `<IndexRedirect>` allows you to redirect from the URL of a parent route to another route. They can be used to allow a child route to serve as the default route for its parent, while still keeping a distinct URL.
 
-Please see the [Index Routes guide](/docs/guides/IndexRoutes.md).
+#### Example
+```js
+<Router>
+  <Route path="/" component={App}>
+    <IndexRedirect to="groups" />
+    {/* If no child route is matched, will redirect to 'groups' */}
+
+    <Route path="groups" component={Groups} />
+    <Route path="users" component={Users} />
+  </Route>
+</Router>
+```
 
 #### Props
 All the same props as [Redirect](#redirect) except for `from`.
