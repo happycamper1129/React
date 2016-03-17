@@ -107,23 +107,17 @@ A `<Link>` can know when the route it links to is active and automatically apply
 
 #### Props
 ##### `to`
-Can be either a string or an object.
-* If it's a string it represents the path to link to, e.g. `/users/123`.
-* If it's an object it can have four keys:
-  * `pathname`: A string representing the path to link to.
-  * `query`: An object of key:value pairs to be stringified.
-  * `hash`: A hash to put in the URL, e.g. `#a-hash`.
-  * `state`: State to persist to the `location`.
+The path to link to, e.g. `/users/123`.
 
-##### `query` **([Deprecated](https://github.com/reactjs/react-router/blob/master/upgrade-guides/v2.0.0.md#link-to-onenter-and-isactive-use-location-descriptors) see `to`)**
+##### `query`
 An object of key:value pairs to be stringified.
 
-##### `hash` **([Deprecated](https://github.com/reactjs/react-router/blob/master/upgrade-guides/v2.0.0.md#link-to-onenter-and-isactive-use-location-descriptors) see `to`)**
+##### `hash`
 A hash to put in the URL, e.g. `#a-hash`.
 
 _Note: React Router currently does not manage scroll position, and will not scroll to the element corresponding to the hash. Scroll position management utilities are available in the [scroll-behavior](https://github.com/taion/scroll-behavior) library._
 
-##### `state` **([Deprecated](https://github.com/reactjs/react-router/blob/master/upgrade-guides/v2.0.0.md#link-to-onenter-and-isactive-use-location-descriptors) see `to`)**
+##### `state`
 State to persist to the `location`.
 
 ##### `activeClassName`
