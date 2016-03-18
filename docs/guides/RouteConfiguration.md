@@ -114,10 +114,10 @@ render((
     <Route path="/" component={App}>
       <IndexRoute component={Dashboard} />
       <Route path="about" component={About} />
-      <Route path="inbox" component={Inbox} />
 
       {/* Use /messages/:id instead of /inbox/messages/:id */}
       <Route component={Inbox}>
+        <Route path="inbox" />
         <Route path="messages/:id" component={Message} />
       </Route>
     </Route>
@@ -152,15 +152,13 @@ render((
     <Route path="/" component={App}>
       <IndexRoute component={Dashboard} />
       <Route path="about" component={About} />
-
-      <Route path="inbox" component={Inbox}>
-        {/* Redirect /inbox/messages/:id to /messages/:id */}
-        <Redirect from="messages/:id" to="/messages/:id" />
-      </Route>
-
       <Route component={Inbox}>
+        <Route path="inbox" />
         <Route path="messages/:id" component={Message} />
       </Route>
+
+      {/* Redirect /inbox/messages/:id to /messages/:id */}
+      <Redirect from="inbox/messages/:id" to="/messages/:id" />
     </Route>
   </Router>
 ), document.body)
@@ -196,18 +194,17 @@ const routes = {
   childRoutes: [
     { path: 'about', component: About },
     {
-      path: 'inbox',
       component: Inbox,
-      childRoutes: [{
-        path: 'messages/:id',
-        onEnter: ({ params }, replace) => replace(`/messages/${params.id}`)
-      }]
+      childRoutes: [
+        { path: 'inbox' },
+        { path: 'messages/:id', component: Message }
+      ]
     },
     {
-      component: Inbox,
-      childRoutes: [{
-        path: 'messages/:id', component: Message
-      }]
+      path: 'inbox/messages/:id',
+      onEnter: (nextState, replace) => {
+        replace('/messages/' + nextState.params.id)
+      }
     }
   ]
 }
