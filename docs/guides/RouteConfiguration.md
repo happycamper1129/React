@@ -114,9 +114,11 @@ render((
     <Route path="/" component={App}>
       <IndexRoute component={Dashboard} />
       <Route path="about" component={About} />
-      <Route path="inbox" component={Inbox}>
-        {/* Use /messages/:id instead of messages/:id */}
-        <Route path="/messages/:id" component={Message} />
+
+      {/* Use /messages/:id instead of /inbox/messages/:id */}
+      <Route component={Inbox}>
+        <Route path="inbox" />
+        <Route path="messages/:id" component={Message} />
       </Route>
     </Route>
   </Router>
@@ -150,12 +152,13 @@ render((
     <Route path="/" component={App}>
       <IndexRoute component={Dashboard} />
       <Route path="about" component={About} />
-      <Route path="inbox" component={Inbox}>
-        <Route path="/messages/:id" component={Message} />
-
-        {/* Redirect /inbox/messages/:id to /messages/:id */}
-        <Redirect from="messages/:id" to="/messages/:id" />
+      <Route component={Inbox}>
+        <Route path="inbox" />
+        <Route path="messages/:id" component={Message} />
       </Route>
+
+      {/* Redirect /inbox/messages/:id to /messages/:id */}
+      <Redirect from="inbox/messages/:id" to="/messages/:id" />
     </Route>
   </Router>
 ), document.body)
@@ -175,33 +178,36 @@ Continuing with our example above, if a user clicked on a link to `/about` from 
   - `onLeave` on the `/inbox` route
   - `onEnter` on the `/about` route
 
-### Alternate Configuration
+### Configuration with Plain Routes
 
 Since [routes](/docs/Glossary.md#route) are usually nested, it's useful to use a concise nested syntax like [JSX](https://facebook.github.io/jsx/) to describe their relationship to one another. However, you may also use an array of plain [route](/docs/Glossary.md#route) objects if you prefer to avoid using JSX.
+
+The `<Redirect>` configuration helper is not available when using plain routes, so you have to set up the redirect using the `onEnter` hook. 
 
 The route config we've discussed up to this point could also be specified like this:
 
 ```js
-const routeConfig = [
-  { path: '/',
-    component: App,
-    indexRoute: { component: Dashboard },
-    childRoutes: [
-      { path: 'about', component: About },
-      { path: 'inbox',
-        component: Inbox,
-        childRoutes: [
-          { path: '/messages/:id', component: Message },
-          { path: 'messages/:id',
-            onEnter: function (nextState, replace) {
-              replace('/messages/' + nextState.params.id)
-            }
-          }
-        ]
+const routes = {
+  path: '/',
+  component: App,
+  indexRoute: { component: Dashboard },
+  childRoutes: [
+    { path: 'about', component: About },
+    {
+      component: Inbox,
+      childRoutes: [
+        { path: 'inbox' },
+        { path: 'messages/:id', component: Message }
+      ]
+    },
+    {
+      path: 'inbox/messages/:id',
+      onEnter: (nextState, replace) => {
+        replace('/messages/' + nextState.params.id)
       }
-    ]
-  }
-]
+    }
+  ]
+}
 
-render(<Router routes={routeConfig} />, document.body)
+render(<Router routes={routes} />, document.body)
 ```
