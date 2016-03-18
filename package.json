@@ -1,6 +1,6 @@
 {
   "name": "react-router",
-  "version": "2.0.1",
+  "version": "2.0.0",
   "description": "A complete routing library for React.js",
   "files": [
     "*.md",
@@ -8,6 +8,7 @@
     "es6",
     "lib",
     "modules/*.js",
+    "npm-scripts",
     "umd"
   ],
   "main": "lib/index",
@@ -25,7 +26,8 @@
     "start": "node examples/server.js",
     "test": "npm run lint && npm run test-node && npm run test-browser",
     "test-browser": "karma start",
-    "test-node": "mocha --compilers js:babel-core/register tests.node.js"
+    "test-node": "mocha --compilers js:babel-core/register tests.node.js",
+    "postinstall": "node ./npm-scripts/postinstall.js"
   },
   "authors": [
     "Ryan Florence",
