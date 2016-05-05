@@ -1,13 +1,13 @@
 # React Router [![Travis][build-badge]][build] [![npm package][npm-badge]][npm]
 
-<img src="/logo/vertical@2x.png" height="150"/>
-
 React Router is a complete routing library for [React](https://facebook.github.io/react).
 
 React Router keeps your UI in sync with the URL. It has a simple API with powerful features like lazy code loading, dynamic route matching, and location transition handling built right in. Make the URL your first thought, not an after-thought.
 
 [![Coveralls][coveralls-badge]][coveralls]
 [![Discord][discord-badge]][discord]
+
+> **Important:** *This is the `next` branch of React Router and may contain changes that are not yet released. To see the code for stable releases, browse [the `master` branch](https://github.com/reactjs/react-router/tree/master).*
 
 ### Docs & Help
 
@@ -64,7 +64,7 @@ import { Router, Route, Link, browserHistory } from 'react-router'
 
 const App = React.createClass({/*...*/})
 const About = React.createClass({/*...*/})
-const NoMatch = React.createClass({/*...*/})
+// etc.
 
 const Users = React.createClass({
   render() {

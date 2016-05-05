@@ -4,7 +4,6 @@
   - [`<Router>`](#router)
   - [`<Link>`](#link)
   - [`<IndexLink>`](#indexlink)
-  - [`withRouter`](#withroutercomponent)
   - [`<RouterContext>`](#routercontext)
     - [`context.router`](#contextrouter)
   - `<RoutingContext>` (deprecated, use `<RouterContext>`)
@@ -117,15 +116,15 @@ A [location descriptor](https://github.com/mjackson/history/blob/master/docs/Glo
   * `hash`: A hash to put in the URL, e.g. `#a-hash`.
   * `state`: State to persist to the `location`.
 
-##### `query` **([Deprecated](/upgrade-guides/v2.0.0.md#link-to-onenter-and-isactive-use-location-descriptors) see `to`)**
+##### `query` **([Deprecated](https://github.com/reactjs/react-router/blob/master/upgrade-guides/v2.0.0.md#link-to-onenter-and-isactive-use-location-descriptors) see `to`)**
 An object of key:value pairs to be stringified.
 
-##### `hash` **([Deprecated](/upgrade-guides/v2.0.0.md#link-to-onenter-and-isactive-use-location-descriptors) see `to`)**
+##### `hash` **([Deprecated](https://github.com/reactjs/react-router/blob/master/upgrade-guides/v2.0.0.md#link-to-onenter-and-isactive-use-location-descriptors) see `to`)**
 A hash to put in the URL, e.g. `#a-hash`.
 
-_Note: React Router currently does not manage scroll position, and will not scroll to the element corresponding to the hash._
+_Note: React Router currently does not manage scroll position, and will not scroll to the element corresponding to the hash. Scroll position management utilities are available in the [scroll-behavior](https://github.com/taion/scroll-behavior) library._
 
-##### `state` **([Deprecated](/upgrade-guides/v2.0.0.md#link-to-onenter-and-isactive-use-location-descriptors) see `to`)**
+##### `state` **([Deprecated](https://github.com/reactjs/react-router/blob/master/upgrade-guides/v2.0.0.md#link-to-onenter-and-isactive-use-location-descriptors) see `to`)**
 State to persist to the `location`.
 
 ##### `activeClassName`
@@ -163,9 +162,6 @@ Given a route like `<Route path="/users/:userId" />`:
 ### `<IndexLink>`
 An `<IndexLink>` is like a [`<Link>`](#link), except it is only active when the current route is exactly the linked route. It is equivalent to `<Link>` with the `onlyActiveOnIndex` prop set.
 
-### `withRouter(component)`
-A HoC (higher-order component) that wraps another component to provide `this.props.router`. Pass in your component and it will return the wrapped component.
-
 ### `<RouterContext>`
 A `<RouterContext>` renders the component tree for a given router state. Its used by `<Router>` but also useful for server rendering and integrating in brownfield development.
 
@@ -174,6 +170,61 @@ It also provides a `router` object on [context](https://facebook.github.io/react
 #### `context.router`
 
 Contains data and methods relevant to routing. Most useful for imperatively transitioning around the application.
+
+To use it, you must signal to React that you need it by declaring your use of it in your component via `contextTypes`:
+
+```js
+var MyComponent = React.createClass({
+  contextTypes: {
+    router: routerShape.isRequired
+  },
+
+  render: function() {
+    // Here, you can use this.context.router.
+  }
+})
+```
+
+To use `context.router` on a component declared as an ES2015 class, define `contextTypes` as a static property of the class:
+
+```js
+class MyComponent extends React.Component {
+  render() {
+    // Here, you can use this.context.router.
+  }
+}
+
+MyComponent.contextTypes = {
+  router: routerShape.isRequired
+}
+```
+
+If you are using the class properties proposal, you can instead write:
+
+```js
+class MyComponent extends React.Component {
+  static contextTypes = {
+    router: routerShape.isRequired
+  }
+
+  render() {
+    // Here, you can use this.context.router.
+  }
+}
+```
+
+To use `context.router` with
+[stateless function components](https://facebook.github.io/react/docs/reusable-components.html#stateless-functions), declare `contextTypes` as a static property of the component function:
+
+```js
+function MyComponent(props, context) {
+  // Here, you can use context.router.
+}
+
+MyComponent.contextTypes = {
+  router: routerShape.isRequired
+}
+```
 
 ##### `push(pathOrLoc)`
 Transitions to a new URL, adding a new entry in the browser history.
@@ -268,7 +319,7 @@ const routes = (
   <Route component={App}>
     <Route path="groups" components={{main: Groups, sidebar: GroupsSidebar}} />
     <Route path="users" components={{main: Users, sidebar: UsersSidebar}}>
-      <Route path=":userId" component={Profile} />
+      <Route path="users/:userId" component={Profile} />
     </Route>
   </Route>
 )
