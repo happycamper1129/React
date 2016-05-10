@@ -1,4 +1,5 @@
 import { loopAsync } from './AsyncUtils'
+import warning from './routerWarning'
 
 function createTransitionHook(hook, route, asyncArity) {
   return function (...args) {
@@ -37,7 +38,21 @@ function runTransitionHooks(length, iter, callback) {
   }
 
   let redirectInfo
-  function replace(location) {
+  function replace(location, deprecatedPathname, deprecatedQuery) {
+    if (deprecatedPathname) {
+      warning(
+        false,
+        '`replaceState(state, pathname, query) is deprecated; use `replace(location)` with a location descriptor instead. http://tiny.cc/router-isActivedeprecated'
+      )
+      redirectInfo = {
+        pathname: deprecatedPathname,
+        query: deprecatedQuery,
+        state: location
+      }
+
+      return
+    }
+
     redirectInfo = location
   }
 
