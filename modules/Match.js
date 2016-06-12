@@ -1,66 +1,76 @@
-import invariant from 'invariant'
+import React, { PropTypes } from 'react'
+import MatchCountProvider from './MatchCountProvider'
+import MultiRender from './MultiRender'
+import matchPattern from './matchPattern'
 
-import createMemoryHistory from './createMemoryHistory'
-import createTransitionManager from './createTransitionManager'
-import { createRoutes } from './RouteUtils'
-import { createRouterObject, createRoutingHistory } from './RouterUtils'
-
-/**
- * A high-level API to be used for server-side rendering.
- *
- * This function matches a location to a set of routes and calls
- * callback(error, redirectLocation, renderProps) when finished.
- *
- * Note: You probably don't want to use this in a browser unless you're using
- * server-side rendering with async routes.
- */
-function match({ history, routes, location, ...options }, callback) {
-  invariant(
-    history || location,
-    'match needs a history or a location'
-  )
-
-  history = history ? history : createMemoryHistory(options)
-  const transitionManager = createTransitionManager(
-    history,
-    createRoutes(routes)
-  )
-
-  let unlisten
-
-  if (location) {
-    // Allow match({ location: '/the/path', ... })
-    location = history.createLocation(location)
-  } else {
-    // Pick up the location from the history via synchronous history.listen
-    // call if needed.
-    unlisten = history.listen(historyLocation => {
-      location = historyLocation
-    })
+class RegisterMatch extends React.Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired
   }
 
-  const router = createRouterObject(history, transitionManager)
-  history = createRoutingHistory(history, transitionManager)
+  static contextTypes = {
+    matchCounter: PropTypes.object
+  }
 
-  transitionManager.match(location, function (error, redirectLocation, nextState) {
-    callback(
-      error,
-      redirectLocation,
-      nextState && {
-        ...nextState,
-        history,
-        router,
-        matchContext: { history, transitionManager, router }
-      }
-    )
+  componentWillMount() {
+    this.context.matchCounter.registerMatch()
+  }
 
-    // Defer removing the listener to here to prevent DOM histories from having
-    // to unwind DOM event listeners unnecessarily, in case callback renders a
-    // <Router> and attaches another history listener.
-    if (unlisten) {
-      unlisten()
-    }
-  })
+  componentWillUnmount() {
+    this.context.matchCounter.unregisterMatch()
+  }
+
+  render() {
+    return React.Children.only(this.props.children)
+  }
 }
 
-export default match
+class Match extends React.Component {
+  static propTypes = {
+    children: PropTypes.node,
+    render: PropTypes.func,
+    component: PropTypes.func,
+    // TODO: has to start w/ slash, create custom validator
+    pattern: PropTypes.string,
+    location: PropTypes.object,
+    exactly: PropTypes.bool
+  }
+
+  static defaultProps = {
+    exactly: false
+  }
+
+  static contextTypes = {
+    location: PropTypes.object
+  }
+
+  render() {
+    const { children, render, component, pattern, location, exactly } = this.props
+    const loc = location || this.context.location
+    const match = matchPattern(pattern, loc, exactly)
+
+    if (!match)
+      return null
+
+    return (
+      <RegisterMatch>
+        <MatchCountProvider isTerminal={match.isTerminal}>
+          <MultiRender
+            props={{
+              location: loc,
+              pattern,
+              pathname: match.pathname,
+              params: match.params,
+              isTerminal: match.isTerminal
+            }}
+            children={children}
+            component={component}
+            render={render}
+          />
+        </MatchCountProvider>
+      </RegisterMatch>
+    )
+  }
+}
+
+export default Match
