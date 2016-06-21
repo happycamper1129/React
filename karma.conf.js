@@ -1,13 +1,8 @@
-/*eslint no-console: 0*/
-var webpack = require('webpack')
-var path = require('path')
+const path = require('path')
+const webpack = require('webpack')
 
-module.exports = function (config) {
-  if (process.env.RELEASE)
-    config.singleRun = true
-
-  var customLaunchers = {
-    // Browsers to run on BrowserStack.
+module.exports = (config) => {
+  const customLaunchers = {
     BS_Chrome: {
       base: 'BrowserStack',
       os: 'Windows',
@@ -29,14 +24,14 @@ module.exports = function (config) {
       browser: 'safari',
       browser_version: '9.0'
     },
-    BS_MobileSafari: {
+    BS_MobileSafari8: {
       base: 'BrowserStack',
       os: 'ios',
       os_version: '8.3',
       browser: 'iphone',
       real_mobile: false
     },
-    BS_MobileSafari: {
+    BS_MobileSafari9: {
       base: 'BrowserStack',
       os: 'ios',
       os_version: '9.1',
@@ -56,30 +51,7 @@ module.exports = function (config) {
       os_version: '10',
       browser: 'ie',
       browser_version: '11.0'
-    },
-
-    // The ancient Travis Chrome that most projects use in CI.
-    ChromeCi: {
-      base: 'Chrome',
-      flags: [ '--no-sandbox' ]
     }
-  }
-
-  var isCi = process.env.CONTINUOUS_INTEGRATION === 'true'
-  var runCoverage = process.env.COVERAGE === 'true' || isCi
-
-  var coverageLoaders = []
-  var coverageReporters = []
-
-  if (runCoverage) {
-    coverageLoaders.push({
-      test: /\.js$/,
-      include: path.resolve('modules/'),
-      exclude: /__tests__/,
-      loader: 'isparta'
-    })
-
-    coverageReporters.push('coverage')
   }
 
   config.set({
@@ -87,7 +59,7 @@ module.exports = function (config) {
 
     browsers: [ 'Chrome' ],
     frameworks: [ 'mocha' ],
-    reporters: [ 'mocha' ].concat(coverageReporters),
+    reporters: [ 'mocha' ],
 
     files: [
       'tests.webpack.js'
@@ -102,7 +74,7 @@ module.exports = function (config) {
       module: {
         loaders: [
           { test: /\.js$/, exclude: /node_modules/, loader: 'babel' }
-        ].concat(coverageLoaders)
+        ]
       },
       plugins: [
         new webpack.DefinePlugin({
@@ -113,26 +85,19 @@ module.exports = function (config) {
 
     webpackServer: {
       noInfo: true
-    },
-
-    coverageReporter: {
-      reporters: [
-        { type: 'html', subdir: 'html' },
-        { type: 'lcovonly', subdir: '.' }
-      ]
     }
   })
 
   if (process.env.USE_CLOUD) {
     config.browsers = Object.keys(customLaunchers)
-    config.reporters[0] = 'dots'
+    config.reporters = [ 'dots' ]
     config.browserDisconnectTimeout = 10000
     config.browserDisconnectTolerance = 3
     config.browserNoActivityTimeout = 30000
     config.captureTimeout = 120000
 
     if (process.env.TRAVIS) {
-      var buildLabel = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')'
+      const buildLabel = 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')'
 
       config.browserStack = {
         username: process.env.BROWSER_STACK_USERNAME,
