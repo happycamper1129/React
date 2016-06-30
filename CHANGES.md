@@ -1,17 +1,25 @@
-## [v3.0.0-alpha.1]
-> May 19, 2016
+## [v2.5.1]
+> Jun 23, 2016
 
-- **Breaking:** Remove all deprecated functionality as of v2.3.0 ([#3340], [#3435])
-- **Breaking/Feature:** Make `<Link>` and `withRouter` update inside static containers ([#3430], [#3443])
-- **Feature:** Add `params`, `location`, and `routes` to props injected by `withRouter` and to properties on `context.router` ([#3444], [#3446])
+- **Bugfix:** Throw error instead of silently failing with history v3 ([#3571])
+- **Bugfix:** Explicitly throw error in `onClick` handler of `<Link>` rendered outside of router context ([#3572])
 
-[v3.0.0-alpha.1]: https://github.com/reactjs/react-router/compare/v2.4.1...v3.0.0-alpha.1
-[#3340]: https://github.com/reactjs/react-router/pull/3340
-[#3430]: https://github.com/reactjs/react-router/pull/3430
-[#3435]: https://github.com/reactjs/react-router/pull/3435
-[#3443]: https://github.com/reactjs/react-router/pull/3443
-[#3444]: https://github.com/reactjs/react-router/pull/3444
-[#3446]: https://github.com/reactjs/react-router/pull/3446
+[v2.5.1]: https://github.com/reactjs/react-router/compare/v2.5.0...v2.5.1
+[#3571]: https://github.com/reactjs/react-router/pull/3571
+[#3572]: https://github.com/reactjs/react-router/pull/3572
+
+
+## [v2.5.0]
+> Jun 22, 2016
+
+- **Feature/Deprecation:** Call `getChildRoutes` and `getIndexRoute` with `partialNextState`; deprecate accessing `location` directly in favor of `partialNextState.location` there ([#3556], [#3561], [#3569], [Upgrade Guide](/upgrade-guides/v2.5.0.md#getchildroutes-getindexroute-signature))
+- **Refactor:** Refactor creating `routeParams` objects ([#3544])
+
+[v2.5.0]: https://github.com/reactjs/react-router/compare/v2.4.1...v2.5.0
+[#3544]: https://github.com/reactjs/react-router/pull/3544
+[#3556]: https://github.com/reactjs/react-router/pull/3556
+[#3561]: https://github.com/reactjs/react-router/pull/3561
+[#3569]: https://github.com/reactjs/react-router/pull/3569
 
 
 ## [v2.4.1]

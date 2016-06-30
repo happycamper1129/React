@@ -1,4 +1,5 @@
 import { mapAsync } from './AsyncUtils'
+import makeStateWithLocation from './makeStateWithLocation'
 
 function getComponentsForRoute(nextState, route, callback) {
   if (route.component || route.components) {
@@ -7,11 +8,15 @@ function getComponentsForRoute(nextState, route, callback) {
   }
 
   const getComponent = route.getComponent || route.getComponents
-  if (getComponent) {
-    getComponent.call(route, nextState, callback)
-  } else {
+  if (!getComponent) {
     callback()
+    return
   }
+
+  const { location } = nextState
+  const nextStateWithLocation = makeStateWithLocation(nextState, location)
+
+  getComponent.call(route, nextStateWithLocation, callback)
 }
 
 /**
