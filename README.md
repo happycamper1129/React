@@ -9,6 +9,8 @@ React Router keeps your UI in sync with the URL. It has a simple API with powerf
 [![Coveralls][coveralls-badge]][coveralls]
 [![Discord][discord-badge]][discord]
 
+> **Important:** *This is the `next` branch of React Router and may contain changes that are not yet released. To see the code for stable releases, browse [the `master` branch](https://github.com/reactjs/react-router/tree/master).*
+
 ### Docs & Help
 
 - [Tutorial – do this first!](https://github.com/reactjs/react-router-tutorial)
@@ -118,7 +120,7 @@ render((
       <Route path="*" component={NoMatch}/>
     </Route>
   </Router>
-), document.getElementById('root'))
+), document.body)
 ```
 
 See more in the [Introduction](/docs/Introduction.md), [Guides](/docs/guides/README.md), and [Examples](/examples).

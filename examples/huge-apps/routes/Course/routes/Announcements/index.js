@@ -1,7 +1,7 @@
 module.exports = {
   path: 'announcements',
 
-  getChildRoutes(partialNextState, cb) {
+  getChildRoutes(location, cb) {
     require.ensure([], (require) => {
       cb(null, [
         require('./routes/Announcement')

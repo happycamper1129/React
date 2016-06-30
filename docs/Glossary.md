@@ -244,7 +244,7 @@ type Router = {
   go(n: number) => void;
   goBack() => void;
   goForward() => void;
-  setRouteLeaveHook(route: Route, hook: RouteHook) => Function;
+  setRouteLeaveHook(hook: RouteHook) => Function;
   isActive(location: LocationDescriptor, indexOnly: boolean) => void;
 };
 ```

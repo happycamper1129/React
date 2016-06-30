@@ -1,11 +1,10 @@
 import expect from 'expect'
-import { createMemoryHistory } from 'history'
 import React from 'react'
-import { canUseMembrane } from '../deprecateObjectProperties'
-import IndexRoute from '../IndexRoute'
+import { createMemoryHistory } from 'history'
+import { createRoutes } from '../RouteUtils'
 import matchRoutes from '../matchRoutes'
 import Route from '../Route'
-import { createRoutes } from '../RouteUtils'
+import IndexRoute from '../IndexRoute'
 import shouldWarn from './shouldWarn'
 
 describe('matchRoutes', function () {
@@ -263,7 +262,7 @@ describe('matchRoutes', function () {
         if (childRoutes) {
           delete route.childRoutes
 
-          route.getChildRoutes = function (partialNextState, callback) {
+          route.getChildRoutes = function (location, callback) {
             setTimeout(function () {
               callback(null, childRoutes)
             })
@@ -295,79 +294,41 @@ describe('matchRoutes', function () {
     let getChildRoutes, getIndexRoute, jsxRoutes
 
     beforeEach(function () {
-      getChildRoutes = expect.createSpy().andCall(
-        function (partialNextState, callback) {
-          setTimeout(function () {
-            callback(null, <Route path=":userId" />)
-          })
-        }
-      )
+      getChildRoutes = function (location, callback) {
+        setTimeout(function () {
+          callback(null, <Route path=":userID" />)
+        })
+      }
 
-      getIndexRoute = expect.createSpy().andCall(
-        function (location, callback) {
-          setTimeout(function () {
-            callback(null, <Route name="jsx" />)
-          })
-        }
-      )
+      getIndexRoute = function (location, callback) {
+        setTimeout(function () {
+          callback(null, <Route name="jsx" />)
+        })
+      }
 
       jsxRoutes = createRoutes([
-        <Route
-          name="users"
-          path=":groupId/users"
-          getChildRoutes={getChildRoutes}
-          getIndexRoute={getIndexRoute}
-        />
+        <Route name="users"
+               path="users"
+               getChildRoutes={getChildRoutes}
+               getIndexRoute={getIndexRoute} />
       ])
     })
 
     it('when getChildRoutes callback returns reactElements', function (done) {
-      matchRoutes(
-        jsxRoutes, createLocation('/foo/users/5'),
-        function (error, match) {
-          expect(match).toExist()
-          expect(match.routes.map(r => r.path)).toEqual([
-            ':groupId/users', ':userId'
-          ])
-          expect(match.params).toEqual({ groupId: 'foo', userId: '5' })
-
-          const partialNextState = getChildRoutes.calls[0].arguments[0]
-          expect(partialNextState.params).toEqual({ groupId: 'foo' })
-          expect(partialNextState.location.pathname).toEqual('/foo/users/5')
-
-          // Only the calls below this point should emit deprecation warnings.
-          if (canUseMembrane) {
-            shouldWarn('deprecated')
-          }
-
-          expect(partialNextState.pathname).toEqual('/foo/users/5')
-
-          done()
-        }
-      )
+      matchRoutes(jsxRoutes, createLocation('/users/5'), function (error, match) {
+        expect(match).toExist()
+        expect(match.routes.map(r => r.path)).toEqual([ 'users', ':userID' ])
+        expect(match.params).toEqual({ userID: '5' })
+        done()
+      })
     })
 
     it('when getIndexRoute callback returns reactElements', function (done) {
-      matchRoutes(
-        jsxRoutes, createLocation('/bar/users'),
-        function (error, match) {
-          expect(match).toExist()
-          expect(match.routes.map(r => r.name)).toEqual([ 'users', 'jsx' ])
-
-          const partialNextState = getIndexRoute.calls[0].arguments[0]
-          expect(partialNextState.params).toEqual({ groupId: 'bar' })
-          expect(partialNextState.location.pathname).toEqual('/bar/users')
-
-          // Only the calls below this point should emit deprecation warnings.
-          if (canUseMembrane) {
-            shouldWarn('deprecated')
-          }
-
-          expect(partialNextState.pathname).toEqual('/bar/users')
-
-          done()
-        }
-      )
+      matchRoutes(jsxRoutes, createLocation('/users'), function (error, match) {
+        expect(match).toExist()
+        expect(match.routes.map(r => r.name)).toEqual([ 'users', 'jsx' ])
+        done()
+      })
     })
   })
 

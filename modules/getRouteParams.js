@@ -10,11 +10,16 @@ function getRouteParams(route, params) {
   if (!route.path)
     return routeParams
 
-  getParamNames(route.path).forEach(p => {
-    if (Object.prototype.hasOwnProperty.call(params, p)) {
+  const paramNames = getParamNames(route.path)
+
+  for (const p in params) {
+    if (
+      Object.prototype.hasOwnProperty.call(params, p) &&
+      paramNames.indexOf(p) !== -1
+    ) {
       routeParams[p] = params[p]
     }
-  })
+  }
 
   return routeParams
 }

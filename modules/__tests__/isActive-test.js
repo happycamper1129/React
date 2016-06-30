@@ -628,7 +628,7 @@ describe('isActive', function () {
       childRoutes: [
         { path: 'foo' }
       ],
-      getIndexRoute(partialNextState, callback) {
+      getIndexRoute(location, callback) {
         setTimeout(() => callback(null, {}))
       }
     }
