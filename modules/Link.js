@@ -1,156 +1,147 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import warning from './routerWarning'
+import invariant from 'invariant'
+import { routerShape } from './PropTypes'
 
-const { oneOfType, string, object, bool, func } = PropTypes
+const { bool, object, string, func, oneOfType } = React.PropTypes
 
-class Link extends React.Component {
+function isLeftClickEvent(event) {
+  return event.button === 0
+}
 
-  static propTypes = {
+function isModifiedEvent(event) {
+  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey)
+}
+
+// TODO: De-duplicate against hasAnyProperties in createTransitionManager.
+function isEmptyObject(object) {
+  for (const p in object)
+    if (Object.prototype.hasOwnProperty.call(object, p))
+      return false
+
+  return true
+}
+
+function createLocationDescriptor(to, { query, hash, state }) {
+  if (query || hash || state) {
+    return { pathname: to, query, hash, state }
+  }
+
+  return to
+}
+
+/**
+ * A <Link> is used to create an <a> element that links to a route.
+ * When that route is active, the link gets the value of its
+ * activeClassName prop.
+ *
+ * For example, assuming you have the following route:
+ *
+ *   <Route path="/posts/:postID" component={Post} />
+ *
+ * You could use the following component to link to that route:
+ *
+ *   <Link to={`/posts/${post.id}`} />
+ *
+ * Links may pass along location state and/or query string parameters
+ * in the state/query props, respectively.
+ *
+ *   <Link ... query={{ show: true }} state={{ the: 'state' }} />
+ */
+const Link = React.createClass({
+
+  contextTypes: {
+    router: routerShape
+  },
+
+  propTypes: {
     to: oneOfType([ string, object ]).isRequired,
+    query: object,
+    hash: string,
+    state: object,
     activeStyle: object,
     activeClassName: string,
-    location: object,
-    activeOnlyWhenExact: bool,
-    isActive: func,
+    onlyActiveOnIndex: bool.isRequired,
+    onClick: func,
+    target: string
+  },
 
-    // props we have to deal with but aren't necessarily
-    // part of the Link API
-    style: object,
-    className: string,
-    target: string,
-    onClick: func
-  }
-
-  static defaultProps = {
-    activeOnlyWhenExact: false,
-    className: '',
-    activeClassName: '',
-    style: {},
-    activeStyle: {},
-    isActive: (location, props) => {
-      const to = createLocationDescriptor(props.to)
-      return pathIsActive(
-        to.pathname,
-        location.pathname,
-        props.activeOnlyWhenExact
-      ) && queryIsActive(
-        to.query,
-        location.query
-      )
+  getDefaultProps() {
+    return {
+      onlyActiveOnIndex: false,
+      style: {}
     }
-  }
+  },
 
-  static contextTypes = {
-    history: PropTypes.object,
-    location: PropTypes.object
-  }
+  handleClick(event) {
+    invariant(
+      this.context.router,
+      '<Link>s rendered outside of a router context cannot handle clicks.'
+    )
+    
+    let allowTransition = true
 
-  handleClick = (event) => {
-    const { history } = this.context
-    const { to, onClick, target } = this.props
+    if (this.props.onClick)
+      this.props.onClick(event)
 
-    if (onClick)
-      onClick(event)
+    if (isModifiedEvent(event) || !isLeftClickEvent(event))
+      return
 
-    if (
-      !event.defaultPrevented && // onClick prevented default
-      !target && // let browser handle "target=_blank" etc.
-      !isModifiedEvent(event) &&
-      isLeftClickEvent(event)
-    ) {
-      event.preventDefault()
-      history.push(to)
+    if (event.defaultPrevented === true)
+      allowTransition = false
+
+    // If target prop is set (e.g. to "_blank") let browser handle link.
+    /* istanbul ignore if: untestable with Karma */
+    if (this.props.target) {
+      if (!allowTransition)
+        event.preventDefault()
+
+      return
     }
-  }
+
+    event.preventDefault()
+
+    if (allowTransition) {
+      const { to, query, hash, state } = this.props
+      const location = createLocationDescriptor(to, { query, hash, state })
+
+      this.context.router.push(location)
+    }
+  },
 
   render() {
-    const {
-      to,
-      style,
-      activeStyle,
-      className,
-      activeClassName,
-      location,
-      isActive: getIsActive,
-      activeOnlyWhenExact, // eslint-disable-line
-      ...rest
-    } = this.props
-    const { history } = this.context
-
-    const currentLocation = location || this.context.location
-    const isActive = getIsActive(currentLocation, this.props)
-
-    return (
-      <a
-        {...rest}
-        href={history ? history.createHref(to) : to}
-        onClick={this.handleClick}
-        style={isActive ? { ...style, ...activeStyle } : style }
-        className={isActive ?
-          [ activeClassName, className ].join(' ').trim() : className
-        }
-      />
+    const { to, query, hash, state, activeClassName, activeStyle, onlyActiveOnIndex, ...props } = this.props
+    warning(
+      !(query || hash || state),
+      'the `query`, `hash`, and `state` props on `<Link>` are deprecated, use `<Link to={{ pathname, query, hash, state }}/>. http://tiny.cc/router-isActivedeprecated'
     )
-  }
-}
 
-const createLocationDescriptor = (to) =>
-  typeof to === 'object' ? to : { pathname: to }
+    // Ignore if rendered outside the context of router, simplifies unit testing.
+    const { router } = this.context
 
-const pathIsActive = (to, pathname, activeOnlyWhenExact) =>
-  activeOnlyWhenExact ? pathname === to : pathname.startsWith(to)
+    if (router) {
+      const location = createLocationDescriptor(to, { query, hash, state })
+      props.href = router.createHref(location)
 
-const queryIsActive = (query, activeQuery) => {
-  if (activeQuery == null)
-    return query == null
+      if (activeClassName || (activeStyle != null && !isEmptyObject(activeStyle))) {
+        if (router.isActive(location, onlyActiveOnIndex)) {
+          if (activeClassName) {
+            if (props.className) {
+              props.className += ` ${activeClassName}`
+            } else {
+              props.className = activeClassName
+            }
+          }
 
-  if (query == null)
-    return true
-
-  return deepEqual(query, activeQuery)
-}
-
-const isLeftClickEvent = (event) =>
-  event.button === 0
-
-const isModifiedEvent = (event) =>
-  !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey)
-
-const deepEqual = (a, b) => {
-  if (a == b)
-    return true
-
-  if (a == null || b == null)
-    return false
-
-  if (Array.isArray(a)) {
-    return (
-      Array.isArray(b) &&
-      a.length === b.length &&
-      a.every((item, index) => deepEqual(item, b[index]))
-    )
-  }
-
-  if (typeof a === 'object') {
-    for (let p in a) {
-      if (!Object.prototype.hasOwnProperty.call(a, p)) {
-        continue
-      }
-
-      if (a[p] === undefined) {
-        if (b[p] !== undefined) {
-          return false
+          if (activeStyle)
+            props.style = { ...props.style, ...activeStyle }
         }
-      } else if (!Object.prototype.hasOwnProperty.call(b, p)) {
-        return false
-      } else if (!deepEqual(a[p], b[p])) {
-        return false
       }
     }
 
-    return true
+    return <a {...props} onClick={this.handleClick} />
   }
 
-  return String(a) === String(b)
-}
+})
 
 export default Link
