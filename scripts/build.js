@@ -1,18 +1,25 @@
-var execSync = require('child_process').execSync
-var readFileSync = require('fs').readFileSync
-var prettyBytes = require('pretty-bytes')
-var gzipSize = require('gzip-size')
+const readFileSync = require('fs').readFileSync
+const execSync = require('child_process').execSync
+const inInstall = require('in-publish').inInstall
+const prettyBytes = require('pretty-bytes')
+const gzipSize = require('gzip-size')
 
-function exec(command) {
-  execSync(command, { stdio: [0, 1, 2] })
-}
+if (inInstall())
+  process.exit(0)
 
-exec('npm run build')
-exec('npm run build-umd')
-exec('npm run build-min')
+const exec = (command, env) =>
+  execSync(command, { stdio: 'inherit', env })
+
+const webpackEnv = Object.assign({}, process.env, {
+  NODE_ENV: 'production'
+})
+
+exec('npm run build-lib')
+exec('npm run build-umd', webpackEnv)
+exec('npm run build-min', webpackEnv)
 
 console.log(
   '\ngzipped, the UMD build is ' + prettyBytes(
-    gzipSize.sync(readFileSync('umd/ReactRouter.min.js'))
+    gzipSize.sync(readFileSync('umd/react-router.min.js'))
   )
 )
