@@ -1,95 +1,186 @@
-import warning from 'warning'
-import React, { PropTypes } from 'react'
-import History from './History'
-import MatchCountProvider from './MatchCountProvider'
-import {
-  history as historyType,
-  location as locationType,
-  router as routerType
-} from './PropTypes'
+import createHashHistory from 'history/lib/createHashHistory'
+import useQueries from 'history/lib/useQueries'
+import invariant from 'invariant'
+import React from 'react'
 
-class Router extends React.Component {
-  static propTypes = {
-    history: historyType,
-    location: locationType,
-    children: PropTypes.oneOfType([ PropTypes.node, PropTypes.func ]),
-    createHref: PropTypes.func,
-    onPush: PropTypes.func,
-    onReplace: PropTypes.func
-  }
+import createTransitionManager from './createTransitionManager'
+import { routes } from './InternalPropTypes'
+import RouterContext from './RouterContext'
+import { createRoutes } from './RouteUtils'
+import { createRouterObject, createRoutingHistory } from './RouterUtils'
+import warning from './routerWarning'
 
-  static defaultProps = {
-    createHref(to) {
-      return this.props.history.createHref(to)
-    },
-    onPush(location) {
-      if (this.props.history) {
-        this.props.history.push(location)
-      } else {
-        warning(
-          false,
-          'Missing <Router history> prop; <Link>s won\'t work'
-        )
-      }
-    },
-    onReplace(location) {
-      if (this.props.history) {
-        this.props.history.replace(location)
-      } else {
-        warning(
-          false,
-          'Missing <Router history> prop; <Redirect>s won\'t work'
-        )
-      }
-    }
-  }
+function isDeprecatedHistory(history) {
+  return !history || !history.__v2_compatible__
+}
 
-  static childContextTypes = {
-    router: routerType.isRequired
-  }
+/* istanbul ignore next: sanity check */
+function isUnsupportedHistory(history) {
+  // v3 histories expose getCurrentLocation, but aren't currently supported.
+  return history && history.getCurrentLocation
+}
 
-  getChildContext() {
+const { func, object } = React.PropTypes
+
+/**
+ * A <Router> is a high-level API for automatically setting up
+ * a router that renders a <RouterContext> with all the props
+ * it needs each time the URL changes.
+ */
+const Router = React.createClass({
+
+  propTypes: {
+    history: object,
+    children: routes,
+    routes, // alias for children
+    render: func,
+    createElement: func,
+    onError: func,
+    onUpdate: func,
+
+    // Deprecated:
+    parseQueryString: func,
+    stringifyQuery: func,
+
+    // PRIVATE: For client-side rehydration of server match.
+    matchContext: object
+  },
+
+  getDefaultProps() {
     return {
-      router: {
-        createHref: this.createHref,
-        transitionTo: this.transitionTo,
-        replaceWith: this.replaceWith,
-        blockTransitions: this.blockTransitions
+      render(props) {
+        return <RouterContext {...props} />
       }
     }
-  }
+  },
 
-  createHref = (to) =>
-    this.props.createHref.call(this, to)
+  getInitialState() {
+    return {
+      location: null,
+      routes: null,
+      params: null,
+      components: null
+    }
+  },
 
-  transitionTo = (location) =>
-    this.props.onPush.call(this, location)
+  handleError(error) {
+    if (this.props.onError) {
+      this.props.onError.call(this, error)
+    } else {
+      // Throw errors by default so we don't silently swallow them!
+      throw error // This error probably occurred in getChildRoutes or getComponents.
+    }
+  },
 
-  replaceWith = (location) =>
-    this.props.onReplace.call(this, location)
+  componentWillMount() {
+    const { parseQueryString, stringifyQuery } = this.props
+    warning(
+      !(parseQueryString || stringifyQuery),
+      '`parseQueryString` and `stringifyQuery` are deprecated. Please create a custom history. http://tiny.cc/router-customquerystring'
+    )
 
-  blockTransitions = (getPromptMessage) =>
-    this.props.history.listenBefore(getPromptMessage)
+    const { history, transitionManager, router } = this.createRouterObjects()
+
+    this._unlisten = transitionManager.listen((error, state) => {
+      if (error) {
+        this.handleError(error)
+      } else {
+        this.setState(state, this.props.onUpdate)
+      }
+    })
+
+    this.history = history
+    this.router = router
+  },
+
+  createRouterObjects() {
+    const { matchContext } = this.props
+    if (matchContext) {
+      return matchContext
+    }
+
+    let { history } = this.props
+    const { routes, children } = this.props
+
+    invariant(
+      !isUnsupportedHistory(history),
+      'You have provided a history object created with history v3.x. ' +
+      'This version of React Router is not compatible with v3 history ' +
+      'objects. Please use history v2.x instead.'
+    )
+
+    if (isDeprecatedHistory(history)) {
+      history = this.wrapDeprecatedHistory(history)
+    }
+
+    const transitionManager = createTransitionManager(
+      history, createRoutes(routes || children)
+    )
+    const router = createRouterObject(history, transitionManager)
+    const routingHistory = createRoutingHistory(history, transitionManager)
+
+    return { history: routingHistory, transitionManager, router }
+  },
+
+  wrapDeprecatedHistory(history) {
+    const { parseQueryString, stringifyQuery } = this.props
+
+    let createHistory
+    if (history) {
+      warning(false, 'It appears you have provided a deprecated history object to `<Router/>`, please use a history provided by ' +
+                     'React Router with `import { browserHistory } from \'react-router\'` or `import { hashHistory } from \'react-router\'`. ' +
+                     'If you are using a custom history please create it with `useRouterHistory`, see http://tiny.cc/router-usinghistory for details.')
+      createHistory = () => history
+    } else {
+      warning(false, '`Router` no longer defaults the history prop to hash history. Please use the `hashHistory` singleton instead. http://tiny.cc/router-defaulthistory')
+      createHistory = createHashHistory
+    }
+
+    return useQueries(createHistory)({ parseQueryString, stringifyQuery })
+  },
+
+  /* istanbul ignore next: sanity check */
+  componentWillReceiveProps(nextProps) {
+    warning(
+      nextProps.history === this.props.history,
+      'You cannot change <Router history>; it will be ignored'
+    )
+
+    warning(
+      (nextProps.routes || nextProps.children) ===
+        (this.props.routes || this.props.children),
+      'You cannot change <Router routes>; it will be ignored'
+    )
+  },
+
+  componentWillUnmount() {
+    if (this._unlisten)
+      this._unlisten()
+  },
 
   render() {
-    const { children, history, location } = this.props
+    const { location, routes, params, components } = this.state
+    const { createElement, render, ...props } = this.props
 
-    return (
-      <History history={history} location={location}>
-        {({ location }) => (
-          <MatchCountProvider>
-            {typeof children === 'function' ? (
-              children({ location })
-            ) : React.Children.count(children) > 1 ? (
-              <div>{children}</div>
-            ) : (
-              children
-            )}
-          </MatchCountProvider>
-        )}
-      </History>
-    )
+    if (location == null)
+      return null // Async match
+
+    // Only forward non-Router-specific props to routing context, as those are
+    // the only ones that might be custom routing context props.
+    Object.keys(Router.propTypes).forEach(propType => delete props[propType])
+
+    return render({
+      ...props,
+      history: this.history,
+      router: this.router,
+      location,
+      routes,
+      params,
+      components,
+      createElement
+    })
   }
-}
+
+})
 
 export default Router

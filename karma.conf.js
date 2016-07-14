@@ -1,8 +1,12 @@
-const path = require('path')
 const webpack = require('webpack')
+const path = require('path')
 
-module.exports = (config) => {
+module.exports = config => {
+  if (process.env.RELEASE)
+    config.singleRun = true
+
   const customLaunchers = {
+    // Browsers to run on BrowserStack.
     BS_Chrome: {
       base: 'BrowserStack',
       os: 'Windows',
@@ -51,6 +55,12 @@ module.exports = (config) => {
       os_version: '10',
       browser: 'ie',
       browser_version: '11.0'
+    },
+
+    // The ancient Travis Chrome that most projects use in CI.
+    ChromeCi: {
+      base: 'Chrome',
+      flags: [ '--no-sandbox' ]
     }
   }
 
@@ -59,7 +69,7 @@ module.exports = (config) => {
 
     browsers: [ 'Chrome' ],
     frameworks: [ 'mocha' ],
-    reporters: [ 'mocha' ],
+    reporters: [ 'mocha', 'coverage' ],
 
     files: [
       'tests.webpack.js'
@@ -70,10 +80,16 @@ module.exports = (config) => {
     },
 
     webpack: {
-      devtool: 'inline-source-map',
+      devtool: 'cheap-module-inline-source-map',
       module: {
         loaders: [
-          { test: /\.js$/, exclude: /node_modules/, loader: 'babel' }
+          { test: /\.js$/, exclude: /node_modules/, loader: 'babel' },
+          {
+            test: /\.js$/,
+            include: path.resolve('modules/'),
+            exclude: /__tests__/,
+            loader: 'isparta'
+          }
         ]
       },
       plugins: [
@@ -85,12 +101,19 @@ module.exports = (config) => {
 
     webpackServer: {
       noInfo: true
+    },
+
+    coverageReporter: {
+      reporters: [
+        { type: 'html', subdir: 'html' },
+        { type: 'lcovonly', subdir: '.' }
+      ]
     }
   })
 
   if (process.env.USE_CLOUD) {
     config.browsers = Object.keys(customLaunchers)
-    config.reporters = [ 'dots' ]
+    config.reporters[0] = 'dots'
     config.browserDisconnectTimeout = 10000
     config.browserDisconnectTolerance = 3
     config.browserNoActivityTimeout = 30000
