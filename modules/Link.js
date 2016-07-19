@@ -1,7 +1,7 @@
 import React from 'react'
-import warning from './routerWarning'
 import invariant from 'invariant'
 import { routerShape } from './PropTypes'
+import { ContextSubscriber } from './ContextUtils'
 
 const { bool, object, string, func, oneOfType } = React.PropTypes
 
@@ -20,14 +20,6 @@ function isEmptyObject(object) {
       return false
 
   return true
-}
-
-function createLocationDescriptor(to, { query, hash, state }) {
-  if (query || hash || state) {
-    return { pathname: to, query, hash, state }
-  }
-
-  return to
 }
 
 /**
@@ -49,6 +41,8 @@ function createLocationDescriptor(to, { query, hash, state }) {
  *   <Link ... query={{ show: true }} state={{ the: 'state' }} />
  */
 const Link = React.createClass({
+
+  mixins: [ ContextSubscriber('router') ],
 
   contextTypes: {
     router: routerShape
@@ -95,28 +89,19 @@ const Link = React.createClass({
 
     event.preventDefault()
 
-    const { to, query, hash, state } = this.props
-    const location = createLocationDescriptor(to, { query, hash, state })
-
-    this.context.router.push(location)
+    this.context.router.push(this.props.to)
   },
 
   render() {
-    const { to, query, hash, state, activeClassName, activeStyle, onlyActiveOnIndex, ...props } = this.props
-    warning(
-      !(query || hash || state),
-      'the `query`, `hash`, and `state` props on `<Link>` are deprecated, use `<Link to={{ pathname, query, hash, state }}/>. http://tiny.cc/router-isActivedeprecated'
-    )
-
+    const { to, activeClassName, activeStyle, onlyActiveOnIndex, ...props } = this.props
     // Ignore if rendered outside the context of router, simplifies unit testing.
     const { router } = this.context
 
     if (router) {
-      const location = createLocationDescriptor(to, { query, hash, state })
-      props.href = router.createHref(location)
+      props.href = router.createHref(to)
 
       if (activeClassName || (activeStyle != null && !isEmptyObject(activeStyle))) {
-        if (router.isActive(location, onlyActiveOnIndex)) {
+        if (router.isActive(to, onlyActiveOnIndex)) {
           if (activeClassName) {
             if (props.className) {
               props.className += ` ${activeClassName}`

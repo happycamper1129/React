@@ -3,7 +3,7 @@ import invariant from 'invariant'
 import createMemoryHistory from './createMemoryHistory'
 import createTransitionManager from './createTransitionManager'
 import { createRoutes } from './RouteUtils'
-import { createRouterObject, createRoutingHistory } from './RouterUtils'
+import { createRouterObject } from './RouterUtils'
 
 /**
  * A high-level API to be used for server-side rendering.
@@ -39,20 +39,19 @@ function match({ history, routes, location, ...options }, callback) {
     })
   }
 
-  const router = createRouterObject(history, transitionManager)
-  history = createRoutingHistory(history, transitionManager)
-
   transitionManager.match(location, function (error, redirectLocation, nextState) {
-    callback(
-      error,
-      redirectLocation,
-      nextState && {
+    let renderProps
+
+    if (nextState) {
+      const router = createRouterObject(history, transitionManager, nextState)
+      renderProps = {
         ...nextState,
-        history,
         router,
-        matchContext: { history, transitionManager, router }
+        matchContext: { transitionManager, router }
       }
-    )
+    }
+
+    callback(error, redirectLocation, renderProps)
 
     // Defer removing the listener to here to prevent DOM histories from having
     // to unwind DOM event listeners unnecessarily, in case callback renders a
