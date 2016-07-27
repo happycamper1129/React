@@ -6,8 +6,7 @@ function execSteps(steps, done) {
       done()
     } else {
       try {
-        // TODO: Don't set `this` context on callback
-        steps[index++].call(this, this.state)
+        steps[index++].apply(this, arguments)
 
         if (index === steps.length)
           done()
