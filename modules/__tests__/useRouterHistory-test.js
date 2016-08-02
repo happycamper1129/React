@@ -8,8 +8,13 @@ import Redirect from '../Redirect'
 import Router from '../Router'
 import Route from '../Route'
 
-describe('useRouterHistory', () => {
-  it('passes along options, especially query parsing', done => {
+describe('useRouterHistory', function () {
+  it('adds backwards compatibility flag', function () {
+    const history = useRouterHistory(createHistory)()
+    expect(history.__v2_compatible__).toBe(true)
+  })
+
+  it('passes along options, especially query parsing', function (done) {
     const history = useRouterHistory(createHistory)({
       stringifyQuery() {
         assert(true)
@@ -20,46 +25,40 @@ describe('useRouterHistory', () => {
     history.push({ pathname: '/', query: { test: true } })
   })
 
-  describe('when using basename', () => {
+  describe('when using basename', function () {
 
     let node
-    beforeEach(() => {
+    beforeEach(function () {
       node = document.createElement('div')
     })
 
-    afterEach(() => {
+    afterEach(function () {
       unmountComponentAtNode(node)
     })
 
-    it('should regard basename', () => {
+    it('should regard basename', function (done) {
+      const pathnames = []
+      const basenames = []
       const history = useRouterHistory(createHistory)({
         entries: '/foo/notes/5',
         basename: '/foo'
       })
-
-      const pathnames = []
-      const basenames = []
-
-      const currentLocation = history.getCurrentLocation()
-      pathnames.push(currentLocation.pathname)
-      basenames.push(currentLocation.basename)
-
-      history.listen(location => {
+      history.listen(function (location) {
         pathnames.push(location.pathname)
         basenames.push(location.basename)
       })
-
-      const instance = render((
+      render((
         <Router history={history}>
           <Route path="/messages/:id" />
           <Redirect from="/notes/:id" to="/messages/:id" />
         </Router>
-      ), node)
-
-      expect(pathnames).toEqual([ '/notes/5', '/messages/5' ])
-      expect(basenames).toEqual([ '/foo', '/foo' ])
-      expect(instance.state.location.pathname).toEqual('/messages/5')
-      expect(instance.state.location.basename).toEqual('/foo')
+      ), node, function () {
+        expect(pathnames).toEqual([ '/notes/5', '/messages/5' ])
+        expect(basenames).toEqual([ '/foo', '/foo' ])
+        expect(this.state.location.pathname).toEqual('/messages/5')
+        expect(this.state.location.basename).toEqual('/foo')
+        done()
+      })
     })
   })
 })
