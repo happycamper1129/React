@@ -1,52 +1,96 @@
-import invariant from 'invariant'
+import React, { PropTypes } from 'react'
+import MatchCountProvider from './MatchCountProvider'
+import matchPattern from './matchPattern'
 
-import createMemoryHistory from './createMemoryHistory'
-import createTransitionManager from './createTransitionManager'
-import { createRoutes } from './RouteUtils'
-import { createRouterObject } from './RouterUtils'
+const patternType = (props, propName, ...rest) => {
+  if (props[propName].charAt(0) !== '/')
+    return new Error('The `pattern` prop must start with "/"')
 
-/**
- * A high-level API to be used for server-side rendering.
- *
- * This function matches a location to a set of routes and calls
- * callback(error, redirectLocation, renderProps) when finished.
- *
- * Note: You probably don't want to use this in a browser unless you're using
- * server-side rendering with async routes.
- */
-function match({ history, routes, location, ...options }, callback) {
-  invariant(
-    history || location,
-    'match needs a history or a location'
-  )
-
-  history = history ? history : createMemoryHistory(options)
-  const transitionManager = createTransitionManager(
-    history,
-    createRoutes(routes)
-  )
-
-  if (location) {
-    // Allow match({ location: '/the/path', ... })
-    location = history.createLocation(location)
-  } else {
-    location = history.getCurrentLocation()
-  }
-
-  transitionManager.match(location, (error, redirectLocation, nextState) => {
-    let renderProps
-
-    if (nextState) {
-      const router = createRouterObject(history, transitionManager, nextState)
-      renderProps = {
-        ...nextState,
-        router,
-        matchContext: { transitionManager, router }
-      }
-    }
-
-    callback(error, redirectLocation, renderProps)
-  })
+  return PropTypes.string(props, propName, ...rest)
 }
 
-export default match
+class RegisterMatch extends React.Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired,
+    match: PropTypes.any
+  }
+
+  static contextTypes = {
+    matchCounter: PropTypes.object
+  }
+
+  componentWillMount() {
+    const { matchCounter } = this.context
+    const { match } = this.props
+
+    if (match && matchCounter)
+      matchCounter.increment()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { matchCounter } = this.context
+
+    if (matchCounter) {
+      if (nextProps.match && !this.props.match) {
+        matchCounter.increment()
+      } else if (!nextProps.match && this.props.match) {
+        matchCounter.decrement()
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.props.match)
+      this.context.matchCounter.decrement()
+  }
+
+  render() {
+    return React.Children.only(this.props.children)
+  }
+}
+
+class Match extends React.Component {
+  static propTypes = {
+    pattern: patternType,
+    exactly: PropTypes.bool,
+    location: PropTypes.object,
+
+    children: PropTypes.func,
+    render: PropTypes.func,
+    component: PropTypes.func
+  }
+
+  static defaultProps = {
+    exactly: false
+  }
+
+  static contextTypes = {
+    location: PropTypes.object
+  }
+
+  render() {
+    const { children, render, component:Component,
+      pattern, location, exactly } = this.props
+    const loc = location || this.context.location
+    const match = matchPattern(pattern, loc, exactly)
+    const props = { ...match, location: loc, pattern }
+
+    return (
+      <RegisterMatch match={match}>
+        <MatchCountProvider match={match}>
+          {children ? (
+            children({ matched: !!match, ...props })
+          ) : match ? (
+            render ? (
+              render(props)
+            ) : (
+              <Component {...props}/>
+            )
+          ) : null}
+        </MatchCountProvider>
+      </RegisterMatch>
+    )
+  }
+}
+
+export default Match
