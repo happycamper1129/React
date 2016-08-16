@@ -1,6 +1,5 @@
 /* eslint-env mocha */
 
-import 'babel-polyfill'
 import expect from 'expect'
 
 import { _resetWarned } from './modules/routerWarning'

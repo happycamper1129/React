@@ -1,5 +1,5 @@
 import { mapAsync } from './AsyncUtils'
-import { isPromise } from './PromiseUtils'
+import makeStateWithLocation from './makeStateWithLocation'
 
 function getComponentsForRoute(nextState, route, callback) {
   if (route.component || route.components) {
@@ -8,17 +8,15 @@ function getComponentsForRoute(nextState, route, callback) {
   }
 
   const getComponent = route.getComponent || route.getComponents
-  if (getComponent) {
-    const componentReturn = getComponent.call(route, nextState, callback)
-    if (isPromise(componentReturn))
-      componentReturn
-        .then(
-          component => callback(null, component),
-          callback
-        )
-  } else {
+  if (!getComponent) {
     callback()
+    return
   }
+
+  const { location } = nextState
+  const nextStateWithLocation = makeStateWithLocation(nextState, location)
+
+  getComponent.call(route, nextStateWithLocation, callback)
 }
 
 /**

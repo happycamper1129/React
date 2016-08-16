@@ -1,7 +1,7 @@
 import React from 'react'
+import warning from './routerWarning'
 import invariant from 'invariant'
 import { routerShape } from './PropTypes'
-import { ContextSubscriber } from './ContextUtils'
 
 const { bool, object, string, func, oneOfType } = React.PropTypes
 
@@ -22,8 +22,12 @@ function isEmptyObject(object) {
   return true
 }
 
-function resolveToLocation(to, router) {
-  return typeof to === 'function' ? to(router.location) : to
+function createLocationDescriptor(to, { query, hash, state }) {
+  if (query || hash || state) {
+    return { pathname: to, query, hash, state }
+  }
+
+  return to
 }
 
 /**
@@ -46,14 +50,12 @@ function resolveToLocation(to, router) {
  */
 const Link = React.createClass({
 
-  mixins: [ ContextSubscriber('router') ],
-
   contextTypes: {
     router: routerShape
   },
 
   propTypes: {
-    to: oneOfType([ string, object, func ]).isRequired,
+    to: oneOfType([ string, object ]).isRequired,
     query: object,
     hash: string,
     state: object,
@@ -78,9 +80,8 @@ const Link = React.createClass({
     if (event.defaultPrevented)
       return
 
-    const { router } = this.context
     invariant(
-      router,
+      this.context.router,
       '<Link>s rendered outside of a router context cannot navigate.'
     )
 
@@ -94,21 +95,28 @@ const Link = React.createClass({
 
     event.preventDefault()
 
-    router.push(resolveToLocation(this.props.to, router))
+    const { to, query, hash, state } = this.props
+    const location = createLocationDescriptor(to, { query, hash, state })
+
+    this.context.router.push(location)
   },
 
   render() {
-    const { to, activeClassName, activeStyle, onlyActiveOnIndex, ...props } = this.props
+    const { to, query, hash, state, activeClassName, activeStyle, onlyActiveOnIndex, ...props } = this.props
+    warning(
+      !(query || hash || state),
+      'the `query`, `hash`, and `state` props on `<Link>` are deprecated, use `<Link to={{ pathname, query, hash, state }}/>. http://tiny.cc/router-isActivedeprecated'
+    )
 
-    // Ignore if rendered outside the context of router to simplify unit testing.
+    // Ignore if rendered outside the context of router, simplifies unit testing.
     const { router } = this.context
 
     if (router) {
-      const toLocation = resolveToLocation(to, router)
-      props.href = router.createHref(toLocation)
+      const location = createLocationDescriptor(to, { query, hash, state })
+      props.href = router.createHref(location)
 
       if (activeClassName || (activeStyle != null && !isEmptyObject(activeStyle))) {
-        if (router.isActive(toLocation, onlyActiveOnIndex)) {
+        if (router.isActive(location, onlyActiveOnIndex)) {
           if (activeClassName) {
             if (props.className) {
               props.className += ` ${activeClassName}`

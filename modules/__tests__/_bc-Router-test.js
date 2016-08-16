@@ -1,14 +1,12 @@
 import expect from 'expect'
 import React, { Component } from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
-import createHistory from '../createMemoryHistory'
-import { canUseMembrane } from '../deprecateObjectProperties'
+import createHistory from 'history/lib/createMemoryHistory'
 import Route from '../Route'
 import Router from '../Router'
 import shouldWarn from './shouldWarn'
 
-describe('Router', function () {
-
+describe('v1 Router', function () {
   class Parent extends Component {
     render() {
       return <div>parent {this.props.children}</div>
@@ -28,6 +26,10 @@ describe('Router', function () {
 
   afterEach(function () {
     unmountComponentAtNode(node)
+  })
+
+  beforeEach(function () {
+    shouldWarn('deprecated')
   })
 
   it('renders routes', function (done) {
@@ -276,19 +278,6 @@ describe('Router', function () {
       })
     })
 
-    it('handles error that are not valid URI character', function (done) {
-      const errorSpy = expect.createSpy()
-
-      render((
-        <Router history={createHistory('/%')} onError={errorSpy}>
-          <Route path="*" />
-        </Router>
-      ), node, function () {
-        expect(errorSpy).toHaveBeenCalled()
-        done()
-      })
-    })
-
   })
 
   describe('render prop', function () {
@@ -344,11 +333,7 @@ describe('Router', function () {
 
     it('should support getComponent', function (done) {
       const Component = () => <div />
-
-      function getComponent(nextState, callback) {
-        expect(this.getComponent).toBe(getComponent)
-        expect(nextState.location.pathname).toBe('/')
-
+      const getComponent = (_, callback) => {
         setTimeout(() => callback(null, Component))
       }
 
@@ -368,10 +353,7 @@ describe('Router', function () {
       const foo = () => <div />
       const bar = () => <div />
 
-      function getComponents(nextState, callback) {
-        expect(this.getComponents).toBe(getComponents)
-        expect(nextState.location.pathname).toBe('/')
-
+      const getComponents = (_, callback) => {
         setTimeout(() => callback(null, { foo, bar }))
       }
 
@@ -386,30 +368,6 @@ describe('Router', function () {
         })
       })
     })
-
-    it('should supply location properties to getComponent', function (done) {
-      if (canUseMembrane) {
-        shouldWarn('deprecated')
-      }
-
-      const Component = () => <div />
-      const getComponent = (location, callback) => {
-        expect(location.pathname).toBe('/')
-        setTimeout(() => callback(null, Component))
-      }
-
-      render((
-        <Router history={createHistory('/')} render={renderSpy}>
-          <Route path="/" getComponent={getComponent} />
-        </Router>
-      ), node, function () {
-        setTimeout(function () {
-          expect(componentSpy).toHaveBeenCalledWith([ Component ])
-          done()
-        })
-      })
-    })
-
   })
 
   describe('error handling', function () {

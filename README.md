@@ -9,8 +9,6 @@ React Router keeps your UI in sync with the URL. It has a simple API with powerf
 [![Codecov][codecov-badge]][codecov]
 [![Discord][discord-badge]][discord]
 
-> **Important:** *This is the `next` branch of React Router and may contain changes that are not yet released. To see the code for stable releases, browse [the `master` branch](https://github.com/reactjs/react-router/tree/master).*
-
 ### Docs & Help
 
 - [Tutorial – do this first!](https://github.com/reactjs/react-router-tutorial)
@@ -127,7 +125,7 @@ See more in the [Introduction](/docs/Introduction.md), [Guides](/docs/guides/REA
 
 ### Versioning and Stability
 
-We want React Router to be a stable dependency that’s easy to keep current. We follow the same versioning as React.js itself: [React Versioning Scheme](https://facebook.github.io/react/blog/2016/02/19/new-versioning-scheme.html).
+We want React Router to be a stable dependency that’s easy to keep current. We take the same approach to versioning as React.js itself: [React Versioning Scheme](https://facebook.github.io/react/blog/2016/02/19/new-versioning-scheme.html).
 
 ### Thanks
 
