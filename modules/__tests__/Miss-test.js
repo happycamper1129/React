@@ -2,7 +2,7 @@ import expect from 'expect'
 import React from 'react'
 import Miss from '../Miss'
 import { renderToString } from 'react-dom/server'
-import MatchProvider from '../MatchProvider'
+import MatchCountProvider from '../MatchCountProvider'
 
 describe('Miss', () => {
   const TEXT = 'TEXT'
@@ -10,12 +10,12 @@ describe('Miss', () => {
   it('renders a Component prop', () => {
     const Page = () => <div>{TEXT}</div>
     const html = renderToString(
-      <MatchProvider>
+      <MatchCountProvider>
         <Miss
           location={{}}
           component={Page}
         />
-      </MatchProvider>
+      </MatchCountProvider>
     )
     expect(html).toContain(TEXT)
   })
@@ -23,14 +23,14 @@ describe('Miss', () => {
   it('renders a render prop passes a location', () => {
     const loc = { state: TEXT }
     const html = renderToString(
-      <MatchProvider>
+      <MatchCountProvider>
         <Miss
           location={loc}
           render={({ location }) => (
             <div>{location.state}</div>
           )}
         />
-      </MatchProvider>
+      </MatchCountProvider>
     )
     expect(html).toContain(TEXT)
   })
@@ -46,3 +46,4 @@ describe('Miss', () => {
     expect(html).toNotContain(TEXT)
   })
 })
+
