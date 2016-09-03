@@ -2,8 +2,7 @@
   "env": {
     "mocha": true
   },
-  rules: {
-    "react/display-name": 0,
+  "rules": {
     "react/prop-types": 0
   }
 }
