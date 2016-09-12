@@ -1,66 +1,92 @@
-import invariant from 'invariant'
+import React, { PropTypes } from 'react'
+import MatchProvider from './MatchProvider'
+import matchPattern from './matchPattern'
 
-import createMemoryHistory from './createMemoryHistory'
-import createTransitionManager from './createTransitionManager'
-import { createRoutes } from './RouteUtils'
-import { createRouterObject, createRoutingHistory } from './RouterUtils'
-
-/**
- * A high-level API to be used for server-side rendering.
- *
- * This function matches a location to a set of routes and calls
- * callback(error, redirectLocation, renderProps) when finished.
- *
- * Note: You probably don't want to use this in a browser unless you're using
- * server-side rendering with async routes.
- */
-function match({ history, routes, location, ...options }, callback) {
-  invariant(
-    history || location,
-    'match needs a history or a location'
-  )
-
-  history = history ? history : createMemoryHistory(options)
-  const transitionManager = createTransitionManager(
-    history,
-    createRoutes(routes)
-  )
-
-  let unlisten
-
-  if (location) {
-    // Allow match({ location: '/the/path', ... })
-    location = history.createLocation(location)
-  } else {
-    // Pick up the location from the history via synchronous history.listen
-    // call if needed.
-    unlisten = history.listen(historyLocation => {
-      location = historyLocation
-    })
+class RegisterMatch extends React.Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired,
+    match: PropTypes.any
   }
 
-  const router = createRouterObject(history, transitionManager)
-  history = createRoutingHistory(history, transitionManager)
+  static contextTypes = {
+    match: PropTypes.object
+  }
 
-  transitionManager.match(location, function (error, redirectLocation, nextState) {
-    callback(
-      error,
-      redirectLocation,
-      nextState && {
-        ...nextState,
-        history,
-        router,
-        matchContext: { history, transitionManager, router }
+  componentWillMount() {
+    const { match:matchContext } = this.context
+    const { match } = this.props
+
+    if (match && matchContext)
+      matchContext.addMatch(match)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { match } = this.context
+
+    if (match) {
+      if (nextProps.match && !this.props.match) {
+        match.addMatch(nextProps.match)
+      } else if (!nextProps.match && this.props.match) {
+        match.removeMatch(this.props.match)
       }
-    )
-
-    // Defer removing the listener to here to prevent DOM histories from having
-    // to unwind DOM event listeners unnecessarily, in case callback renders a
-    // <Router> and attaches another history listener.
-    if (unlisten) {
-      unlisten()
     }
-  })
+  }
+
+  componentWillUnmount() {
+    if (this.props.match)
+      this.context.match.removeMatch(this.props.match)
+  }
+
+  render() {
+    return React.Children.only(this.props.children)
+  }
 }
 
-export default match
+class Match extends React.Component {
+  static propTypes = {
+    pattern: PropTypes.string,
+    exactly: PropTypes.bool,
+    location: PropTypes.object,
+
+    children: PropTypes.func,
+    render: PropTypes.func,
+    component: PropTypes.func
+  }
+
+  static defaultProps = {
+    exactly: false
+  }
+
+  static contextTypes = {
+    location: PropTypes.object,
+    match: PropTypes.object
+  }
+
+  render() {
+    const { children, render, component:Component,
+      pattern, location, exactly } = this.props
+    const { location:locationContext, match:matchContext } = this.context
+    const loc = location || locationContext
+    const parent = matchContext && matchContext.parent
+    const match = matchPattern(pattern, loc, exactly, parent)
+    const props = { ...match, location: loc, pattern }
+
+    return (
+      <RegisterMatch match={match}>
+        <MatchProvider match={match}>
+          {children ? (
+            children({ matched: !!match, ...props })
+          ) : match ? (
+            render ? (
+              render(props)
+            ) : (
+              <Component {...props}/>
+            )
+          ) : null}
+        </MatchProvider>
+      </RegisterMatch>
+    )
+  }
+}
+
+export default Match
