@@ -20,7 +20,6 @@ class StaticRouter extends React.Component {
     children: PropTypes.oneOfType([ PropTypes.node, PropTypes.func ]),
     createHref: PropTypes.func.isRequired,
     location: PropTypes.oneOfType([ PropTypes.object, PropTypes.string ]).isRequired,
-    basename: PropTypes.string,
     onPush: PropTypes.func.isRequired,
     onReplace: PropTypes.func.isRequired,
     stringifyQuery: PropTypes.func.isRequired,
@@ -46,8 +45,7 @@ class StaticRouter extends React.Component {
 
   getChildContext() {
     const createHref = (to) => {
-      let path = createRouterPath(to, this.props.stringifyQuery)
-      if (this.props.basename) path = this.props.basename + path
+      const path = createRouterPath(to, this.props.stringifyQuery)
       return this.props.createHref(path)
     }
 
