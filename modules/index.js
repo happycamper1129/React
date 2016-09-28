@@ -1,23 +1,32 @@
+/* components */
+export Router from './Router'
 export Link from './Link'
-export Match from './Match'
-export Miss from './Miss'
-export NavigationPrompt from 'react-history/Prompt'
+export IndexLink from './IndexLink'
+export withRouter from './withRouter'
+
+/* components (configuration) */
+export IndexRedirect from './IndexRedirect'
+export IndexRoute from './IndexRoute'
 export Redirect from './Redirect'
+export Route from './Route'
 
-// High-level wrappers
-export BrowserRouter from './BrowserRouter'
-export HashRouter from './HashRouter'
-export MemoryRouter from './MemoryRouter'
-export ServerRouter from './ServerRouter'
+/* mixins */
+export History from './History'
+export Lifecycle from './Lifecycle'
+export RouteContext from './RouteContext'
 
-// Low-level building block
-export StaticRouter from './StaticRouter'
+/* utils */
+export useRoutes from './useRoutes'
+export { createRoutes } from './RouteUtils'
+export RouterContext from './RouterContext'
+export RoutingContext from './RoutingContext'
+export PropTypes, { locationShape, routerShape } from './PropTypes'
+export match from './match'
+export useRouterHistory from './useRouterHistory'
+export { formatPattern } from './PatternUtils'
+export applyRouterMiddleware from './applyRouterMiddleware'
 
-// Util for server rendering "pre-render match"
-export matchPattern from './matchPattern'
-
-// Util for server rendering context
-export createServerRenderContext from './createServerRenderContext'
-
-// React PropTypes for all Components
-export * as propTypes from './PropTypes'
+/* histories */
+export browserHistory from './browserHistory'
+export hashHistory from './hashHistory'
+export createMemoryHistory from './createMemoryHistory'
