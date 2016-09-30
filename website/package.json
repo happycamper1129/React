@@ -1,0 +1,30 @@
+{
+  "name": "react-router-website",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "rm -rf .examples && cp -R examples .examples && webpack-dev-server --config webpack.config.js --inline --content-base build",
+    "build": "npm run clean && cp -R examples .examples && webpack",
+    "clean": "rm -rf .examples build",
+    "start": "npm run build && pushstate-server build/"
+  },
+  "dependencies": {
+    "pushstate-server": "1.14.0"
+  },
+  "devDependencies": {
+    "bundle-loader": "0.5.4",
+    "css-loader": "0.23.1",
+    "file-loader": "^0.9.0",
+    "html-loader": "^0.4.3",
+    "html-webpack-plugin": "^2.22.0",
+    "markdown-it": "^7.0.0",
+    "postcss-loader": "0.9.1",
+    "prismjs-loader": "0.0.3",
+    "pushstate-server": "^1.14.0",
+    "react-motion": "^0.4.4",
+    "style-loader": "0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "1.13.1",
+    "webpack-dev-server": "1.14.1"
+  }
+}
