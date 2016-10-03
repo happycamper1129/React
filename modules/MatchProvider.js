@@ -68,8 +68,13 @@ class MatchProvider extends React.Component {
     // React's contract is that cDM of descendants is called before cDM of
     // ancestors, so here we can safely check if we found a match
     if (this.subscribers.length) {
+      const hadMatches = this.hasMatches
       this.hasMatches = this.matches.length !== 0
-      this.subscribers.forEach(fn => fn(this.hasMatches))
+      // optimization, don't notify if nothing changed initial will be null, so
+      // we can get initial render correct
+      if (this.hasMatches !== hadMatches) {
+        this.subscribers.forEach(fn => fn(this.hasMatches))
+      }
     }
   }
 
