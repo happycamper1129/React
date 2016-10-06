@@ -48,12 +48,7 @@ class StaticRouter extends React.Component {
     let path = createRouterPath(to, this.props.stringifyQuery)
 
     if (this.props.basename)
-      if (path === '/')
-        path = this.props.basename
-      else if (path.length >= 2 && path.charAt(0) === '/' && path.charAt(1) === '?')
-        path = this.props.basename + path.substring(1)
-      else
-        path = this.props.basename + path
+      path = this.props.basename + path
 
     return this.props.createHref(path)
   }

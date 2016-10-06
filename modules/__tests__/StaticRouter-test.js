@@ -196,7 +196,7 @@ describe('StaticRouter', () => {
       }
 
       render() {
-        return <div>{this.context.router.createHref(this.props.to)}</div>
+        return <div>{this.context.router.createHref('/bar')}</div>
       }
     }
 
@@ -211,25 +211,9 @@ describe('StaticRouter', () => {
     it('uses the basename when creating hrefs', () => {
       expect(renderToString(
         <StaticRouter {...routerProps} basename={BASENAME}>
-          <Test to='/bar' />
+          <Test />
         </StaticRouter>
       )).toContain(BASENAME)
-    })
-
-    it('does not append a trailing slash to the root path', () => {
-      expect(renderToString(
-        <StaticRouter {...routerProps} basename={BASENAME}>
-        <Test to='/' />
-        </StaticRouter>
-      )).toContain('/foo</div>')
-    })
-
-    it('does not append a trailing slash to the root path if a query is specified', () => {
-      expect(renderToString(
-        <StaticRouter {...routerProps} basename={BASENAME}>
-        <Test to={{pathname:'/', query:{a:1}}} />
-        </StaticRouter>
-      )).toContain('/foo?a=1</div>')
     })
   })
 })
