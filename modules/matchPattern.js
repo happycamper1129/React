@@ -19,7 +19,7 @@ const truncatePathnameToPattern = (pathname, pattern) =>
 
 const parseParams = (pattern, match, keys) =>
   match.slice(1).reduce((params, value, index) => {
-    params[keys[index].name] = decodeURIComponent(value)
+    params[keys[index].name] = value
     return params
   }, {})
 
