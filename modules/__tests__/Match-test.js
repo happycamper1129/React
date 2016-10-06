@@ -59,6 +59,17 @@ describe('Match', () => {
             })
           })
         })
+        it('decodes props', () => {
+          run({ pathname: '/first%20name/second%20name' }, (props) => {
+            expect(props).toEqual({
+              params: { foo: 'first name', bar: 'second name' },
+              isExact: true,
+              pathname: '/first%20name/second%20name',
+              location: { pathname: '/first%20name/second%20name' },
+              pattern: '/:foo/:bar'
+            })
+          })
+        })
       })
 
       describe('when matched partially', () => {
@@ -266,6 +277,85 @@ describe('Match', () => {
     describe('when matched partially', () => {
       it('does not render', () => {
         run({ pathname: '/foo/bar' }, (html) => {
+          expect(html).toNotContain(TEXT)
+        })
+      })
+    })
+  })
+
+  describe('with a trailing slash', () => {
+    const TEXT = 'TEXT'
+    const run = (location, cb) => (
+      cb(renderToString(
+        <Match
+          pattern="/foo/"
+          location={location}
+          render={() => (
+            <div>{TEXT}</div>
+          )}
+        />
+      ))
+    )
+
+    describe('when matched exactly', () => {
+      it('renders', () => {
+        run({ pathname: '/foo/' }, (html) => {
+          expect(html).toContain(TEXT)
+        })
+      })
+    })
+
+    describe('when matched partially', () => {
+      it('renders', () => {
+        run({ pathname: '/foo/bar/' }, (html) => {
+          expect(html).toContain(TEXT)
+        })
+      })
+    })
+
+    describe('when the trailing slash is missing', () => {
+      it('does not renders', () => {
+        run({ pathname: '/foo' }, (html) => {
+          expect(html).toNotContain(TEXT)
+        })
+      })
+    })
+  })
+
+  describe('`exactly` prop with a trailing slash', () => {
+    const TEXT = 'TEXT'
+    const run = (location, cb) => (
+      cb(renderToString(
+        <Match
+          exactly
+          pattern="/foo/"
+          location={location}
+          render={() => (
+            <div>{TEXT}</div>
+          )}
+        />
+      ))
+    )
+
+    describe('when matched exactly', () => {
+      it('renders', () => {
+        run({ pathname: '/foo/' }, (html) => {
+          expect(html).toContain(TEXT)
+        })
+      })
+    })
+
+    describe('when matched partially', () => {
+      it('does not render', () => {
+        run({ pathname: '/foo/bar/' }, (html) => {
+          expect(html).toNotContain(TEXT)
+        })
+      })
+    })
+
+    describe('when the trailing slash is missing', () => {
+      it('does not renders', () => {
+        run({ pathname: '/foo' }, (html) => {
           expect(html).toNotContain(TEXT)
         })
       })
