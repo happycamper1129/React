@@ -1,57 +1,119 @@
-import { REPLACE } from 'history/lib/Actions'
-import invariant from 'invariant'
+import React, { PropTypes } from 'react'
+import MatchProvider from './MatchProvider'
+import matchPattern from './matchPattern'
+import { LocationSubscriber } from './Broadcasts'
 
-import createMemoryHistory from './createMemoryHistory'
-import createTransitionManager from './createTransitionManager'
-import { createRoutes } from './RouteUtils'
-import { createRouterObject } from './RouterUtils'
-
-/**
- * A high-level API to be used for server-side rendering.
- *
- * This function matches a location to a set of routes and calls
- * callback(error, redirectLocation, renderProps) when finished.
- *
- * Note: You probably don't want to use this in a browser unless you're using
- * server-side rendering with async routes.
- */
-function match({ history, routes, location, ...options }, callback) {
-  invariant(
-    history || location,
-    'match needs a history or a location'
-  )
-
-  history = history ? history : createMemoryHistory(options)
-  const transitionManager = createTransitionManager(
-    history,
-    createRoutes(routes)
-  )
-
-  if (location) {
-    // Allow match({ location: '/the/path', ... })
-    location = history.createLocation(location)
-  } else {
-    location = history.getCurrentLocation()
+class RegisterMatch extends React.Component {
+  static contextTypes = {
+    match: PropTypes.object,
+    serverRouter: PropTypes.object
   }
 
-  transitionManager.match(location, (error, redirectLocation, nextState) => {
-    let renderProps
+  registerMatch() {
+    const { match:matchContext } = this.context
+    const { match } = this.props
 
-    if (nextState) {
-      const router = createRouterObject(history, transitionManager, nextState)
-      renderProps = {
-        ...nextState,
-        router,
-        matchContext: { transitionManager, router }
+    if (match && matchContext) {
+      matchContext.addMatch(match)
+    }
+  }
+
+  componentWillMount() {
+    if (this.context.serverRouter) {
+      this.registerMatch()
+    }
+  }
+
+  componentDidMount() {
+    if (!this.context.serverRouter) {
+      this.registerMatch()
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { match } = this.context
+
+    if (match) {
+      if (prevProps.match && !this.props.match) {
+        match.removeMatch(prevProps.match)
+      } else if (!prevProps.match && this.props.match) {
+        match.addMatch(this.props.match)
       }
     }
+  }
 
-    callback(
-      error,
-      redirectLocation && history.createLocation(redirectLocation, REPLACE),
-      renderProps
-    )
-  })
+  componentWillUnmount() {
+    if (this.props.match) {
+      this.context.match.removeMatch(this.props.match)
+    }
+  }
+
+  render() {
+    return React.Children.only(this.props.children)
+  }
 }
 
-export default match
+if (__DEV__) {
+  RegisterMatch.propTypes = {
+    children: PropTypes.node.isRequired,
+    match: PropTypes.any
+  }
+}
+
+class Match extends React.Component {
+  static defaultProps = {
+    exactly: false
+  }
+
+  static contextTypes = {
+    match: PropTypes.object
+  }
+
+  render() {
+    return (
+      <LocationSubscriber>
+        {(location) => {
+          const {
+            children,
+            render,
+            component:Component,
+            pattern,
+            exactly
+          } = this.props
+          const { match:matchContext } = this.context
+          const parent = matchContext && matchContext.parent
+          const match = matchPattern(pattern, location, exactly, parent)
+          const props = { ...match, location, pattern }
+          return (
+            <RegisterMatch match={match}>
+              <MatchProvider match={match}>
+                {children ? (
+                  children({ matched: !!match, ...props })
+                ) : match ? (
+                  render ? (
+                    render(props)
+                  ) : (
+                    <Component {...props}/>
+                  )
+                ) : null}
+              </MatchProvider>
+            </RegisterMatch>
+          )
+        }}
+      </LocationSubscriber>
+    )
+  }
+}
+
+if (__DEV__) {
+  Match.propTypes = {
+    pattern: PropTypes.string,
+    exactly: PropTypes.bool,
+
+    children: PropTypes.func,
+    render: PropTypes.func,
+    component: PropTypes.func
+  }
+}
+
+export default Match
