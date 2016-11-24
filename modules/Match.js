@@ -1,57 +1,117 @@
-import { REPLACE } from 'history/lib/Actions'
-import invariant from 'invariant'
+import React, { PropTypes } from 'react'
+import matchPattern from './matchPattern'
 
-import createMemoryHistory from './createMemoryHistory'
-import createTransitionManager from './createTransitionManager'
-import { createRoutes } from './RouteUtils'
-import { createRouterObject } from './RouterUtils'
+class Match extends React.Component {
+  matchCount = 0
 
-/**
- * A high-level API to be used for server-side rendering.
- *
- * This function matches a location to a set of routes and calls
- * callback(error, redirectLocation, renderProps) when finished.
- *
- * Note: You probably don't want to use this in a browser unless you're using
- * server-side rendering with async routes.
- */
-function match({ history, routes, location, ...options }, callback) {
-  invariant(
-    history || location,
-    'match needs a history or a location'
-  )
-
-  history = history ? history : createMemoryHistory(options)
-  const transitionManager = createTransitionManager(
-    history,
-    createRoutes(routes)
-  )
-
-  if (location) {
-    // Allow match({ location: '/the/path', ... })
-    location = history.createLocation(location)
-  } else {
-    location = history.getCurrentLocation()
+  state = {
+    match: null
   }
 
-  transitionManager.match(location, (error, redirectLocation, nextState) => {
-    let renderProps
+  static defaultProps = {
+    exactly: false
+  }
 
-    if (nextState) {
-      const router = createRouterObject(history, transitionManager, nextState)
-      renderProps = {
-        ...nextState,
-        router,
-        matchContext: { transitionManager, router }
+  static contextTypes = {
+    router: PropTypes.object
+  }
+
+  static childContextTypes = {
+    router: PropTypes.object
+  }
+
+  constructor(props, context) {
+    super(props, context)
+
+    const match = this.getMatch()
+    const parent = context.router.match
+
+    if (parent && match)
+      parent.registerMatch()
+
+    this.state = { match: this.getMatch() }
+  }
+
+  getChildContext() {
+    const match = {
+      registerMatch: () => {
+        this.matchCount++
+        this.context.router.onMatch()
+      },
+
+      unregisterMatch: () => {
+        this.matchCount--
+      },
+
+      getState: () => {
+        return {
+          match: this.state.match,
+          matchCount: this.matchCount
+        }
       }
     }
 
-    callback(
-      error,
-      redirectLocation && history.createLocation(redirectLocation, REPLACE),
-      renderProps
+    return { router: { ...this.context.router, match } }
+  }
+
+  componentDidMount() {
+    this.unlisten = this.context.router.subscribe(() => {
+      this.matchCount = 0
+
+      const parent = this.context.router.match
+      const match = this.getMatch()
+
+      if (parent && match)
+        parent.registerMatch()
+
+      this.setState({
+        match: this.getMatch()
+      })
+    })
+  }
+
+  componentWillUnmount() {
+    this.unlisten()
+  }
+
+  getMatch() {
+    const { router } = this.context
+    const { pattern, exactly } = this.props
+    const { location } = router.getState()
+    const parent = router.match && router.match.getState().match
+    return matchPattern(pattern, location, exactly, parent)
+  }
+
+  render() {
+    const { children, render, component:Component, pattern } = this.props
+    const { match } = this.state
+    const { location } = this.context.router.getState()
+    const props = { ...match, location, pattern }
+    return (
+      children ? (
+        children({ matched: !!match, ...props })
+      ) : match ? (
+        render ? (
+          render(props)
+        ) : (
+          <Component {...props}/>
+        )
+      ) : null
     )
-  })
+  }
 }
 
-export default match
+if (__DEV__) {
+  Match.propTypes = {
+    pattern: PropTypes.string,
+    exactly: PropTypes.bool,
+    component: PropTypes.func,
+    render: PropTypes.func,
+    children: PropTypes.func
+  }
+}
+
+// oh crap, what if mount/unmount w/o location change?  need to notify misses
+// so they know to start or stop rendering geez...
+
+export default Match
