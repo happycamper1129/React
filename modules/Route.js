@@ -1,43 +1,68 @@
-import React from 'react'
-import invariant from 'invariant'
-import { createRouteFromReactElement } from './RouteUtils'
-import { component, components } from './InternalPropTypes'
-
-const { string, func } = React.PropTypes
+import React, { PropTypes } from 'react'
+import matchRoutes from './matchRoutes'
+import withHistory from './withHistory'
+import {
+  action as actionType,
+  location as locationType
+} from './PropTypes'
 
 /**
- * A <Route> is used to declare which components are rendered to the
- * page when the URL matches a given pattern.
- *
- * Routes are arranged in a nested tree structure. When a new URL is
- * requested, the tree is searched depth-first to find a route whose
- * path matches the URL.  When one is found, all routes in the tree
- * that lead to it are considered "active" and their components are
- * rendered into the DOM, nested in the same order as in the tree.
+ * The public API for matching a single pattern.
  */
-/* eslint-disable react/require-render-return */
-const Route = React.createClass({
-
-  statics: {
-    createRouteFromReactElement
-  },
-
-  propTypes: {
-    path: string,
-    component,
-    components,
-    getComponent: func,
-    getComponents: func
-  },
-
-  /* istanbul ignore next: sanity check */
-  render() {
-    invariant(
-      false,
-      '<Route> elements are for router configuration only and should not be rendered'
-    )
+class Route extends React.Component {
+  static propTypes = {
+    action: actionType.isRequired,
+    location: locationType.isRequired,
+    pattern: PropTypes.string.isRequired,
+    exact: PropTypes.bool,
+    component: PropTypes.func,
+    render: PropTypes.func
   }
 
-})
+  static defaultProps = {
+    exact: false
+  }
 
-export default Route
+  handleRouteChange(nextState, callback) {
+    if (this.child.routeWillChange) {
+      this.child.routeWillChange.call(this.child, nextState, callback)
+    } else {
+      callback()
+    }
+  }
+
+  updateChild = (child) => {
+    this.child = child
+  }
+
+  render() {
+    const { action, location, pattern, exact, component, render, ...props } = this.props
+
+    const renderMatch = (props, matched) => (
+      render ? (
+        render({ ...props, matched })
+      ) : (
+        matched ? React.createElement(component, props) : null
+      )
+    )
+
+    const routes = [{
+      pattern,
+      exact,
+      render: props => renderMatch(props, true)
+    }, {
+      render: props => renderMatch(props, false)
+    }]
+
+    const { match, route } = matchRoutes(routes, location.pathname)
+
+    if (!match)
+      return null
+
+    const props = { ...match, route, action, location, ref: this.updateChild }
+
+    return route.render(props)
+  }
+}
+
+export default withHistory(Route)

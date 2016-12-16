@@ -1,21 +1,23 @@
 import { PropTypes } from 'react'
 
-const { func, object, shape, string } = PropTypes
+export const action = PropTypes.oneOf([ 'PUSH', 'REPLACE', 'POP' ])
 
-export const routerShape = shape({
-  push: func.isRequired,
-  replace: func.isRequired,
-  go: func.isRequired,
-  goBack: func.isRequired,
-  goForward: func.isRequired,
-  setRouteLeaveHook: func.isRequired,
-  isActive: func.isRequired
+export const location = PropTypes.shape({
+  pathname: PropTypes.string,
+  search: PropTypes.string,
+  hash: PropTypes.string
 })
 
-export const locationShape = shape({
-  pathname: string.isRequired,
-  search: string.isRequired,
-  state: object,
-  action: string.isRequired,
-  key: string
+export const history = PropTypes.shape({
+  createHref: PropTypes.func.isRequired,
+  action: action.isRequired,
+  location: location.isRequired,
+  push: PropTypes.func.isRequired,
+  replace: PropTypes.func.isRequired,
+  listen: PropTypes.func.isRequired
 })
+
+export const to = PropTypes.oneOf([
+  PropTypes.string
+  PropTypes.object
+])

@@ -1,25 +1,11 @@
-/* components */
-export Router from './Router'
 export Link from './Link'
-export IndexLink from './IndexLink'
-export withRouter from './withRouter'
-
-/* components (configuration) */
-export IndexRedirect from './IndexRedirect'
-export IndexRoute from './IndexRoute'
+export Prompt from 'react-history/Prompt'
 export Redirect from './Redirect'
+export Router from './Router'
 export Route from './Route'
 
-/* utils */
-export { createRoutes } from './RouteUtils'
-export RouterContext from './RouterContext'
-export { locationShape, routerShape } from './PropTypes'
-export match from './match'
-export useRouterHistory from './useRouterHistory'
-export { formatPattern } from './PatternUtils'
-export applyRouterMiddleware from './applyRouterMiddleware'
-
-/* histories */
-export browserHistory from './browserHistory'
-export hashHistory from './hashHistory'
-export createMemoryHistory from './createMemoryHistory'
+// High-level wrappers
+export BrowserRouter from './BrowserRouter'
+export HashRouter from './HashRouter'
+export MemoryRouter from './MemoryRouter'
+export ServerRouter from './ServerRouter'
