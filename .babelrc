@@ -1,17 +1,15 @@
 {
   "presets": [
-    "./tools/es2015Preset",
+    [ "es2015", { "loose": true } ],
     "stage-1",
     "react"
   ],
-  "plugins": ["dev-expression"],
-
   "env": {
-    "cjs": {
-      "plugins": ["add-module-exports"]
-    },
-    "test": {
-      "plugins": ["istanbul"]
+    "production": {
+      "plugins": [
+        "dev-expression",
+        "transform-react-remove-prop-types"
+      ]
     }
   }
 }
