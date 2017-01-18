@@ -1,72 +1,144 @@
-import expect, { createSpy, spyOn } from 'expect'
-import React from 'react'
+import expect from 'expect'
+import React, { Component } from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
+import createHistory from '../createMemoryHistory'
 import Route from '../Route'
-import withRouter from '../withRouter'
 import Router from '../Router'
-import createMemoryHistory from 'history/createMemoryHistory'
+import withRouter from '../withRouter'
 
-describe('withRouter', () => {
-  const div = document.createElement('div')
+describe('withRouter', function () {
+  const routerStub = {
+    push() {},
+    replace() {},
+    go() {},
+    goBack() {},
+    goForward() {},
+    setRouteLeaveHook() {},
+    isActive() {}
+  }
 
-  afterEach(() => {
-    unmountComponentAtNode(div)
+  let node
+  beforeEach(function () {
+    node = document.createElement('div')
   })
 
-  it('injects match and history props', () => {
-    const PATH = '/foo'
-    const history = createMemoryHistory({
-      initialEntries: [PATH]
-    })
+  afterEach(function () {
+    unmountComponentAtNode(node)
+  })
 
-    const ContextChecker = withRouter((props) => {
-      expect(props.history).toBe(history)
-      expect(props.match.path).toEqual(PATH)
+  it('should put router on props', function (done) {
+    const MyComponent = withRouter(({ router }) => {
+      expect(router).toExist()
+      done()
       return null
     })
 
-    const Parent = () => <ContextChecker/>
+    function App() {
+      return <MyComponent /> // Ensure no props are passed explicitly.
+    }
+
     render((
-      <Router history={history}>
-        <Route path={PATH} component={Parent} />
+      <Router history={createHistory('/')}>
+        <Route path="/" component={App} />
       </Router>
-    ), div)
+    ), node)
   })
 
-  it('avoids sCU blocks', () => {
-    const PATH = '/foo'
-    const firstPath = PATH
-    const secondPath = PATH + '/bar'
-    const MatchBlocker = class extends React.Component {
+  it('should set displayName', function () {
+    function MyComponent() {
+      return null
+    }
+
+    MyComponent.displayName = 'MyComponent'
+
+    expect(withRouter(MyComponent).displayName)
+      .toEqual('withRouter(MyComponent)')
+  })
+
+  it('should use router prop if specified', function (done) {
+    const MyComponent = withRouter(({ router }) => {
+      expect(router).toBe(routerStub)
+      done()
+      return null
+    })
+
+    render(<MyComponent router={routerStub} />, node)
+  })
+
+  it('should support withRef', function () {
+    const spy = expect.createSpy()
+
+    class MyComponent extends Component {
+      invokeSpy() {
+        spy()
+      }
+
+      render() {
+        return null
+      }
+    }
+
+    const WrappedComponent = withRouter(MyComponent, { withRef: true })
+
+    const instance = render(<WrappedComponent router={routerStub} />, node)
+    instance.getWrappedInstance().invokeSpy()
+
+    expect(spy).toHaveBeenCalled()
+  })
+
+  it('updates the context inside static containers', function (done) {
+    class App extends Component {
+      render() {
+        expect(this.props.router).toExist()
+        expect(this.props.params).toExist()
+        expect(this.props.params).toBe(this.props.router.params)
+        expect(this.props.location).toExist()
+        expect(this.props.location).toBe(this.props.router.location)
+        expect(this.props.routes).toExist()
+        expect(this.props.routes).toBe(this.props.router.routes)
+        return <h1>{this.props.router.location.pathname}</h1>
+      }
+    }
+
+    const WrappedApp = withRouter(App)
+
+    class StaticContainer extends Component {
       shouldComponentUpdate() {
         return false
       }
 
       render() {
-        return <ContextChecker/>
+        return this.props.children
       }
     }
-    let currentPath
-    let currentMatch
-    const ContextChecker = withRouter((props) => {
-      currentPath = props.history.location.pathname
-      currentMatch = props.match
-      return null
-    })
 
-    const history = createMemoryHistory({
-      initialEntries: [firstPath, secondPath]
-    })
+    const history = createHistory('/')
+
     render((
       <Router history={history}>
-        <Route path={PATH} component={MatchBlocker} />
+        <Route component={StaticContainer}>
+          <Route path="/" component={WrappedApp} />
+          <Route path="/hello" component={WrappedApp} />
+        </Route>
       </Router>
-    ), div)
-    expect(currentPath).toBe(firstPath)
-    expect(currentMatch.isExact).toBe(true)
+    ), node, function () {
+      expect(node.firstChild.textContent).toEqual('/')
+      history.push('/hello')
+      expect(node.firstChild.textContent).toEqual('/hello')
+      done()
+    })
+  })
 
-    history.goForward()
-    expect(currentPath).toBe(secondPath)
-    expect(currentMatch.isExact).toBe(false)
+  it('should render Component even without Router context', function (done) {
+    const MyComponent = withRouter(({ router }) => {
+      expect(router).toNotExist()
+
+      return <h1>Hello</h1>
+    })
+
+    render((<MyComponent />), node, function () {
+      expect(node.firstChild.textContent).toEqual('Hello')
+      done()
+    })
   })
 })
