@@ -8,8 +8,7 @@
     "production": {
       "plugins": [
         "dev-expression",
-        "transform-react-remove-prop-types",
-        "transform-object-assign"
+        "transform-react-remove-prop-types"
       ]
     }
   }
