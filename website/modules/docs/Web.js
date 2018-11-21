@@ -35,87 +35,86 @@ export default {
     {
       label: "Basic",
       slug: "basic",
-      path: "website/modules/examples/Basic",
-      code: require("!raw-loader!../examples/Basic")
+      load: require("../examples/Basic?bundle"),
+      loadSource: require("../examples/Basic.js?prismjs")
     },
     {
       label: "URL Parameters",
       slug: "url-params",
-      path: "website/modules/examples/Params",
-      code: require("!raw-loader!../examples/Params")
+      load: require("../examples/Params?bundle"),
+      loadSource: require("../examples/Params.js?prismjs")
     },
     {
       label: "Redirects (Auth)",
       slug: "auth-workflow",
-      path: "website/modules/examples/Auth",
-      code: require("!raw-loader!../examples/Auth")
+      load: require("../examples/Auth?bundle"),
+      loadSource: require("../examples/Auth.js?prismjs")
     },
     {
       label: "Custom Link",
       slug: "custom-link",
-      path: "website/modules/examples/CustomLink",
-      code: require("!raw-loader!../examples/CustomLink")
+      load: require("../examples/CustomLink?bundle"),
+      loadSource: require("../examples/CustomLink.js?prismjs")
     },
     {
       label: "Preventing Transitions",
       slug: "preventing-transitions",
-      path: "website/modules/examples/PreventingTransitions",
-      code: require("!raw-loader!../examples/PreventingTransitions")
+      load: require("../examples/PreventingTransitions?bundle"),
+      loadSource: require("../examples/PreventingTransitions.js?prismjs")
     },
     {
       label: "No Match (404)",
       slug: "no-match",
-      path: "website/modules/examples/NoMatch",
-      code: require("!raw-loader!../examples/NoMatch")
+      load: require("../examples/NoMatch?bundle"),
+      loadSource: require("../examples/NoMatch.js?prismjs")
     },
     {
       label: "Recursive Paths",
       slug: "recursive-paths",
-      path: "website/modules/examples/Recursive",
-      code: require("!raw-loader!../examples/Recursive")
+      load: require("../examples/Recursive?bundle"),
+      loadSource: require("../examples/Recursive.js?prismjs")
     },
     {
       label: "Sidebar",
       slug: "sidebar",
-      path: "website/modules/examples/Sidebar",
-      code: require("!raw-loader!../examples/Sidebar")
+      load: require("../examples/Sidebar?bundle"),
+      loadSource: require("../examples/Sidebar.js?prismjs")
     },
     {
       label: "Animated Transitions",
       slug: "animated-transitions",
-      path: "website/modules/examples/Animation/index",
-      code: require("!raw-loader!../examples/Animation/index"),
-      extraDependencies: { "react-transition-group": "^2.2.1" }
+      load: require("../examples/Animation?bundle"),
+      loadSource: require("../examples/Animation.js?prismjs")
     },
     {
       label: "Ambiguous Matches",
       slug: "ambiguous-matches",
-      path: "website/modules/examples/Ambiguous",
-      code: require("!raw-loader!../examples/Ambiguous")
+      load: require("../examples/Ambiguous?bundle"),
+      loadSource: require("../examples/Ambiguous.js?prismjs")
     },
     {
       label: "Route Config",
       slug: "route-config",
-      path: "website/modules/examples/RouteConfig",
-      code: require("!raw-loader!../examples/RouteConfig")
+      load: require("../examples/RouteConfig?bundle"),
+      loadSource: require("../examples/RouteConfig.js?prismjs")
     },
     {
       label: "Modal Gallery",
       slug: "modal-gallery",
-      path: "website/modules/examples/ModalGallery",
-      code: require("!raw-loader!../examples/ModalGallery")
+      load: require("../examples/ModalGallery?bundle"),
+      loadSource: require("../examples/ModalGallery.js?prismjs")
     },
     {
       label: "StaticRouter Context",
       slug: "static-router",
-      path: "website/modules/examples/StaticRouter",
-      code: require("!raw-loader!../examples/StaticRouter")
+      load: require("../examples/StaticRouter?bundle"),
+      loadSource: require("../examples/StaticRouter.js?prismjs")
     },
     {
       label: "Query Parameters",
       slug: "query-parameters",
-      path: "website/modules/examples/QueryParams",
-      code: require("!raw-loader!../examples/QueryParams")
+      load: require("../examples/QueryParams?bundle"),
+      loadSource: require("../examples/QueryParams.js?prismjs")
     }
   ]
 };
