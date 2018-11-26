@@ -1,12 +1,9 @@
 // TODO: Replace with React.createContext once we can assume React 16+
 import createContext from "create-react-context";
 
-const createNamedContext = name => {
-  const context = createContext();
-  context.Provider.displayName = `${name}.Provider`;
-  context.Consumer.displayName = `${name}.Consumer`;
-  return context;
-}
+const context = createContext();
 
-const context = /*#__PURE__*/ createNamedContext('Router');
+context.Provider.displayName = "Router.Provider";
+context.Consumer.displayName = "Router.Consumer";
+
 export default context;
