@@ -20,62 +20,62 @@ export default {
     {
       label: "Basic",
       slug: "Basic",
-      path: "packages/react-router-native/examples/BasicExample.js",
-      code: require("!raw-loader!../../../packages/react-router-native/examples/BasicExample.js")
+      appetizeURL: "https://appetize.io/embed/kq15zzzz6u328rvg49bdu75vum",
+      loadSource: require("../../../packages/react-router-native/examples/BasicExample.js?prismjs")
     },
     {
       label: "URL Parameters",
       slug: "url-params",
-      path: "packages/react-router-native/examples/Params.js",
-      code: require("!raw-loader!../../../packages/react-router-native/examples/Params.js")
+      appetizeURL: "https://appetize.io/embed/gudt9n7654nawc85ufn4fa78uw",
+      loadSource: require("../../../packages/react-router-native/examples/Params.js?prismjs")
     },
     {
       label: "Redirects (Auth)",
       slug: "auth-workflow",
-      path: "packages/react-router-native/examples/Auth.js",
-      code: require("!raw-loader!../../../packages/react-router-native/examples/Auth.js")
+      appetizeURL: "https://appetize.io/embed/77urbu5w9g111yeauhe59cac6w",
+      loadSource: require("../../../packages/react-router-native/examples/Auth.js?prismjs")
     },
     {
       label: "Custom Link",
       slug: "custom-link",
-      path: "packages/react-router-native/examples/CustomLink.js",
-      code: require("!raw-loader!../../../packages/react-router-native/examples/CustomLink.js")
+      appetizeURL: "https://appetize.io/embed/0tyewzy1w3d47n8bqvfwfw7k88",
+      loadSource: require("../../../packages/react-router-native/examples/CustomLink.js?prismjs")
     },
     {
       label: "Preventing Transitions",
       slug: "preventing-transitions",
-      path: "packages/react-router-native/examples/PreventingTransitions.js",
-      code: require("!raw-loader!../../../packages/react-router-native/examples/PreventingTransitions.js")
+      appetizeURL: "https://appetize.io/embed/vdudnenr9rzv323tty60th51ag",
+      loadSource: require("../../../packages/react-router-native/examples/PreventingTransitions.js?prismjs")
     },
     {
       label: "No Match",
       slug: "no-match",
-      path: "packages/react-router-native/examples/NoMatch.js",
-      code: require("!raw-loader!../../../packages/react-router-native/examples/NoMatch.js")
+      appetizeURL: "https://appetize.io/embed/cbp7d494t1g9jvb7fvgjt4fun4",
+      loadSource: require("../../../packages/react-router-native/examples/NoMatch.js?prismjs")
     },
     {
       label: "Recursive Paths",
       slug: "recursive-paths",
-      path: "packages/react-router-native/examples/Recursive.js",
-      code: require("!raw-loader!../../../packages/react-router-native/examples/Recursive.js")
+      appetizeURL: "https://appetize.io/embed/7jtxzvxhrqgg48ffy6nj5n5gmc",
+      loadSource: require("../../../packages/react-router-native/examples/Recursive.js?prismjs")
     },
     {
       label: "Sidebar",
       slug: "sidebar",
-      path: "packages/react-router-native/examples/Sidebar.js",
-      code: require("!raw-loader!../../../packages/react-router-native/examples/Sidebar.js")
+      appetizeURL: "https://appetize.io/embed/t91v5044ay0vktbvbwhw580ax0",
+      loadSource: require("../../../packages/react-router-native/examples/Sidebar.js?prismjs")
     },
     {
       label: "Ambiguous Matches",
       slug: "ambiguous-matches",
-      path: "packages/react-router-native/examples/Ambiguous.js",
-      code: require("!raw-loader!../../../packages/react-router-native/examples/Ambiguous.js")
+      appetizeURL: "https://appetize.io/embed/0xzpxy9vxb9z64zd3auyz1c3h0",
+      loadSource: require("../../../packages/react-router-native/examples/Ambiguous.js?prismjs")
     },
     {
       label: "Route Config",
       slug: "route-config",
-      path: "packages/react-router-native/examples/RouteConfig.js",
-      code: require("!raw-loader!../../../packages/react-router-native/examples/RouteConfig.js")
+      appetizeURL: "https://appetize.io/embed/kb15rx5ngmuf78hh3hefg7kh5g",
+      loadSource: require("../../../packages/react-router-native/examples/RouteConfig.js?prismjs")
     }
   ],
   guides: [

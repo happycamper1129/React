@@ -30,9 +30,9 @@
   "module": "esm/react-router.js",
   "sideEffects": false,
   "scripts": {
-    "build": "del cjs esm umd && rollup -c",
-    "prepublishOnly": "del cjs esm umd && rollup -c",
+    "build": "rollup -c",
     "lint": "eslint modules",
+    "prepublishOnly": "npm run build",
     "test": "jest"
   },
   "peerDependencies": {
@@ -42,11 +42,11 @@
     "@babel/runtime": "^7.1.2",
     "create-react-context": "^0.2.2",
     "history": "^4.8.0-beta.0",
-    "hoist-non-react-statics": "^2.5.0",
+    "hoist-non-react-statics": "^3.1.0",
     "loose-envify": "^1.3.1",
     "path-to-regexp": "^1.7.0",
     "prop-types": "^15.6.2",
-    "react-is": "^16.5.2",
+    "react-is": "^16.6.0",
     "tiny-invariant": "^1.0.2",
     "tiny-warning": "^1.0.0"
   },
@@ -60,7 +60,6 @@
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
     "babel-plugin-dev-expression": "^0.2.1",
-    "del-cli": "^1.1.0",
     "eslint": "^5.7.0",
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-react": "^7.9.1",
