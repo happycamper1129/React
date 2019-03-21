@@ -25,6 +25,10 @@ module.exports = {
         process.env.NODE_ENV || "development"
       )
     }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: "vendor",
+      filename: `vendor-[chunkHash].js`
+    }),
     new HTMLWebpackPlugin({
       template: "index.html.ejs"
     }),
@@ -39,12 +43,6 @@ module.exports = {
         ]
       : []
   ),
-
-  optimization: {
-    splitChunks: {
-      name: "vendor"
-    }
-  },
 
   resolve: {
     alias: {

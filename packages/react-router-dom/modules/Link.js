@@ -62,7 +62,7 @@ if (__DEV__) {
   const innerRefType = PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.func,
-    PropTypes.shape({ current: PropTypes.any })
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) })
   ]);
 
   Link.propTypes = {
