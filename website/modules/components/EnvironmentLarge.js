@@ -8,7 +8,6 @@ import EnvironmentHeader from "./EnvironmentHeader";
 import Example from "./Example";
 import Guide from "./Guide";
 import API from "./API";
-import HooksTourAd from "./HooksTourAd";
 
 class EnvironmentLarge extends Component {
   static propTypes = {
@@ -99,8 +98,6 @@ NavLink.propTypes = {
 function NavLinks({ data, environment }) {
   return (
     <Block lineHeight="1.8" padding="10px">
-      <HooksTourAd />
-
       {Array.isArray(data.examples) &&
         data.examples.length > 0 && (
           <Block>
