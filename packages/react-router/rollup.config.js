@@ -24,7 +24,7 @@ const cjs = [
     },
     external: isBareModuleId,
     plugins: [
-      babel({ exclude: /node_modules/, sourceMaps: true, rootMode: "upward" }),
+      babel({ exclude: /node_modules/, sourceMaps: true }),
       replace({
         "process.env.NODE_ENV": JSON.stringify("development"),
         "process.env.BUILD_FORMAT": JSON.stringify("cjs")
@@ -36,7 +36,7 @@ const cjs = [
     output: { file: `cjs/${pkg.name}.min.js`, sourcemap: true, format: "cjs" },
     external: isBareModuleId,
     plugins: [
-      babel({ exclude: /node_modules/, sourceMaps: true, rootMode: "upward" }),
+      babel({ exclude: /node_modules/, sourceMaps: true }),
       replace({
         "process.env.NODE_ENV": JSON.stringify("production"),
         "process.env.BUILD_FORMAT": JSON.stringify("cjs")
@@ -56,8 +56,7 @@ const esm = [
         exclude: /node_modules/,
         runtimeHelpers: true,
         sourceMaps: true,
-        plugins: [["@babel/transform-runtime", { useESModules: true }]],
-        rootMode: "upward"
+        plugins: [["@babel/transform-runtime", { useESModules: true }]]
       }),
       replace({ "process.env.BUILD_FORMAT": JSON.stringify("esm") }),
       sizeSnapshot()
@@ -85,8 +84,7 @@ const umd = [
         exclude: /node_modules/,
         runtimeHelpers: true,
         sourceMaps: true,
-        plugins: [["@babel/transform-runtime", { useESModules: true }]],
-        rootMode: "upward"
+        plugins: [["@babel/transform-runtime", { useESModules: true }]]
       }),
       nodeResolve(),
       commonjs({
@@ -119,8 +117,7 @@ const umd = [
         exclude: /node_modules/,
         runtimeHelpers: true,
         sourceMaps: true,
-        plugins: [["@babel/transform-runtime", { useESModules: true }]],
-        rootMode: "upward"
+        plugins: [["@babel/transform-runtime", { useESModules: true }]]
       }),
       nodeResolve(),
       commonjs({

@@ -11,7 +11,8 @@
   "main": "main.js",
   "sideEffects": false,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start"
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
   },
   "files": [
     "BackButton.js",
