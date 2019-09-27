@@ -1,6 +1,6 @@
 {
   "name": "react-router",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "description": "Declarative routing for React",
   "repository": "ReactTraining/react-router",
   "license": "MIT",
@@ -34,7 +34,7 @@
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint modules",
-    "prepublishOnly": "npm run build"
+    "test": "jest"
   },
   "peerDependencies": {
     "react": ">=15"
