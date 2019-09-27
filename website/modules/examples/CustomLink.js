@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-export default function CustomLinkExample() {
+function CustomLinkExample() {
   return (
     <Router>
       <div>
@@ -45,3 +45,5 @@ function About() {
     </div>
   );
 }
+
+export default CustomLinkExample;

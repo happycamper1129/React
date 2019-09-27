@@ -5,10 +5,9 @@ import invariant from "tiny-invariant";
 import { resolveToLocation, normalizeToLocation } from "./utils/locationUtils";
 
 // React 15 compat
-const forwardRefShim = C => C;
 let { forwardRef } = React;
 if (typeof forwardRef === "undefined") {
-  forwardRef = forwardRefShim;
+  forwardRef = C => C;
 }
 
 function isModifiedEvent(event) {
@@ -71,8 +70,10 @@ const Link = forwardRef(
           );
 
           const href = location ? history.createHref(location) : "";
-          const props = {
+
+          return React.createElement(component, {
             ...rest,
+            ref: forwardedRef || innerRef,
             href,
             navigate() {
               const location = resolveToLocation(to, context.location);
@@ -80,17 +81,7 @@ const Link = forwardRef(
 
               method(location);
             }
-          };
-
-          // React 15 compat
-          if (forwardRefShim !== forwardRef) {
-            props.ref = forwardedRef || innerRef;
-          } else {
-            // TODO: deprecate
-            props.innerRef = innerRef;
-          }
-
-          return React.createElement(component, props);
+          });
         }}
       </RouterContext.Consumer>
     );

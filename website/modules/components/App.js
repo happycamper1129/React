@@ -1,20 +1,28 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import basename from "../basename.js";
-import DelegateMarkdownLinks from "./DelegateMarkdownLinks.js";
-import Home from "./Home/index.js";
-import Environment from "./Environment.js";
+// don't want the shimmed one
+// eslint-disable-next-line
+import { BrowserRouter } from "../../../packages/react-router-dom";
 
-export default function App() {
+// this stuff is shimmed, see ReactRouterDOMShim.js for more details
+import { Switch, Route } from "react-router-dom";
+
+import DelegateMarkdownLinks from "./DelegateMarkdownLinks";
+import Home from "./Home";
+import Environment from "./Environment";
+import basename from "../basename";
+
+function App() {
   return (
-    <Router basename={basename}>
+    <BrowserRouter basename={basename}>
       <DelegateMarkdownLinks>
         <Switch>
           <Route path="/" exact={true} component={Home} />
           <Route path="/:environment" component={Environment} />
         </Switch>
       </DelegateMarkdownLinks>
-    </Router>
+    </BrowserRouter>
   );
 }
+
+export default App;

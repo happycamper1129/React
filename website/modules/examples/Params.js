@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-export default function ParamsExample() {
+function ParamsExample() {
   return (
     <Router>
       <div>
@@ -53,3 +53,5 @@ function ComponentWithRegex({ match }) {
     </div>
   );
 }
+
+export default ParamsExample;

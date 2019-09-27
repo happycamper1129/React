@@ -1,15 +1,7 @@
 import React from "react";
-import { BrowserRouter as Router, Link, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-export default function QueryParamsExample() {
-  return (
-    <Router>
-      <Route component={QueryParamsDemo} />
-    </Router>
-  );
-}
-
-function QueryParamsDemo({ location }) {
+function ParamsDemo({ location }) {
   let params = new URLSearchParams(location.search);
 
   return (
@@ -80,3 +72,13 @@ function Child({ name }) {
     </div>
   );
 }
+
+function ParamsExample() {
+  return (
+    <Router>
+      <Route component={ParamsDemo} />
+    </Router>
+  );
+}
+
+export default ParamsExample;

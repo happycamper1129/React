@@ -1,6 +1,6 @@
 {
   "name": "react-router-config",
-  "version": "5.1.0",
+  "version": "5.0.1",
   "description": "Static route config matching for React Router",
   "repository": "ReactTraining/react-router",
   "license": "MIT",
@@ -25,7 +25,7 @@
   "scripts": {
     "build": "rollup -c",
     "lint": "eslint modules",
-    "test": "jest"
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "react": ">=15",

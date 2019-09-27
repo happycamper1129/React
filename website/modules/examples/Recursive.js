@@ -9,10 +9,10 @@ const PEEPS = [
 ];
 
 function find(id) {
-  return PEEPS.find(p => p.id === id);
+  return PEEPS.find(p => p.id == id);
 }
 
-export default function RecursiveExample() {
+function RecursiveExample() {
   return (
     <Router>
       <Person match={{ params: { id: 0 }, url: "" }} />
@@ -40,3 +40,5 @@ function Person({ match }) {
     </div>
   );
 }
+
+export default RecursiveExample;
