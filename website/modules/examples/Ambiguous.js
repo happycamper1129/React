@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 
-export default function AmbiguousExample() {
+function AmbiguousExample() {
   return (
     <Router>
       <div>
@@ -58,3 +58,5 @@ function User({ match }) {
     </div>
   );
 }
+
+export default AmbiguousExample;

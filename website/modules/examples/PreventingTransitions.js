@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link, Prompt } from "react-router-dom";
 
-export default function PreventingTransitionsExample() {
+function PreventingTransitionsExample() {
   return (
     <Router>
       <div>
@@ -71,3 +71,5 @@ class Form extends Component {
     );
   }
 }
+
+export default PreventingTransitionsExample;

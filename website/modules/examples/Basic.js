@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-export default function BasicExample() {
+function BasicExample() {
   return (
     <Router>
       <div>
@@ -76,3 +76,5 @@ function Topic({ match }) {
     </div>
   );
 }
+
+export default BasicExample;

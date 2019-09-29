@@ -76,7 +76,7 @@ function RouteWithSubRoutes(route) {
   );
 }
 
-export default function RouteConfigExample() {
+function RouteConfigExample() {
   return (
     <Router>
       <div>
@@ -96,3 +96,5 @@ export default function RouteConfigExample() {
     </Router>
   );
 }
+
+export default RouteConfigExample;

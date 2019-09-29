@@ -1,6 +1,5 @@
 export default {
   api: [
-    require("../../../packages/react-router/docs/api/hooks.md?web"),
     require("../../../packages/react-router-dom/docs/api/BrowserRouter.md"),
     require("../../../packages/react-router-dom/docs/api/HashRouter.md"),
     require("../../../packages/react-router-dom/docs/api/Link.md"),
@@ -19,105 +18,103 @@ export default {
     require("../../../packages/react-router/docs/api/withRouter.md?web")
   ],
 
+  guides: [
+    require("../../../packages/react-router-dom/docs/guides/quick-start.md"),
+    require("../../../packages/react-router-dom/docs/guides/basic-components.md"),
+    require("../../../packages/react-router-dom/docs/guides/server-rendering.md"),
+    require("../../../packages/react-router-dom/docs/guides/code-splitting.md"),
+    require("../../../packages/react-router-dom/docs/guides/scroll-restoration.md"),
+    require("../../../packages/react-router/docs/guides/philosophy.md"),
+    require("../../../packages/react-router/docs/guides/testing.md?web"),
+    require("../../../packages/react-router/docs/guides/redux.md"),
+    require("../../../packages/react-router/docs/guides/static-routes.md")
+  ],
+
   examples: [
     {
       label: "Basic",
       slug: "basic",
-      path: "packages/react-router-dom/examples/Basic.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/Basic.js")
+      path: "website/modules/examples/Basic",
+      code: require("!raw-loader!../examples/Basic")
     },
     {
       label: "URL Parameters",
       slug: "url-params",
-      path: "packages/react-router-dom/examples/Params.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/Params.js")
+      path: "website/modules/examples/Params",
+      code: require("!raw-loader!../examples/Params")
     },
     {
       label: "Redirects (Auth)",
       slug: "auth-workflow",
-      path: "packages/react-router-dom/examples/Auth.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/Auth.js")
+      path: "website/modules/examples/Auth",
+      code: require("!raw-loader!../examples/Auth")
     },
     {
       label: "Custom Link",
       slug: "custom-link",
-      path: "packages/react-router-dom/examples/CustomLink.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/CustomLink.js")
+      path: "website/modules/examples/CustomLink",
+      code: require("!raw-loader!../examples/CustomLink")
     },
     {
       label: "Preventing Transitions",
       slug: "preventing-transitions",
-      path: "packages/react-router-dom/examples/PreventingTransitions.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/PreventingTransitions.js")
+      path: "website/modules/examples/PreventingTransitions",
+      code: require("!raw-loader!../examples/PreventingTransitions")
     },
     {
       label: "No Match (404)",
       slug: "no-match",
-      path: "packages/react-router-dom/examples/NoMatch.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/NoMatch.js")
+      path: "website/modules/examples/NoMatch",
+      code: require("!raw-loader!../examples/NoMatch")
     },
     {
       label: "Recursive Paths",
       slug: "recursive-paths",
-      path: "packages/react-router-dom/examples/Recursive.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/Recursive.js")
+      path: "website/modules/examples/Recursive",
+      code: require("!raw-loader!../examples/Recursive")
     },
     {
       label: "Sidebar",
       slug: "sidebar",
-      path: "packages/react-router-dom/examples/Sidebar.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/Sidebar.js")
+      path: "website/modules/examples/Sidebar",
+      code: require("!raw-loader!../examples/Sidebar")
     },
     {
       label: "Animated Transitions",
       slug: "animated-transitions",
-      path: "packages/react-router-dom/examples/Animation/index.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/Animation/index.js"),
-      extraDependencies: {
-        "react-transition-group": "^2.2.1"
-      }
+      path: "website/modules/examples/Animation/index",
+      code: require("!raw-loader!../examples/Animation/index"),
+      extraDependencies: { "react-transition-group": "^2.2.1" }
     },
     {
       label: "Ambiguous Matches",
       slug: "ambiguous-matches",
-      path: "packages/react-router-dom/examples/Ambiguous.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/Ambiguous.js")
+      path: "website/modules/examples/Ambiguous",
+      code: require("!raw-loader!../examples/Ambiguous")
     },
     {
       label: "Route Config",
       slug: "route-config",
-      path: "packages/react-router-dom/examples/RouteConfig.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/RouteConfig.js")
+      path: "website/modules/examples/RouteConfig",
+      code: require("!raw-loader!../examples/RouteConfig")
     },
     {
       label: "Modal Gallery",
       slug: "modal-gallery",
-      path: "packages/react-router-dom/examples/ModalGallery.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/ModalGallery.js")
+      path: "website/modules/examples/ModalGallery",
+      code: require("!raw-loader!../examples/ModalGallery")
     },
     {
       label: "StaticRouter Context",
       slug: "static-router",
-      path: "packages/react-router-dom/examples/StaticRouter.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/StaticRouter.js")
+      path: "website/modules/examples/StaticRouter",
+      code: require("!raw-loader!../examples/StaticRouter")
     },
     {
       label: "Query Parameters",
       slug: "query-parameters",
-      path: "packages/react-router-dom/examples/QueryParams.js",
-      code: require("!raw-loader!../../../packages/react-router-dom/examples/QueryParams.js")
+      path: "website/modules/examples/QueryParams",
+      code: require("!raw-loader!../examples/QueryParams")
     }
-  ],
-
-  guides: [
-    require("../../../packages/react-router-dom/docs/guides/quick-start.md"),
-    require("../../../packages/react-router-dom/docs/guides/primary-components.md"),
-    require("../../../packages/react-router-dom/docs/guides/server-rendering.md"),
-    require("../../../packages/react-router-dom/docs/guides/code-splitting.md"),
-    require("../../../packages/react-router-dom/docs/guides/scroll-restoration.md"),
-    require("../../../packages/react-router/docs/guides/philosophy.md?web"),
-    require("../../../packages/react-router/docs/guides/testing.md?web"),
-    require("../../../packages/react-router/docs/guides/redux.md?web"),
-    require("../../../packages/react-router/docs/guides/static-routes.md?web")
   ]
 };

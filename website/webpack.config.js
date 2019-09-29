@@ -49,10 +49,7 @@ module.exports = {
   resolve: {
     alias: {
       "react-router": path.resolve(__dirname, "../packages/react-router"),
-      "react-router-dom": path.resolve(
-        __dirname,
-        "../packages/react-router-dom"
-      )
+      "react-router-dom": path.resolve(__dirname, "modules/ReactRouterDOMShim")
     }
   },
 
@@ -68,7 +65,10 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules|examples/,
-        loader: "babel-loader"
+        use: {
+          loader: "babel-loader",
+          options: { rootMode: "upward" }
+        }
       },
       {
         test: /\.js$/,
@@ -81,7 +81,10 @@ module.exports = {
               lazy: true
             }
           },
-          { loader: "babel-loader" }
+          {
+            loader: "babel-loader",
+            options: { rootMode: "upward" }
+          }
         ]
       },
       {

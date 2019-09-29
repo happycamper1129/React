@@ -1,9 +1,9 @@
 import React from "react";
 import { Block } from "jsxstyle";
 
-import Footer from "../Footer.js";
-import Header from "./Header.js";
-import Video from "./Video.js";
+import Header from "./Header";
+import Video from "./Video";
+import Footer from "../Footer";
 
 export default function() {
   return (

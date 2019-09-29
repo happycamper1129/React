@@ -1,6 +1,5 @@
 export default {
   api: [
-    require("../../../packages/react-router/docs/api/hooks.md?native"),
     require("../../../packages/react-router-native/docs/api/BackButton.md"),
     require("../../../packages/react-router-native/docs/api/DeepLinking.md"),
     require("../../../packages/react-router-native/docs/api/Link.md"),
@@ -17,7 +16,6 @@ export default {
     require("../../../packages/react-router/docs/api/matchPath.md?native"),
     require("../../../packages/react-router/docs/api/withRouter.md?native")
   ],
-
   examples: [
     {
       label: "Basic",
@@ -80,7 +78,6 @@ export default {
       code: require("!raw-loader!../../../packages/react-router-native/examples/RouteConfig.js")
     }
   ],
-
   guides: [
     require("../../../packages/react-router-native/docs/guides/quick-start.md"),
     require("../../../packages/react-router-native/docs/guides/deep-linking.md"),

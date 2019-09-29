@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Block, Row, Inline } from "jsxstyle";
+import { Block, Flex, Row, Inline } from "jsxstyle";
 
-import { SMALL_SCREEN, LIGHT_GRAY } from "../../Theme.js";
-import Logo from "../Logo.js";
-import SmallScreen from "../SmallScreen.js";
+import Logo from "../Logo";
+import SmallScreen from "../SmallScreen";
+import { SMALL_SCREEN, LIGHT_GRAY, BRIGHT_GRAY } from "../../Theme";
 
 function NavLink({ href, ...props }) {
   return <Block component="a" props={{ href }} margin="0 10px" {...props} />;
@@ -109,7 +109,7 @@ function Banner() {
               margin={`${isSmallScreen ? 20 : 20}px 0`}
               fontSize={isSmallScreen ? "80%" : null}
             >
-              Components are the heart of React&apos;s powerful, declarative
+              Components are the heart of React's powerful, declarative
               programming model. React Router is a collection of{" "}
               <b>navigational components</b> that compose declaratively with
               your application. Whether you want to have{" "}
@@ -133,7 +133,7 @@ function Banner() {
   );
 }
 
-export default function Header() {
+function Header() {
   return (
     <SmallScreen query={SMALL_SCREEN}>
       {isSmallScreen => (
@@ -149,3 +149,5 @@ export default function Header() {
     </SmallScreen>
   );
 }
+
+export default Header;

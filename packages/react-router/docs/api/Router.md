@@ -12,19 +12,14 @@ The most common use-case for using the low-level `<Router>` is to
 synchronize a custom history with a state management lib like Redux or Mobx. Note that this is not required to use state management libs alongside React Router, it's only for deep integration.
 
 ```jsx
-import React from "react"
-import ReactDOM from "react-dom"
-import { Router } from "react-router"
-import { createBrowserHistory } from "history"
+import { Router } from "react-router";
+import { createBrowserHistory } from "history";
 
 const history = createBrowserHistory()
 
-ReactDOM.render(
-  <Router history={history}>
-    <App />
-  </Router>,
-  node
-)
+<Router history={history}>
+  <App/>
+</Router>
 ```
 
 ## history: object
@@ -32,18 +27,16 @@ ReactDOM.render(
 A [`history`](https://github.com/ReactTraining/history) object to use for navigation.
 
 ```jsx
-import React from "react"
-import ReactDOM from "react-dom"
-import { createBrowserHistory } from "history"
+import { createBrowserHistory } from "history";
 
-const customHistory = createBrowserHistory()
+const customHistory = createBrowserHistory();
 
-ReactDOM.render(<Router history={customHistory} />, node)
+<Router history={customHistory} />;
 ```
 
 ## children: node
 
-A child element to render.
+A [single child element](https://facebook.github.io/react/docs/react-api.html#reactchildrenonly) to render.
 
 ```jsx
 <Router>

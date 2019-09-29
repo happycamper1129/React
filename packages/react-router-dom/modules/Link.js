@@ -5,10 +5,9 @@ import invariant from "tiny-invariant";
 import { resolveToLocation, normalizeToLocation } from "./utils/locationUtils";
 
 // React 15 compat
-const forwardRefShim = C => C;
 let { forwardRef } = React;
 if (typeof forwardRef === "undefined") {
-  forwardRef = forwardRefShim;
+  forwardRef = C => C;
 }
 
 function isModifiedEvent(event) {
@@ -16,47 +15,33 @@ function isModifiedEvent(event) {
 }
 
 const LinkAnchor = forwardRef(
-  (
-    {
-      innerRef, // TODO: deprecate
-      navigate,
-      onClick,
-      ...rest
-    },
-    forwardedRef
-  ) => {
+  ({ innerRef, navigate, onClick, ...rest }, forwardedRef) => {
     const { target } = rest;
 
-    let props = {
-      ...rest,
-      onClick: event => {
-        try {
-          if (onClick) onClick(event);
-        } catch (ex) {
-          event.preventDefault();
-          throw ex;
-        }
+    return (
+      <a
+        {...rest}
+        ref={forwardedRef || innerRef}
+        onClick={event => {
+          try {
+            if (onClick) onClick(event);
+          } catch (ex) {
+            event.preventDefault();
+            throw ex;
+          }
 
-        if (
-          !event.defaultPrevented && // onClick prevented default
-          event.button === 0 && // ignore everything but left clicks
-          (!target || target === "_self") && // let browser handle "target=_blank" etc.
-          !isModifiedEvent(event) // ignore clicks with modifier keys
-        ) {
-          event.preventDefault();
-          navigate();
-        }
-      }
-    };
-
-    // React 15 compat
-    if (forwardRefShim !== forwardRef) {
-      props.ref = forwardedRef || innerRef;
-    } else {
-      props.ref = innerRef;
-    }
-
-    return <a {...props} />;
+          if (
+            !event.defaultPrevented && // onClick prevented default
+            event.button === 0 && // ignore everything but left clicks
+            (!target || target === "_self") && // let browser handle "target=_blank" etc.
+            !isModifiedEvent(event) // ignore clicks with modifier keys
+          ) {
+            event.preventDefault();
+            navigate();
+          }
+        }}
+      />
+    );
   }
 );
 
@@ -69,13 +54,7 @@ if (__DEV__) {
  */
 const Link = forwardRef(
   (
-    {
-      component = LinkAnchor,
-      replace,
-      to,
-      innerRef, // TODO: deprecate
-      ...rest
-    },
+    { component = LinkAnchor, replace, to, innerRef, ...rest },
     forwardedRef
   ) => {
     return (
@@ -91,8 +70,10 @@ const Link = forwardRef(
           );
 
           const href = location ? history.createHref(location) : "";
-          const props = {
+
+          return React.createElement(component, {
             ...rest,
+            ref: forwardedRef || innerRef,
             href,
             navigate() {
               const location = resolveToLocation(to, context.location);
@@ -100,16 +81,7 @@ const Link = forwardRef(
 
               method(location);
             }
-          };
-
-          // React 15 compat
-          if (forwardRefShim !== forwardRef) {
-            props.ref = forwardedRef || innerRef;
-          } else {
-            props.innerRef = innerRef;
-          }
-
-          return React.createElement(component, props);
+          });
         }}
       </RouterContext.Consumer>
     );

@@ -5,11 +5,11 @@ import ChevronLeft from "react-icons/lib/md/chevron-left";
 import PropTypes from "prop-types";
 import { Block, Col } from "jsxstyle";
 
-import EnvironmentHeader from "./EnvironmentHeader.js";
-import { RED } from "../Theme.js";
-import Example from "./Example.js";
-import API from "./APISmall.js";
-import Guide from "./Guide.js";
+import EnvironmentHeader from "./EnvironmentHeader";
+import { RED } from "../Theme";
+import Example from "./Example";
+import API from "./APISmall";
+import Guide from "./Guide";
 
 const paths = {
   api: match => `${match.path}/api/:mod`,
@@ -17,7 +17,7 @@ const paths = {
   guide: match => `${match.path}/guides/:mod/:header?`
 };
 
-export default class EnvironmentSmall extends Component {
+class EnvironmentSmall extends Component {
   static propTypes = {
     data: PropTypes.object,
     match: PropTypes.object,
@@ -176,84 +176,93 @@ export default class EnvironmentSmall extends Component {
   }
 }
 
-function AnimatedHeaderBg({ anim, children }) {
-  return (
-    <Block
-      position="absolute"
-      top="0"
-      left="0"
-      right="0"
-      fontSize="13px"
-      background="linear-gradient(to bottom, rgba(221,221,221,1) 0%,rgba(221,221,221,1) 33%,rgba(221,221,221,0.9) 100%)"
-      overflow="hidden"
-    >
+class AnimatedHeaderBg extends Component {
+  static propTypes = {
+    anim: PropTypes.object,
+    children: PropTypes.node
+  };
+
+  render() {
+    const { anim, children } = this.props;
+    return (
+      <Block
+        position="absolute"
+        top="0"
+        left="0"
+        right="0"
+        fontSize="13px"
+        background="linear-gradient(to bottom, rgba(221,221,221,1) 0%,rgba(221,221,221,1) 33%,rgba(221,221,221,0.9) 100%)"
+        overflow="hidden"
+      >
+        <Animated.div
+          style={{
+            height: anim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [150, 50]
+            })
+          }}
+        >
+          {children}
+        </Animated.div>
+      </Block>
+    );
+  }
+}
+
+class AnimatedParentHeader extends Component {
+  static propTypes = {
+    anim: PropTypes.object,
+    children: PropTypes.node
+  };
+
+  render() {
+    const { anim, children } = this.props;
+    return (
+      <Animated.div
+        children={children}
+        style={{
+          position: "relative",
+          top: anim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, -50]
+          }),
+          opacity: anim.interpolate({
+            inputRange: [0, 0.5],
+            outputRange: [1, 0]
+          })
+        }}
+      />
+    );
+  }
+}
+
+class AnimatedNav extends Component {
+  static propTypes = {
+    children: PropTypes.node,
+    anim: PropTypes.object
+  };
+
+  render() {
+    const { anim, children } = this.props;
+    return (
       <Animated.div
         style={{
-          height: anim.interpolate({
+          position: "absolute",
+          top: 0,
+          width: "100%",
+          bottom: 0,
+          background: "white",
+          left: anim.interpolate({
             inputRange: [0, 1],
-            outputRange: [150, 50]
+            outputRange: ["0%", "-25%"]
           })
         }}
       >
         {children}
       </Animated.div>
-    </Block>
-  );
+    );
+  }
 }
-
-AnimatedHeaderBg.propTypes = {
-  anim: PropTypes.object,
-  children: PropTypes.node
-};
-
-function AnimatedParentHeader({ anim, children }) {
-  return (
-    <Animated.div
-      children={children}
-      style={{
-        position: "relative",
-        top: anim.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, -50]
-        }),
-        opacity: anim.interpolate({
-          inputRange: [0, 0.5],
-          outputRange: [1, 0]
-        })
-      }}
-    />
-  );
-}
-
-AnimatedParentHeader.propTypes = {
-  anim: PropTypes.object,
-  children: PropTypes.node
-};
-
-function AnimatedNav({ anim, children }) {
-  return (
-    <Animated.div
-      style={{
-        position: "absolute",
-        top: 0,
-        width: "100%",
-        bottom: 0,
-        background: "white",
-        left: anim.interpolate({
-          inputRange: [0, 1],
-          outputRange: ["0%", "-25%"]
-        })
-      }}
-    >
-      {children}
-    </Animated.div>
-  );
-}
-
-AnimatedNav.propTypes = {
-  children: PropTypes.node,
-  anim: PropTypes.object
-};
 
 class AnimatedChild extends Component {
   static propTypes = {
@@ -327,7 +336,9 @@ class AnimatedChildHeader extends Component {
     animating: PropTypes.bool
   };
 
-  state = { previousChildren: null };
+  state = {
+    previousChildren: null
+  };
 
   componentWillReceiveProps(nextProps) {
     const navigatingToParent = nextProps.atParent && !this.props.atParent;
@@ -418,24 +429,22 @@ class GoUp extends Component {
   }
 }
 
-function Header({ children, url, ...rest }) {
-  return (
-    <Col
-      justifyContent="center"
-      fontSize="14px"
-      width="100%"
-      height="50px"
-      textAlign="center"
-      textTransform="uppercase"
-      fontWeight="bold"
-      position="relative"
-      {...rest}
-    >
-      {children}
-      <GoUp url={url} />
-    </Col>
-  );
-}
+const Header = ({ children, url, ...rest }) => (
+  <Col
+    justifyContent="center"
+    fontSize="14px"
+    width="100%"
+    height="50px"
+    textAlign="center"
+    textTransform="uppercase"
+    fontWeight="bold"
+    position="relative"
+    {...rest}
+  >
+    {children}
+    <GoUp url={url} />
+  </Col>
+);
 
 Header.propTypes = {
   children: PropTypes.node,
@@ -448,7 +457,9 @@ class Page extends Component {
   };
 
   getChildContext() {
-    return { scrollToDoc: "mobile-page" };
+    return {
+      scrollToDoc: "mobile-page"
+    };
   }
 
   render() {
@@ -470,106 +481,108 @@ class Page extends Component {
   }
 }
 
-function Title(props) {
-  return (
-    <Block
-      textTransform="uppercase"
-      fontWeight="bold"
-      color="#aaa"
-      padding="10px"
-      fontSize="13px"
-      marginTop="20px"
-      {...props}
-    />
-  );
-}
+const Title = props => (
+  <Block
+    textTransform="uppercase"
+    fontWeight="bold"
+    color="#aaa"
+    padding="10px"
+    fontSize="13px"
+    marginTop="20px"
+    {...props}
+  />
+);
 
-function NavLink({ to, ...props }) {
-  return (
-    <Route
-      path={to}
-      children={({ match }) => (
-        <Block
-          component={Link}
-          className="no-tap-highlight"
-          props={{ to }}
-          padding="10px"
-          borderTop="solid 1px #eee"
-          background={match ? "#eee" : ""}
-          activeBackground="#eee"
-          {...props}
-        />
-      )}
-    />
-  );
-}
+const NavLink = ({ to, ...props }) => (
+  <Route
+    path={to}
+    children={({ match }) => (
+      <Block
+        component={Link}
+        className="no-tap-highlight"
+        props={{ to }}
+        padding="10px"
+        borderTop="solid 1px #eee"
+        background={match ? "#eee" : ""}
+        activeBackground="#eee"
+        {...props}
+      />
+    )}
+  />
+);
 
 NavLink.propTypes = { to: PropTypes.string };
 
-function Nav({ environment, data }) {
-  return (
-    <Block
-      position="absolute"
-      className="mobile-scroll"
-      top="0"
-      bottom="0"
-      left="0"
-      width="100%"
-      overflow="scroll"
-      paddingTop="150px"
-    >
-      {Array.isArray(data.examples) && data.examples.length > 0 && (
+class Nav extends Component {
+  static propTypes = {
+    data: PropTypes.object,
+    environment: PropTypes.string
+  };
+
+  render() {
+    const { environment, data } = this.props;
+    return (
+      <Block
+        position="absolute"
+        className="mobile-scroll"
+        top="0"
+        bottom="0"
+        left="0"
+        width="100%"
+        overflow="scroll"
+        paddingTop="150px"
+      >
+        {Array.isArray(data.examples) &&
+          data.examples.length > 0 && (
+            <Block>
+              <Title>Examples</Title>
+              <Block>
+                {data.examples.map((item, i) => (
+                  <NavLink
+                    key={i}
+                    to={`/${environment}/example/${item.slug}`}
+                    children={item.label}
+                  />
+                ))}
+              </Block>
+            </Block>
+          )}
+
         <Block>
-          <Title>Examples</Title>
-          <Block>
-            {data.examples.map((item, i) => (
-              <NavLink
-                key={i}
-                to={`/${environment}/example/${item.slug}`}
-                children={item.label}
-              />
-            ))}
-          </Block>
-        </Block>
-      )}
-
-      <Block>
-        <Title>Guides</Title>
-        {data.guides.map((item, i) => (
-          <NavLink
-            key={i}
-            to={`/${environment}/guides/${item.title.slug}`}
-            children={item.title.text}
-          />
-        ))}
-      </Block>
-
-      <Block>
-        <Title>API</Title>
-        {data.api.map((item, i) => (
-          <Block key={i} marginBottom="10px" fontFamily="Menlo, monospace">
+          <Title>Guides</Title>
+          {data.guides.map((item, i) => (
             <NavLink
               key={i}
-              to={`/${environment}/api/${item.title.slug}`}
+              to={`/${environment}/guides/${item.title.slug}`}
               children={item.title.text}
             />
-            <Block paddingLeft="10px" fontSize="90%">
-              {item.headers.map((header, i) => (
-                <NavLink
-                  key={i}
-                  to={`/${environment}/api/${item.title.slug}/${header.slug}`}
-                  children={header.text}
-                />
-              ))}
+          ))}
+        </Block>
+
+        <Block>
+          <Title>API</Title>
+          {data.api.map((item, i) => (
+            <Block key={i} marginBottom="10px" fontFamily="Menlo, monospace">
+              <NavLink
+                key={i}
+                to={`/${environment}/api/${item.title.slug}`}
+                children={item.title.text}
+              />
+              <Block paddingLeft="10px" fontSize="90%">
+                {item.headers.map((header, i) => (
+                  <NavLink
+                    key={i}
+                    to={`/${environment}/api/${item.title.slug}/${header.slug}`}
+                    children={header.text}
+                  />
+                ))}
+              </Block>
             </Block>
-          </Block>
-        ))}
+          ))}
+        </Block>
       </Block>
-    </Block>
-  );
+    );
+  }
 }
 
-Nav.propTypes = {
-  data: PropTypes.object,
-  environment: PropTypes.string
-};
+export default EnvironmentSmall;

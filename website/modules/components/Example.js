@@ -1,10 +1,9 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
+import SandboxExample from "./SandboxExample";
 
-import SandboxExample from "./SandboxExample.js";
-
-export default function Example({ data, match }) {
+function Example({ data, match }) {
   const { example: exampleParam, environment } = match.params;
   const example = data.examples.find(e => e.slug === exampleParam);
   const isNative = environment === "native";
@@ -50,3 +49,5 @@ Example.propTypes = {
     })
   })
 };
+
+export default Example;
