@@ -141,33 +141,30 @@ You shouldn't have to access the `location` or `history` objects very often in t
 
 ```jsx
 // app.test.js
-test("clicking filter links updates product query params", () => {
-  let history, location
+test('clicking filter links updates product query params', () => {
+  let history, location;
   render(
-    <MemoryRouter initialEntries={["/my/initial/route"]}>
+    <MemoryRouter initialEntries={['/my/initial/route']}>
       <App />
-      <Route
-        path="*"
-        render={({ history, location }) => {
-          history = history
-          location = location
-          return null
-        }}
-      />
+      <Route path="*" render={({ history, location }) => {
+        history = history;
+        location = location;
+        return null;
+      }} />
     </MemoryRouter>,
     node
-  )
+  );
 
   act(() => {
     // example: click a <Link> to /products?id=1234
-  })
+  });
 
   // assert about url
-  expect(location.pathname).toBe("/products")
-  const searchParams = new URLSearchParams(location.search)
-  expect(searchParams.has("id")).toBe(true)
-  expect(searchParams.get("id")).toEqual("1234")
-})
+  expect(location.pathname).toBe('/products');
+  const searchParams = new URLSearchParams(location.search);
+  expect(searchParams.has('id')).toBe(true);
+  expect(searchParams.get('id')).toEqual('1234');
+});
 ```
 
 ### Alternatives

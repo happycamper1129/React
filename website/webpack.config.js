@@ -68,9 +68,7 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules|examples/,
-        use: {
-          loader: "babel-loader"
-        }
+        loader: "babel-loader"
       },
       {
         test: /\.js$/,
@@ -83,9 +81,7 @@ module.exports = {
               lazy: true
             }
           },
-          {
-            loader: "babel-loader"
-          }
+          { loader: "babel-loader" }
         ]
       },
       {

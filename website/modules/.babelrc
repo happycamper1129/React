@@ -1,20 +1,9 @@
 {
-  "presets": [
-    [
-      "@babel/env",
-      {
-        "loose": true
-      }
-    ],
-    "@babel/react"
-  ],
+  "presets": [["env", { "loose": true }], "react"],
   "plugins": [
     "dev-expression",
-    [
-      "@babel/proposal-class-properties",
-      {
-        "loose": true
-      }
-    ]
+    "transform-class-properties",
+    ["transform-object-rest-spread", { "useBuiltIns": true }],
+    "transform-export-default"
   ]
 }
