@@ -1,15 +1,3 @@
-const preset = require("react-native/jest-preset");
-
-function mapValues(obj, mapper) {
-  const mapped = {};
-
-  Object.keys(obj).forEach(key => {
-    mapped[key] = mapper(obj[key]);
-  });
-
-  return mapped;
-}
-
 function resolveName(packageName) {
   switch (process.env.TEST_ENV) {
     case "cjs":
@@ -23,17 +11,21 @@ function resolveName(packageName) {
 }
 
 module.exports = {
-  ...preset,
   testRunner: "jest-circus/runner",
   restoreMocks: true,
+  globals: {
+    __DEV__: true
+  },
   moduleNameMapper: {
     "^react-router$": resolveName("react-router"),
+    "^react-router-config$": resolveName("react-router-config"),
     "^react-router-dom$": resolveName("react-router-dom"),
-    "^react-router-config": resolveName("react-router-config")
+    "^react-router-native$": resolveName("react-router-native")
   },
-  transform: mapValues(preset.transform, transformer =>
-    transformer === "babel-jest"
-      ? ["babel-jest", { rootMode: "upward" }]
-      : transformer
-  )
+  setupFiles: ["raf/polyfill"],
+  testMatch: ["**/__tests__/**/*-test.js"],
+  transform: {
+    "^.+\\.[jt]sx?$": "babel-jest"
+  },
+  testURL: "http://localhost/"
 };
